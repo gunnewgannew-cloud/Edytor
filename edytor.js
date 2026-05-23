@@ -1,19 +1,22 @@
 (function() {
+    // WYCZYŚĆ STARE, ZEPSUTE USTAWIENIA ERUDY Z PRZEGLĄDARKI
+    localStorage.removeItem('eruda-settings');
+    localStorage.removeItem('eruda-dev-tools');
+
     var d = document;
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Oficjalne uruchomienie Erudy OD RAZU w fabrycznym ciemnym motywie
-        eruda.init();
-        try {
-            eruda.setOption('theme', 'dark');
-        } catch(e) {
-            // Jeśli standardowa metoda nie zadziała, konfigurujemy przez defaults
-            eruda.init({ defaults: { theme: 'dark' } });
-        }
+        // 1. Oficjalne uruchomienie Erudy w fabrycznym ciemnym motywie
+        eruda.init({
+            defaults: {
+                theme: 'dark',
+                displaySize: 50 // przywraca normalny rozmiar, gdyby się rozciągnęła
+            }
+        });
         
-        // 2. Stylizujemy tylko okrągły przycisk uruchamiania, żeby pasował do reszty
+        // 2. Bezpieczna stylizacja tylko i wyłącznie niebieskiego przycisku (bez ruszania menu!)
         var style = d.createElement('style');
         style.innerHTML = '.eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; }';
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);

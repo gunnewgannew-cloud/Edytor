@@ -3,24 +3,24 @@
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
-        // 1. Wymuszenie ciemnego motywu w samej Erudzie
+        // 1. Oficjalne i bezpieczne włączenie ciemnego motywu Erudy
         eruda.init({
             defaults: {
                 theme: 'dark'
             }
         });
         
-        // 2. Agresywne wstrzyknięcie ciemnego stylu (żeby naprawić białą listę pluginów)
+        // 2. Bezpieczne poprawki CSS (BEZ gwiazdki "*", która psuła zębatkę!)
         var css = `
-            .eruda-dev-tools, .eruda-dev-tools * { background: #1a1a22 !important; color: #eee !important; border-color: #333 !important; }
-            .eruda-nav-bar { background: #111 !important; color: #fff !important; }
-            .eruda-entry-btn { background: #61afef !important; }
+            .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; }
+            /* Celujemy tylko w listy i elementy, które wcześniej były białe */
+            .eruda-dev-tools .eruda-list, .eruda-dev-tools li { background: #1a1a22 !important; color: #eee !important; }
         `;
         var style = d.createElement('style');
         style.innerHTML = css;
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 3. Tworzenie okna Edytora (z animacjami i nowym UI)
+        // 3. Tworzenie okna Edytora (ze wszystkimi funkcjami)
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -34,7 +34,7 @@
                     <button id="eSa" style="background:#61afef;color:#fff;border:none;border-radius:5px;padding:5px 15px;font-weight:bold;">Zapisz</button>
                 </div>
             </div>
-            <textarea id="eAr" style="flex:1;background:#000;color:#98c379;border:none;padding:10px;font-family:monospace;"></textarea>
+            <textarea id="eAr" style="flex:1;background:#000;color:#98c379;border:none;padding:10px;font-family:monospace;outline:none;"></textarea>
         `;
         d.body.appendChild(w);
 
@@ -83,12 +83,11 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Integracja z Erudą (Snippet "Edytor" + Pulsowanie)
+        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie)
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
             var e = null, b = d.createElement('div');
-            // Zmieniono kolor ramki na spójny niebieski z lekką poświatą
             b.style = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
             d.body.appendChild(b);
             

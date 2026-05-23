@@ -5,7 +5,6 @@
     s.onload = function() {
         eruda.init();
         
-        // 1. Funkcja przywracania stanu
         var restoreDraft = function() {
             var savedData = localStorage.getItem('edytor_draft');
             var savedTime = localStorage.getItem('edytor_time');
@@ -19,7 +18,6 @@
             }
         };
 
-        // 2. Tworzenie okna
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 20px #000;transition: height 0.3s ease;';
@@ -38,20 +36,17 @@
 
         var area = d.getElementById('eAr');
 
-        // 3. Autozapis
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 4. Funkcje sterowania
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
             area.style.display = isMin ? 'block' : 'none';
         };
 
-        // 5. Przeciąganie (Drag)
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -68,7 +63,6 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 6. Akcje przycisków
         d.getElementById('eSa').onclick = function() {
             var target = d.getElementById('e_l');
             if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
@@ -78,7 +72,6 @@
         };
         d.getElementById('eCa').onclick = function() { w.style.display = 'none'; };
 
-        // 7. Integracja z Erudą
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -97,7 +90,6 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // 8. Finalny start
         restoreDraft();
     };
     d.body.appendChild(s);

@@ -9,7 +9,7 @@
             defaults: { theme: 'dark' }
         });
         
-        // 2. Kompleksowy styl wizualny - Wersja Ostateczna (Wymuszenie na wszystkich elementach)
+        // 2. Kompleksowy styl wizualny - Naprawiona zębatka
         var css = `
             /* --- BAZA (Usunięcie bieli z każdego zakamarka) --- */
             .eruda-dev-tools { background-color: #0a0a0f !important; }
@@ -48,7 +48,7 @@
                 box-shadow: 0 0 15px rgba(97, 175, 239, 0.2) inset !important;
             }
 
-            /* --- LISTA I PASKI W DOLNEJ CZĘŚCI (Naprawa bieli ze screena) --- */
+            /* --- LISTA I PASKI W DOLNEJ CZĘŚCI --- */
             .eruda-dev-tools .eruda-snippets,
             .eruda-dev-tools .eruda-list,
             .eruda-dev-tools .luna-list {
@@ -56,11 +56,10 @@
                 padding: 16px !important;
             }
 
-            /* Agresywne uderzenie we wszystkie elementy listy (białe paski) */
             .eruda-dev-tools .eruda-list li,
             .eruda-dev-tools .eruda-item,
             .eruda-dev-tools .luna-list-item {
-                background-color: #161622 !important; /* Mroczne tło kafelka */
+                background-color: #161622 !important;
                 border-radius: 12px !important;
                 padding: 18px !important;
                 margin-bottom: 14px !important;
@@ -71,7 +70,6 @@
                 transition: all 0.2s ease !important;
             }
 
-            /* Wymuszenie przezroczystości na pod-elementach (żeby nie psuły kafelka) */
             .eruda-dev-tools .eruda-list li *,
             .eruda-dev-tools .eruda-item *,
             .eruda-dev-tools .luna-list-item * {
@@ -85,7 +83,6 @@
                 transform: translateY(-2px) !important;
             }
 
-            /* Tytuły i ikony na liście */
             .eruda-dev-tools .eruda-title,
             .eruda-dev-tools .luna-list-item-title,
             .eruda-dev-tools .eruda-item span:first-child {
@@ -103,7 +100,10 @@
                 margin-top: 4px !important;
             }
 
-            .eruda-dev-tools [class*="icon"] {
+            /* NAPRAWA: Zmieniony selektor - dotyka TYLKO ikon wewnątrz kafelków na liście */
+            .eruda-snippets .eruda-list li > [class*="icon"],
+            .eruda-snippets .luna-list-item > [class*="icon"],
+            .eruda-snippets .eruda-item > [class*="icon"] {
                 color: #61afef !important;
                 position: absolute !important;
                 right: 18px !important;
@@ -204,6 +204,19 @@
                 if(e) { e.id = 'e_l'; area.value = e.outerHTML; w.style.display = 'flex'; }
             };
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
+        });
+
+        // 8. Kopia zapasowa
+        var savedData = localStorage.getItem('edytor_draft');
+        var savedTime = localStorage.getItem('edytor_time');
+        if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {
+            area.value = savedData;
+            w.style.display = 'flex';
+        }
+    };
+    d.body.appendChild(s);
+})();
+hide();
         });
 
         // 8. Kopia zapasowa

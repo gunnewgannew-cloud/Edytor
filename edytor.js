@@ -4,7 +4,8 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         eruda.init();
-        
+        // Usunięto kod wymuszający inwersję kolorów, więc menu będzie normalne.
+
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 20px #000;transition: height 0.3s ease;';
@@ -25,7 +26,6 @@
         var area = d.getElementById('eAr');
         var search = d.getElementById('eSearch');
 
-        // Wyszukiwanie
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -36,13 +36,11 @@
             }
         };
 
-        // Autozapis (bez komunikatów)
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // Minimalizacja i Przeciąganie
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -60,7 +58,6 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // Akcje
         d.getElementById('eSa').onclick = function() {
             var target = d.getElementById('e_l');
             if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
@@ -86,7 +83,6 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // Przywracanie
         var savedData = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {

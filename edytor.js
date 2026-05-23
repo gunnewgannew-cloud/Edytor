@@ -3,18 +3,24 @@
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
-        eruda.init();
+        // 1. Wymuszenie ciemnego motywu w samej Erudzie
+        eruda.init({
+            defaults: {
+                theme: 'dark'
+            }
+        });
         
-        // 1. Wymuszenie ciemnego motywu Erudy
-        var style = d.createElement('style');
-        style.innerHTML = `
-            .eruda-dev-tools { background: #1a1a22 !important; color: #eee !important; } 
+        // 2. Agresywne wstrzyknięcie ciemnego stylu (żeby naprawić białą listę pluginów)
+        var css = `
+            .eruda-dev-tools, .eruda-dev-tools * { background: #1a1a22 !important; color: #eee !important; border-color: #333 !important; }
             .eruda-nav-bar { background: #111 !important; color: #fff !important; }
             .eruda-entry-btn { background: #61afef !important; }
         `;
+        var style = d.createElement('style');
+        style.innerHTML = css;
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 2. Tworzenie okna Edytora
+        // 3. Tworzenie okna Edytora (z animacjami i nowym UI)
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -35,7 +41,7 @@
         var area = d.getElementById('eAr');
         var search = d.getElementById('eSearch');
 
-        // Funkcje wyszukiwania i autozapisu
+        // 4. Funkcje wyszukiwania i autozapisu
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -48,7 +54,7 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // Obsługa interfejsu (minimalizacja, zamykanie, zapis)
+        // 5. Obsługa interfejsu (minimalizacja, zamykanie, zapis)
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -64,7 +70,7 @@
             w.style.display = 'none';
         };
 
-        // Przeciąganie okna
+        // 6. Przeciąganie okna
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -77,12 +83,13 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // Integracja z Erudą (Snippet "Edytor")
+        // 7. Integracja z Erudą (Snippet "Edytor" + Pulsowanie)
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
             var e = null, b = d.createElement('div');
-            b.style = 'position:fixed;pointer-events:none;border:2px dashed #f52;z-index:999998;';
+            // Zmieniono kolor ramki na spójny niebieski z lekką poświatą
+            b.style = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
             d.body.appendChild(b);
             
             var tm = function(x) {
@@ -96,7 +103,7 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // Przywracanie zapisu
+        // 8. Przywracanie zapisu
         var savedData = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {

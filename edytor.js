@@ -1,27 +1,51 @@
 (function() {
-    // WYCZYŚĆ STARE, ZEPSUTE USTAWIENIA ERUDY Z PRZEGLĄDARKI
-    localStorage.removeItem('eruda-settings');
-    localStorage.removeItem('eruda-dev-tools');
-
     var d = document;
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Oficjalne uruchomienie Erudy w fabrycznym ciemnym motywie
+        // 1. Oficjalna inicjalizacja z domyślnym Dark Mode
         eruda.init({
             defaults: {
-                theme: 'dark',
-                displaySize: 50 // przywraca normalny rozmiar, gdyby się rozciągnęła
+                theme: 'dark'
             }
         });
         
-        // 2. Bezpieczna stylizacja tylko i wyłącznie niebieskiego przycisku (bez ruszania menu!)
+        // 2. Precyzyjne, bezpieczne poprawki CSS eliminujące białe menu
+        var css = `
+            /* Przywrócenie ciemnego tła dla głównego kontenera i list */
+            .eruda-dev-tools .eruda-control,
+            .eruda-dev-tools .eruda-plugins,
+            .eruda-dev-tools .eruda-list,
+            .eruda-dev-tools .eruda-item,
+            .eruda-dev-tools .eruda-content { 
+                background-color: #1a1a22 !important; 
+                color: #eee !important; 
+                border-color: #2a2a35 !important; 
+            }
+            
+            /* Stylizacja nagłówków sekcji na listach (np. teksty na białych paskach) */
+            .eruda-dev-tools .eruda-title,
+            .eruda-dev-tools .eruda-name {
+                color: #61afef !important;
+            }
+
+            /* Opisy pod wtyczkami */
+            .eruda-dev-tools .eruda-desc {
+                color: #abb2bf !important;
+            }
+            
+            /* Okrągły przycisk uruchamiania Erudy */
+            .eruda-entry-btn { 
+                background: #61afef !important; 
+                box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; 
+            }
+        `;
         var style = d.createElement('style');
-        style.innerHTML = '.eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; }';
+        style.innerHTML = css;
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 3. Tworzenie okna Edytora Pro
+        // 3. Tworzenie okna Edytora Pro (z zachowaniem wszystkich animacji i funkcji)
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -84,7 +108,7 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie elementu)
+        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie elementu z poświatą)
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');

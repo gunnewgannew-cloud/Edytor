@@ -4,67 +4,83 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Inicjalizacja Erudy z fabrycznym motywem
+        // 1. Inicjalizacja Erudy z domyślnym Dark Mode
         eruda.init({
             defaults: { theme: 'dark' }
         });
         
-                // 2. Snajperski CSS – pełny mroczny motyw (łącznie z górnym paskiem nawigacji)
+        // 2. Maksymalnie ulepszony i wygładzony styl wizualny
         var css = `
-            /* Górny pasek menu z zakładkami */
+            /* Cały górny pasek nawigacji - nowoczesny design */
             .eruda-dev-tools .eruda-nav-bar {
-                background-color: #111116 !important;
-                background: #111116 !important;
-                border-bottom: 1px solid #2b2b36 !important;
+                background-color: #0f0f14 !important;
+                background: #0f0f14 !important;
+                border-bottom: 2px solid #1a1a24 !important;
+                padding: 4px 0 !important;
             }
 
-            /* Pojedyncze zakładki w menu górnym */
+            /* Wszystkie zakładki - eleganckie zaokrąglenia i płynne przejście */
             .eruda-dev-tools .eruda-tab {
-                background-color: #111116 !important;
-                background: #111116 !important;
-                color: #abb2bf !important;
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #888e9b !important;
+                font-family: sans-serif !important;
+                font-size: 13px !important;
+                font-weight: 500 !important;
+                transition: all 0.2s ease-in-out !important;
+                border-radius: 8px 8px 0 0 !important;
+                margin: 0 2px !important;
+                border: none !important;
+            }
+
+            /* Efekt po dotknięciu / najechaniu na nieaktywną zakładkę */
+            .eruda-dev-tools .eruda-tab:active,
+            .eruda-dev-tools .eruda-tab:hover {
+                background-color: #1a1a24 !important;
+                color: #fff !important;
             }
 
             /* Aktywna, obecnie wybrana zakładka (np. podświetlone Snippets) */
             .eruda-dev-tools .eruda-tab.eruda-active {
-                background-color: #1a1a22 !important;
-                background: #1a1a22 !important;
+                background-color: #16161f !important;
+                background: #16161f !important;
                 color: #61afef !important;
-                border-bottom: 2px solid #61afef !important;
+                font-weight: bold !important;
+                border-bottom: 3px solid #61afef !important;
             }
 
-            /* Wymuszamy ciemne tło na WSZYSTKICH elementach wewnątrz zakładki Snippets */
+            /* Całkowite mroczne tło wewnątrz sekcji Snippets */
             .eruda-snippets,
             .eruda-snippets * {
-                background-color: #1a1a22 !important; 
-                background: #1a1a22 !important;
-                border-color: #2b2b36 !important;
+                background-color: #111116 !important; 
+                background: #111116 !important;
+                border-color: #1e1e26 !important;
             }
             
-            /* Przywracamy piękny, jasnoniebieski kolor dla tytułów i strzałek */
+            /* Niebieskie, czyste tytuły skryptów i strzałki wykonawcze */
             .eruda-snippets .eruda-title,
             .eruda-snippets .eruda-name,
             .eruda-snippets [class*="title"] {
                 color: #61afef !important;
             }
 
-            /* Przywracamy jasny, szary kolor dla opisów pod wtyczkami */
+            /* Wygładzone opisy pod skryptami */
             .eruda-snippets .eruda-desc,
             .eruda-snippets p {
                 color: #abb2bf !important;
             }
             
-            /* Stylizacja okrągłego przycisku startowego Erudy */
+            /* Stylowy, świecący okrągły przycisk Erudy */
             .eruda-entry-btn { 
                 background: #61afef !important; 
-                box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; 
+                box-shadow: 0 0 12px rgba(97, 175, 239, 0.6) !important; 
             }
         `;
         var style = d.createElement('style');
         style.innerHTML = css;
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 3. Tworzenie okna Edytora Pro
+        // 3. Okno Edytora Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -85,7 +101,7 @@
         var area = d.getElementById('eAr');
         var search = d.getElementById('eSearch');
 
-        // 4. Funkcje wyszukiwania i autozapisu
+        // 4. Szukanie i autozapis
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -98,7 +114,7 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 5. Obsługa interfejsu (minimalizacja, zamykanie, zapis)
+        // 5. Minimalizacja, zamykanie i zapis
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -114,7 +130,7 @@
             w.style.display = 'none';
         };
 
-        // 6. Przeciąganie okna
+        // 6. Mechanizm przeciągania
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -127,7 +143,7 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Integracja z Erudą (Snippet "Edytor")
+        // 7. Snippet "Edytor"
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -146,7 +162,7 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // 8. Przywracanie zapisu
+        // 8. Kopia zapasowa
         var savedData = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {

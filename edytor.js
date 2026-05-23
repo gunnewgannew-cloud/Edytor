@@ -4,7 +4,17 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         eruda.init();
-        // Usunięto kod wymuszający inwersję kolorów, więc menu będzie normalne.
+        
+        // Wymuszenie ciemnego motywu Erudy
+        var style = d.createElement('style');
+        style.innerHTML = `
+            .eruda-dev-tools { background: #1a1a22 !important; color: #eee !important; } 
+            .eruda-nav-bar { background: #111 !important; color: #fff !important; }
+            .eruda-entry-btn { background: #111 !important; }
+        `;
+        if (eruda._shadowRoot) {
+            eruda._shadowRoot.appendChild(style);
+        }
 
         var w = d.createElement('div');
         w.id = 'edytor-pro';
@@ -53,6 +63,7 @@
             offsetX = e.touches[0].clientX - w.offsetLeft; 
             offsetY = e.touches[0].clientY - w.offsetTop;
         }, {passive: false});
+        
         d.addEventListener('touchmove', function(e) {
             if (isDragging) { e.preventDefault(); w.style.left = (e.touches[0].clientX - offsetX) + 'px'; w.style.top = (e.touches[0].clientY - offsetY) + 'px'; }
         }, {passive: false});

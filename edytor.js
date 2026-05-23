@@ -4,37 +4,35 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Inicjalizacja Erudy
+        // 1. Inicjalizacja Erudy z fabrycznym motywem
         eruda.init({
             defaults: { theme: 'dark' }
         });
         
-        // 2. CSS celujący WYŁĄCZNIE w zakładkę Snippets (żeby nie popsuć zębatki!)
+        // 2. Snajperski CSS – wymuszenie ciemnego tła TYLKO w zakładce Snippets
         var css = `
-            /* Przemalowanie tylko i wyłącznie zakładki skryptów (Snippets) */
+            /* Wymuszamy ciemne tło na WSZYSTKICH elementach wewnątrz zakładki Snippets */
             .eruda-snippets,
-            .eruda-snippets .eruda-list,
-            .eruda-snippets li,
-            .eruda-snippets .eruda-item,
-            .eruda-snippets .eruda-content {
+            .eruda-snippets * {
                 background-color: #1a1a22 !important; 
                 background: #1a1a22 !important;
-                color: #eee !important;
-                border-color: #333 !important;
+                border-color: #2b2b36 !important;
             }
             
-            /* Niebieskie napisy tylko w Snippets */
+            /* Przywracamy piękny, jasnoniebieski kolor dla tytułów i strzałek */
             .eruda-snippets .eruda-title,
-            .eruda-snippets .eruda-name {
+            .eruda-snippets .eruda-name,
+            .eruda-snippets [class*="title"] {
                 color: #61afef !important;
             }
 
-            /* Szare opisy pod skryptami */
-            .eruda-snippets .eruda-desc {
+            /* Przywracamy jasny, szary kolor dla opisów pod wtyczkami */
+            .eruda-snippets .eruda-desc,
+            .eruda-snippets p {
                 color: #abb2bf !important;
             }
             
-            /* Przycisk startowy Erudy */
+            /* Stylizacja okrągłego przycisku startowego Erudy */
             .eruda-entry-btn { 
                 background: #61afef !important; 
                 box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; 
@@ -78,7 +76,7 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 5. Obsługa interfejsu
+        // 5. Obsługa interfejsu (minimalizacja, zamykanie, zapis)
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';

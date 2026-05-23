@@ -3,24 +3,22 @@
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
-        // 1. Oficjalne i bezpieczne włączenie ciemnego motywu Erudy
-        eruda.init({
-            defaults: {
-                theme: 'dark'
-            }
-        });
         
-        // 2. Bezpieczne poprawki CSS (BEZ gwiazdki "*", która psuła zębatkę!)
-        var css = `
-            .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; }
-            /* Celujemy tylko w listy i elementy, które wcześniej były białe */
-            .eruda-dev-tools .eruda-list, .eruda-dev-tools li { background: #1a1a22 !important; color: #eee !important; }
-        `;
+        // 1. Oficjalne uruchomienie Erudy OD RAZU w fabrycznym ciemnym motywie
+        eruda.init();
+        try {
+            eruda.setOption('theme', 'dark');
+        } catch(e) {
+            // Jeśli standardowa metoda nie zadziała, konfigurujemy przez defaults
+            eruda.init({ defaults: { theme: 'dark' } });
+        }
+        
+        // 2. Stylizujemy tylko okrągły przycisk uruchamiania, żeby pasował do reszty
         var style = d.createElement('style');
-        style.innerHTML = css;
+        style.innerHTML = '.eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; }';
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 3. Tworzenie okna Edytora (ze wszystkimi funkcjami)
+        // 3. Tworzenie okna Edytora Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -83,7 +81,7 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie)
+        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie elementu)
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');

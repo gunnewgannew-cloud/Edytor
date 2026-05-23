@@ -5,7 +5,7 @@
     s.onload = function() {
         eruda.init();
 
-        // Styl dla ciemnego motywu (filtr invert + hue-rotate)
+        // Ciemny motyw dla Erudy
         var st = d.createElement('style');
         st.innerHTML = '.eruda-dev-tools { filter: invert(0.9) hue-rotate(180deg) !important; } .eruda-dev-tools .eruda-nav-bar .eruda-active { border-bottom: 2px solid #9e5010 !important; }';
         eruda._shadowRoot.appendChild(st);
@@ -49,7 +49,7 @@
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:999999;border:1px solid #333;border-radius:15px;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.5);filter: none !important;';
         
         w.innerHTML = `
-            <div id="edytor-header" style="padding:10px;background:#1a1a22;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;border-radius:15px 15px 0 0;touch-action:none;">
+            <div id="edytor-header" style="padding:10px;background:#1a1a22;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;border-radius:15px 15px 0 0;touch-action:none;cursor:move;">
                 <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
                 <div>
                     <button id="ePh" style="background:#61afef22;border:none;color:#61afef;padding:5px 10px;margin-right:5px;border-radius:5px;">📸</button>
@@ -61,7 +61,7 @@
         `;
         d.body.appendChild(w);
 
-        // --- FUNKCJA PRZECIĄGANIA ---
+        // Logika przeciągania
         var header = w.querySelector('#edytor-header');
         var isDragging = false, offsetX, offsetY;
 
@@ -70,15 +70,16 @@
             var touch = e.touches[0];
             offsetX = touch.clientX - w.offsetLeft;
             offsetY = touch.clientY - w.offsetTop;
-        });
+        }, {passive: false});
 
         d.addEventListener('touchmove', function(e) {
             if (isDragging) {
+                e.preventDefault();
                 var touch = e.touches[0];
                 w.style.left = (touch.clientX - offsetX) + 'px';
                 w.style.top = (touch.clientY - offsetY) + 'px';
             }
-        });
+        }, {passive: false});
 
         d.addEventListener('touchend', function() { isDragging = false; });
 

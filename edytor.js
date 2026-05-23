@@ -30,16 +30,16 @@
                 d.removeEventListener('touchend', nd);
                 b.remove();
                 e.id = 'e_l';
-                d.getElementById('eAr').value = e.outerHTML;
-                var w = d.getElementById('edytor-pro');
-                if(w) w.style.display = 'flex';
+                var val = e.outerHTML;
+                d.getElementById('eAr').value = val;
+                localStorage.setItem('edytor_draft', val); // Zapis do pamięci
+                w.style.display = 'flex';
             };
             d.addEventListener('touchmove', tm);
             d.addEventListener('touchend', nd);
             eruda.hide();
         });
 
-        // Sprawdzamy czy Edytor Pro już istnieje, jeśli tak to usuwamy
         var oldW = d.getElementById('edytor-pro');
         if (oldW) oldW.remove();
 
@@ -61,21 +61,25 @@
         `;
         d.body.appendChild(w);
 
-        // Minimalizacja - poprawiona
+        // AUTOSAVE: Nasłuchiwanie zmian w textarea
+        var area = d.getElementById('eAr');
+        area.addEventListener('input', function() {
+            localStorage.setItem('edytor_draft', area.value);
+        });
+
+        // Przywracanie przy otwarciu (jeśli coś było zapisane)
+        var saved = localStorage.getItem('edytor_draft');
+        if(saved) area.value = saved;
+
+        // Minimalizacja
         var isMinimized = false;
         d.getElementById('eMi').onclick = function() {
-            var area = d.getElementById('eAr');
-            if (!isMinimized) {
-                w.style.height = '45px';
-                area.style.display = 'none';
-            } else {
-                w.style.height = '75%';
-                area.style.display = 'block';
-            }
+            if (!isMinimized) { w.style.height = '45px'; area.style.display = 'none'; } 
+            else { w.style.height = '75%'; area.style.display = 'block'; }
             isMinimized = !isMinimized;
         };
 
-        // Przeciąganie - reszta zostaje bez zmian
+        // Przeciąganie
         var header = w.querySelector('#edytor-header');
         var isDragging = false, offsetX, offsetY;
         header.addEventListener('touchstart', function(e) {
@@ -96,14 +100,11 @@
 
         // Przyciski
         d.getElementById('eCa').onclick = function() { w.style.display = 'none'; eruda.show(); };
-        d.getElementById('ePh').onclick = function() { 
-            w.style.display = 'none'; 
-            /* tu dopisane poprawne wywołanie e */
-            eruda.show(); 
-        };
+        d.getElementById('ePh').onclick = function() { w.style.display = 'none'; eruda.show(); };
         d.getElementById('eSa').onclick = function() { 
-            var c = d.getElementById('eAr').value, l = d.getElementById('e_l'); 
+            var c = area.value, l = d.getElementById('e_l'); 
             if (l) l.outerHTML = c; 
+            localStorage.removeItem('edytor_draft'); // Czyścimy po zapisie
             w.style.display = 'none'; 
             eruda.show(); 
         };

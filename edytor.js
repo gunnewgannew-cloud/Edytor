@@ -9,8 +9,30 @@
             defaults: { theme: 'dark' }
         });
         
-        // 2. Snajperski CSS – wymuszenie ciemnego tła TYLKO w zakładce Snippets
+                // 2. Snajperski CSS – pełny mroczny motyw (łącznie z górnym paskiem nawigacji)
         var css = `
+            /* Górny pasek menu z zakładkami */
+            .eruda-dev-tools .eruda-nav-bar {
+                background-color: #111116 !important;
+                background: #111116 !important;
+                border-bottom: 1px solid #2b2b36 !important;
+            }
+
+            /* Pojedyncze zakładki w menu górnym */
+            .eruda-dev-tools .eruda-tab {
+                background-color: #111116 !important;
+                background: #111116 !important;
+                color: #abb2bf !important;
+            }
+
+            /* Aktywna, obecnie wybrana zakładka (np. podświetlone Snippets) */
+            .eruda-dev-tools .eruda-tab.eruda-active {
+                background-color: #1a1a22 !important;
+                background: #1a1a22 !important;
+                color: #61afef !important;
+                border-bottom: 2px solid #61afef !important;
+            }
+
             /* Wymuszamy ciemne tło na WSZYSTKICH elementach wewnątrz zakładki Snippets */
             .eruda-snippets,
             .eruda-snippets * {

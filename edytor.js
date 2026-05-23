@@ -4,76 +4,114 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Inicjalizacja Erudy z domyślnym Dark Mode
+        // 1. Inicjalizacja Erudy z Dark Mode
         eruda.init({
             defaults: { theme: 'dark' }
         });
         
-        // 2. Maksymalnie ulepszony i wygładzony styl wizualny
+        // 2. Kompleksowy, futurystyczny styl wizualny (Total Overhaul)
         var css = `
-            /* Cały górny pasek nawigacji - nowoczesny design */
+            /* Cały górny pasek nawigacji - czysty, mroczny design */
             .eruda-dev-tools .eruda-nav-bar {
-                background-color: #0f0f14 !important;
-                background: #0f0f14 !important;
-                border-bottom: 2px solid #1a1a24 !important;
-                padding: 4px 0 !important;
+                background-color: #0d0d12 !important;
+                background: #0d0d12 !important;
+                border-bottom: 2px solid #1c1c28 !important;
+                padding: 6px 0 !important;
             }
 
-            /* Wszystkie zakładki - eleganckie zaokrąglenia i płynne przejście */
+            /* Zakładki - zaokrąglone krawędzie i płynne przejście */
             .eruda-dev-tools .eruda-tab {
                 background-color: transparent !important;
                 background: transparent !important;
-                color: #888e9b !important;
-                font-family: sans-serif !important;
+                color: #9097a5 !important;
+                font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif !important;
                 font-size: 13px !important;
                 font-weight: 500 !important;
-                transition: all 0.2s ease-in-out !important;
-                border-radius: 8px 8px 0 0 !important;
-                margin: 0 2px !important;
+                transition: all 0.25s ease-in-out !important;
+                border-radius: 8px !important;
+                margin: 0 4px !important;
                 border: none !important;
             }
 
-            /* Efekt po dotknięciu / najechaniu na nieaktywną zakładkę */
-            .eruda-dev-tools .eruda-tab:active,
-            .eruda-dev-tools .eruda-tab:hover {
-                background-color: #1a1a24 !important;
+            /* Efekt po dotknięciu nieaktywnej zakładki */
+            .eruda-dev-tools .eruda-tab:active {
+                background-color: #1a1a28 !important;
                 color: #fff !important;
             }
 
-            /* Aktywna, obecnie wybrana zakładka (np. podświetlone Snippets) */
+            /* Aktywna zakładka z wyraźnym, neonowym podświetleniem */
             .eruda-dev-tools .eruda-tab.eruda-active {
-                background-color: #16161f !important;
-                background: #16161f !important;
+                background-color: #161622 !important;
                 color: #61afef !important;
-                font-weight: bold !important;
-                border-bottom: 3px solid #61afef !important;
+                font-weight: 600 !important;
+                box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important;
             }
 
-            /* Całkowite mroczne tło wewnątrz sekcji Snippets */
-            .eruda-snippets,
-            .eruda-snippets * {
-                background-color: #111116 !important; 
-                background: #111116 !important;
-                border-color: #1e1e26 !important;
-            }
-            
-            /* Niebieskie, czyste tytuły skryptów i strzałki wykonawcze */
-            .eruda-snippets .eruda-title,
-            .eruda-snippets .eruda-name,
-            .eruda-snippets [class*="title"] {
-                color: #61afef !important;
+            /* Całkowita zmiana układu wewnątrz Snippets - Siatka kafelków */
+            .eruda-snippets .eruda-list {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                gap: 16px !important;
+                padding: 16px !important;
+                background: #111118 !important;
             }
 
-            /* Wygładzone opisy pod skryptami */
+            /* Każdy snippet jako interaktywny kafelek z efektem głębi */
+            .eruda-snippets .eruda-item {
+                background: #161622 !important;
+                border-radius: 12px !important;
+                padding: 20px !important;
+                border: 1px solid #1e1e2d !important;
+                transition: all 0.2s ease-in-out !important;
+                cursor: pointer !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+
+            /* Podświetlenie kafelka po dotknięciu */
+            .eruda-snippets .eruda-item:active {
+                border-color: #61afef !important;
+                box-shadow: 0 0 15px rgba(97, 175, 239, 0.3) !important;
+                transform: translateY(-2px) !important;
+            }
+
+            /* Tytuły skryptów - neonowy błękit */
+            .eruda-snippets .eruda-title {
+                color: #61afef !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                margin-bottom: 6px !important;
+            }
+
+            /* Strzałki wykonawcze z poświatą */
+            .eruda-snippets [class*="icon"] {
+                color: #61afef !important;
+                font-size: 18px !important;
+                margin-left: auto !important;
+                opacity: 0.9 !important;
+                transition: transform 0.2s !important;
+                box-shadow: 0 0 5px rgba(97, 175, 239, 0.5) !important;
+            }
+
+            /* Efekt obrotu strzałki przy naciśnięciu */
+            .eruda-snippets .eruda-item:active [class*="icon"] {
+                transform: rotate(90deg) !important;
+            }
+
+            /* Wygładzone, jasnoszare opisy */
             .eruda-snippets .eruda-desc,
             .eruda-snippets p {
-                color: #abb2bf !important;
+                color: #a0a8b9 !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+                margin-top: 4px !important;
             }
             
-            /* Stylowy, świecący okrągły przycisk Erudy */
+            /* Stylowy, świecący przycisk startowy Erudy */
             .eruda-entry-btn { 
                 background: #61afef !important; 
-                box-shadow: 0 0 12px rgba(97, 175, 239, 0.6) !important; 
+                box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; 
             }
         `;
         var style = d.createElement('style');
@@ -130,7 +168,7 @@
             w.style.display = 'none';
         };
 
-        // 6. Mechanizm przeciągania
+        // 6. Mechanizm przeciąganie
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 

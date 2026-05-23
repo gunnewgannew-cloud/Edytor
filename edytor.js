@@ -4,18 +4,12 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Inicjalizacja Erudy z Dark Mode
-        eruda.init({
-            defaults: { theme: 'dark' }
-        });
+        eruda.init({ defaults: { theme: 'dark' } });
         
-        // 2. Kompleksowy styl wizualny - Naprawiona zębatka
         var css = `
-            /* --- BAZA (Usunięcie bieli z każdego zakamarka) --- */
             .eruda-dev-tools { background-color: #0a0a0f !important; }
             .eruda-dev-tools * { border-color: #1e1e2d !important; color: #a0a8b9 !important; }
 
-            /* --- GÓRNE MENU (Glassmorphism) --- */
             .eruda-dev-tools .eruda-nav-bar {
                 background: rgba(13, 13, 18, 0.85) !important;
                 backdrop-filter: blur(12px) !important;
@@ -48,7 +42,6 @@
                 box-shadow: 0 0 15px rgba(97, 175, 239, 0.2) inset !important;
             }
 
-            /* --- LISTA I PASKI W DOLNEJ CZĘŚCI --- */
             .eruda-dev-tools .eruda-snippets,
             .eruda-dev-tools .eruda-list,
             .eruda-dev-tools .luna-list {
@@ -100,7 +93,6 @@
                 margin-top: 4px !important;
             }
 
-            /* NAPRAWA: Zmieniony selektor - dotyka TYLKO ikon wewnątrz kafelków na liście */
             .eruda-snippets .eruda-list li > [class*="icon"],
             .eruda-snippets .luna-list-item > [class*="icon"],
             .eruda-snippets .eruda-item > [class*="icon"] {
@@ -124,7 +116,6 @@
             }
         }, 100);
 
-        // 3. Okno Edytora Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -145,7 +136,6 @@
         var area = d.getElementById('eAr');
         var search = d.getElementById('eSearch');
 
-        // 4. Szukanie i autozapis
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -158,7 +148,6 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 5. Minimalizacja, zamykanie i zapis
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -174,7 +163,6 @@
             w.style.display = 'none';
         };
 
-        // 6. Mechanizm przeciągania
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -187,7 +175,6 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Snippet "Edytor"
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -206,8 +193,16 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // 8. Kopia zapasowa
         var savedData = localStorage.getItem('edytor_draft');
+        var savedTime = localStorage.getItem('edytor_time');
+        if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {
+            area.value = savedData;
+            w.style.display = 'flex';
+        }
+    };
+    d.body.appendChild(s);
+})();
+a = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {
             area.value = savedData;

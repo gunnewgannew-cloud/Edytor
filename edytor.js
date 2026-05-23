@@ -10,33 +10,25 @@
         
         // 2. Pełny pakiet CSS - nasz futurystyczny design
         var css = `
-            /* Pasek nawigacji */
             .eruda-dev-tools .eruda-nav-bar { background: #0d0d12 !important; border-bottom: 2px solid #1c1c28 !important; }
             .eruda-dev-tools .eruda-tab { background: transparent !important; color: #9097a5 !important; border-radius: 8px !important; margin: 0 4px !important; transition: all 0.2s; }
             .eruda-dev-tools .eruda-tab.eruda-active { background: #161622 !important; color: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important; }
-            
-            /* Tarcza ochronna dla Snippets */
             .eruda-snippets, .eruda-snippets * { background-color: #111118 !important; border-color: #1e1e2d !important; }
             .eruda-snippets .eruda-list { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; gap: 16px !important; padding: 16px !important; }
             .eruda-snippets .eruda-item { background: #161622 !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #1e1e2d !important; transition: all 0.2s ease-in-out !important; }
-            .eruda-snippets .eruda-item:active { border-color: #61afef !important; transform: translateY(-2px) !important; }
-            
-            /* Typografia */
-            .eruda-snippets .eruda-title { color: #61afef !important; font-weight: 600 !important; font-size: 16px !important; }
-            .eruda-snippets [class*="icon"] { color: #61afef !important; margin-left: auto !important; }
-            .eruda-snippets .eruda-desc, .eruda-snippets p { color: #a0a8b9 !important; font-size: 13px !important; }
+            .eruda-snippets .eruda-title { color: #61afef !important; font-weight: 600 !important; }
             .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; }
         `;
         setTimeout(function() {
             var style = d.createElement('style');
-            style.innerHTML = css;
+            style.textContent = css;
             if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
         }, 100);
 
-        // 3. Okno Edytora Pro (Wszystkie funkcje!)
+        // 3. Okno Edytora Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
-        w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
+        w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
         w.innerHTML = `
             <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none;border-bottom: 2px solid #61afef;">
                 <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
@@ -51,8 +43,7 @@
         `;
         d.body.appendChild(w);
 
-        var area = d.getElementById('eAr');
-        var search = d.getElementById('eSearch');
+        var area = d.getElementById('eAr'), search = d.getElementById('eSearch');
 
         // 4. Logika Wyszukiwania
         search.oninput = function() {
@@ -68,7 +59,7 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 6. Obsługa przycisków
+        // 6. Obsługa przycisków (Minimalizacja, Zamknięcie, Zapis)
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -82,7 +73,7 @@
             w.style.display = 'none';
         };
 
-        // 7. Przeciąganie
+        // 7. Mechanizm przeciągania
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -94,12 +85,12 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 8. Snippet Edytora (Wybieranie elementu)
+        // 8. Snippet Edytora
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
             var e = null, b = d.createElement('div');
-            b.style = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
+            b.style.cssText = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
             d.body.appendChild(b);
             
             var tm = function(x) {

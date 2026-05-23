@@ -46,11 +46,21 @@
 
         var area = d.getElementById('eAr'), headerText = w.querySelector('b');
         
-        // Autozapis
-        var saved = localStorage.getItem('edytor_draft');
-        if(saved) area.value = saved;
+        // --- MECHANIZM AUTOSAVE 60s ---
+        var now = new Date().getTime();
+        var savedTime = localStorage.getItem('edytor_time');
+        var savedData = localStorage.getItem('edytor_draft');
+
+        if(savedData && savedTime && (now - parseInt(savedTime) < 60000)) {
+            area.value = savedData;
+        } else {
+            localStorage.removeItem('edytor_draft');
+            localStorage.removeItem('edytor_time');
+        }
+
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
+            localStorage.setItem('edytor_time', new Date().getTime().toString());
             var o = headerText.innerText; headerText.innerText = "Zapisywanie...";
             setTimeout(function() { headerText.innerText = o; }, 1000);
         });
@@ -73,11 +83,11 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // Zapis i Wyjście
+        // Akcje
         d.getElementById('eSa').onclick = function() {
             var target = d.getElementById('e_l');
             if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
-            localStorage.removeItem('edytor_draft');
+            localStorage.removeItem('edytor_draft'); localStorage.removeItem('edytor_time');
             w.style.display = 'none'; eruda.show();
         };
         d.getElementById('eCa').onclick = function() { w.style.display = 'none'; eruda.show(); };

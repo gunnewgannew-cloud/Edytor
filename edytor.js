@@ -3,29 +3,33 @@
     var s = d.createElement('script');
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
-        
-        // 1. Inicjalizacja i wymuszenie motywu
+        // --- 1. INICJALIZACJA ---
         eruda.init({ defaults: { theme: 'dark' } });
-        if (eruda.get('settings')) eruda.get('settings').set('theme', 'Dark');
-        
-        // 2. Pełny pakiet CSS - nasz futurystyczny design
+        if (eruda.get('settings')) {
+            eruda.get('settings').set('theme', 'Dark');
+        }
+
+        // --- 2. FUTURYSTYCZNY DESIGN (Pełne style) ---
         var css = `
-            .eruda-dev-tools .eruda-nav-bar { background: #0d0d12 !important; border-bottom: 2px solid #1c1c28 !important; }
-            .eruda-dev-tools .eruda-tab { background: transparent !important; color: #9097a5 !important; border-radius: 8px !important; margin: 0 4px !important; transition: all 0.2s; }
-            .eruda-dev-tools .eruda-tab.eruda-active { background: #161622 !important; color: #61afef !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important; }
+            .eruda-dev-tools .eruda-nav-bar { background: #0d0d12 !important; border-bottom: 2px solid #1c1c28 !important; padding: 6px 0 !important; }
+            .eruda-dev-tools .eruda-tab { background: transparent !important; color: #9097a5 !important; font-family: sans-serif !important; font-size: 13px !important; font-weight: 500 !important; transition: all 0.25s ease-in-out !important; border-radius: 8px !important; margin: 0 4px !important; border: none !important; }
+            .eruda-dev-tools .eruda-tab.eruda-active { background: #161622 !important; color: #61afef !important; font-weight: 600 !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important; }
             .eruda-snippets, .eruda-snippets * { background-color: #111118 !important; border-color: #1e1e2d !important; }
             .eruda-snippets .eruda-list { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; gap: 16px !important; padding: 16px !important; }
-            .eruda-snippets .eruda-item { background: #161622 !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #1e1e2d !important; transition: all 0.2s ease-in-out !important; }
-            .eruda-snippets .eruda-title { color: #61afef !important; font-weight: 600 !important; }
+            .eruda-snippets .eruda-item { background: #161622 !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #1e1e2d !important; transition: all 0.2s ease-in-out !important; cursor: pointer !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; }
+            .eruda-snippets .eruda-item:active { border-color: #61afef !important; box-shadow: 0 0 15px rgba(97, 175, 239, 0.3) !important; transform: translateY(-2px) !important; }
+            .eruda-snippets .eruda-title { color: #61afef !important; font-size: 16px !important; font-weight: 600 !important; margin-bottom: 6px !important; }
+            .eruda-snippets [class*="icon"] { color: #61afef !important; margin-left: auto !important; opacity: 0.9 !important; box-shadow: 0 0 5px rgba(97, 175, 239, 0.5) !important; }
+            .eruda-snippets .eruda-desc, .eruda-snippets p { color: #a0a8b9 !important; font-size: 13px !important; }
             .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; }
         `;
         setTimeout(function() {
             var style = d.createElement('style');
             style.textContent = css;
             if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
-        }, 100);
+        }, 200);
 
-        // 3. Okno Edytora Pro
+        // --- 3. OKNO EDYTORA (Pełne GUI) ---
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -43,9 +47,11 @@
         `;
         d.body.appendChild(w);
 
-        var area = d.getElementById('eAr'), search = d.getElementById('eSearch');
+        // --- 4. LOGIKA I FUNKCJE ---
+        var area = d.getElementById('eAr');
+        var search = d.getElementById('eSearch');
 
-        // 4. Logika Wyszukiwania
+        // [1] Wyszukiwanie
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -53,19 +59,23 @@
             if(pos > -1) { area.focus(); area.setSelectionRange(pos, pos + val.length); }
         };
 
-        // 5. Autozapis
+        // [2] Autozapis
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 6. Obsługa przycisków (Minimalizacja, Zamknięcie, Zapis)
+        // [3] Minimalizacja
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
             area.style.display = isMin ? 'block' : 'none';
         };
+
+        // [4] Zamykanie
         d.getElementById('eCa').onclick = function() { w.style.display = 'none'; };
+
+        // [5] Zapis
         d.getElementById('eSa').onclick = function() {
             var target = d.getElementById('e_l');
             if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
@@ -73,19 +83,20 @@
             w.style.display = 'none';
         };
 
-        // 7. Mechanizm przeciągania
+        // [6] Przeciąganie (Drag & Drop)
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
             offsetX = e.touches[0].clientX - w.offsetLeft; 
             offsetY = e.touches[0].clientY - w.offsetTop;
         }, {passive: false});
+        
         d.addEventListener('touchmove', function(e) {
             if (isDragging) { e.preventDefault(); w.style.left = (e.touches[0].clientX - offsetX) + 'px'; w.style.top = (e.touches[0].clientY - offsetY) + 'px'; }
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 8. Snippet Edytora
+        // [7] Snippet Edytora (Wybieranie elementu)
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -104,7 +115,7 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // 9. Przywracanie sesji
+        // [8] Przywracanie sesji (Sprawdzenie autozapisu)
         var savedData = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {

@@ -4,47 +4,32 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         
-        // 1. Inicjalizacja Erudy
+        // 1. Inicjalizacja Erudy z fabrycznym Dark Mode
         eruda.init({
             defaults: {
                 theme: 'dark'
             }
         });
         
-        // 2. Kompleksowe i bezpieczne uderzenie w białe tła Erudy
+        // 2. Precyzyjne i ultra-bezpieczne gaszenie bieli (BEZ czarnej dziury)
         var css = `
-            /* Główne kontenery, panele i karty */
-            .eruda-dev-tools,
-            .eruda-dev-tools .eruda-container,
-            .eruda-dev-tools .eruda-control,
-            .eruda-dev-tools .eruda-plugins,
-            .eruda-dev-tools .eruda-list,
-            .eruda-dev-tools .eruda-item,
-            .eruda-dev-tools .eruda-content,
-            .eruda-dev-tools .eruda-tab-panel,
-            .eruda-dev-tools .eruda-settings,
-            .eruda-dev-tools .eruda-notification { 
-                background: #111116 !important; 
-                background-color: #111116 !important;
-                color: #eee !important; 
-                border-color: #2a2a35 !important; 
+            /* Celujemy TYLKO w te białe paski i listy wtyczek ze screena */
+            .eruda-dev-tools .eruda-nested,
+            .eruda-dev-tools .eruda-b-border,
+            .eruda-dev-tools [class*="plugin"] {
+                background-color: #1a1a22 !important; 
+                background: #1a1a22 !important;
+                color: #eee !important;
+                border-color: #333 !important;
             }
             
-            /* Napisy na listach i nagłówki */
+            /* Niebieskie napisy dla tytułów wtyczek */
             .eruda-dev-tools .eruda-title,
-            .eruda-dev-tools .eruda-name,
-            .eruda-dev-tools .eruda-text,
-            .eruda-dev-tools .eruda-keyword {
+            .eruda-dev-tools .eruda-name {
                 color: #61afef !important;
             }
-
-            /* Opisy i teksty poboczne */
-            .eruda-dev-tools .eruda-desc,
-            .eruda-dev-tools .eruda-info {
-                color: #abb2bf !important;
-            }
             
-            /* Okrągły przycisk uruchamiania Erudy */
+            /* Okrągły przycisk Erudy */
             .eruda-entry-btn { 
                 background: #61afef !important; 
                 box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; 

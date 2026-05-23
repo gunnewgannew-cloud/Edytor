@@ -9,42 +9,67 @@
             defaults: { theme: 'dark' }
         });
         
-        // 2. Kompleksowy, futurystyczny styl wizualny (Total Overhaul)
+        // 2. Kompleksowy, futurystyczny styl wizualny z NOWYM MENU
         var css = `
-            /* Cały górny pasek nawigacji - czysty, mroczny design */
+            /* --- NOWE MENU ERUDY (Glassmorphism & Clean UI) --- */
+            
+            /* Pływający pasek nawigacji z efektem rozmytego szkła */
             .eruda-dev-tools .eruda-nav-bar {
-                background-color: #0d0d12 !important;
-                background: #0d0d12 !important;
-                border-bottom: 2px solid #1c1c28 !important;
-                padding: 6px 0 !important;
+                background: rgba(13, 13, 18, 0.85) !important;
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+                border-bottom: 1px solid rgba(97, 175, 239, 0.15) !important;
+                padding: 10px 6px !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+                overflow-x: auto !important;
+                scrollbar-width: none !important; /* Ukrycie scrollbara Firefox */
+            }
+            
+            /* Ukrycie scrollbara Chrome/Safari dla czystego wyglądu */
+            .eruda-dev-tools .eruda-nav-bar::-webkit-scrollbar {
+                display: none !important;
             }
 
-            /* Zakładki - zaokrąglone krawędzie i płynne przejście */
+            /* Zakładki menu - nowoczesne przyciski */
             .eruda-dev-tools .eruda-tab {
-                background-color: transparent !important;
-                background: transparent !important;
-                color: #9097a5 !important;
+                background: rgba(255, 255, 255, 0.03) !important;
+                color: #8b94a5 !important;
                 font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif !important;
                 font-size: 13px !important;
                 font-weight: 500 !important;
-                transition: all 0.25s ease-in-out !important;
-                border-radius: 8px !important;
-                margin: 0 4px !important;
-                border: none !important;
+                padding: 6px 14px !important;
+                border-radius: 10px !important;
+                margin: 0 5px !important;
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+                border: 1px solid transparent !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
-            /* Efekt po dotknięciu nieaktywnej zakładki */
+            /* Efekt najechania/lekkiego dotyku na nieaktywną zakładkę */
+            .eruda-dev-tools .eruda-tab:hover,
             .eruda-dev-tools .eruda-tab:active {
-                background-color: #1a1a28 !important;
-                color: #fff !important;
+                background: rgba(97, 175, 239, 0.1) !important;
+                color: #e2e8f0 !important;
+                transform: translateY(-1px) !important;
             }
 
-            /* Aktywna zakładka z wyraźnym, neonowym podświetleniem */
+            /* Aktywna zakładka - potężny neonowy efekt 3D */
             .eruda-dev-tools .eruda-tab.eruda-active {
-                background-color: #161622 !important;
+                background: rgba(97, 175, 239, 0.15) !important;
                 color: #61afef !important;
-                font-weight: 600 !important;
-                box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important;
+                font-weight: 700 !important;
+                border: 1px solid rgba(97, 175, 239, 0.3) !important;
+                box-shadow: 0 0 15px rgba(97, 175, 239, 0.2) inset, 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+                transform: translateY(-2px) !important;
+            }
+
+            /* --- RESZTA STYLÓW (Snippets, Tła) --- */
+
+            /* Tło główne całej Erudy (dopasowane do menu) */
+            .eruda-dev-tools {
+                background-color: #0a0a0f !important;
             }
 
             /* Całkowita zmiana układu wewnątrz Snippets - Siatka kafelków */
@@ -53,7 +78,7 @@
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
                 gap: 16px !important;
                 padding: 16px !important;
-                background: #111118 !important;
+                background: #0a0a0f !important;
             }
 
             /* Każdy snippet jako interaktywny kafelek z efektem głębi */
@@ -114,9 +139,16 @@
                 box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; 
             }
         `;
-        var style = d.createElement('style');
-        style.innerHTML = css;
-        if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
+        
+        // BEZPIECZNE wstrzykiwanie stylów (eliminuje Script Error)
+        var injectStyles = setInterval(function() {
+            if (eruda._shadowRoot) {
+                var style = d.createElement('style');
+                style.innerHTML = css;
+                eruda._shadowRoot.appendChild(style);
+                clearInterval(injectStyles);
+            }
+        }, 100);
 
         // 3. Okno Edytora Pro
         var w = d.createElement('div');

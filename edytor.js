@@ -6,104 +6,94 @@
         
         eruda.init({ defaults: { theme: 'dark' } });
         
+        // POTĘŻNY CSS Z PODWÓJNĄ KLASĄ (Wymusza najwyższy priorytet)
         var css = `
-            .eruda-dev-tools { background-color: #0a0a0f !important; }
-            .eruda-dev-tools * { border-color: #1e1e2d !important; color: #a0a8b9 !important; }
-
-            .eruda-dev-tools .eruda-nav-bar {
-                background: rgba(13, 13, 18, 0.85) !important;
-                backdrop-filter: blur(12px) !important;
-                -webkit-backdrop-filter: blur(12px) !important;
-                border-bottom: 1px solid rgba(97, 175, 239, 0.15) !important;
-                padding: 10px 6px !important;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
-                overflow-x: auto !important;
+            /* Baza */
+            .eruda-dev-tools.eruda-dev-tools { background-color: #0a0a0f !important; }
+            
+            /* Górne Menu */
+            .eruda-dev-tools.eruda-dev-tools .eruda-nav-bar {
+                background: #0d0d12 !important;
+                border-bottom: 1px solid #1e1e2d !important;
                 scrollbar-width: none !important;
             }
-            .eruda-dev-tools .eruda-nav-bar::-webkit-scrollbar { display: none !important; }
-
-            .eruda-dev-tools .eruda-tab {
-                background: rgba(255, 255, 255, 0.03) !important;
+            .eruda-dev-tools.eruda-dev-tools .eruda-nav-bar::-webkit-scrollbar { display: none !important; }
+            
+            /* Zakładki nieaktywne */
+            .eruda-dev-tools.eruda-dev-tools .eruda-tab {
+                background: transparent !important;
                 color: #8b94a5 !important;
-                font-family: 'SF Pro Display', sans-serif !important;
-                font-size: 13px !important;
-                font-weight: 500 !important;
-                padding: 6px 14px !important;
-                border-radius: 10px !important;
-                margin: 0 5px !important;
-                transition: all 0.3s ease !important;
-                border: 1px solid transparent !important;
+                border: none !important;
+                font-family: sans-serif !important;
             }
-            .eruda-dev-tools .eruda-tab.eruda-active {
-                background: rgba(97, 175, 239, 0.15) !important;
+            
+            /* Aktywna zakładka (Niszczy białe tło ze screena) */
+            .eruda-dev-tools.eruda-dev-tools .eruda-tab.eruda-active {
+                background: #161622 !important;
                 color: #61afef !important;
-                font-weight: 700 !important;
-                border: 1px solid rgba(97, 175, 239, 0.3) !important;
-                box-shadow: 0 0 15px rgba(97, 175, 239, 0.2) inset !important;
+                font-weight: bold !important;
+                border-bottom: 2px solid #61afef !important;
             }
 
-            .eruda-dev-tools .eruda-snippets,
-            .eruda-dev-tools .eruda-list,
-            .eruda-dev-tools .luna-list {
-                background-color: #0a0a0f !important;
-                padding: 16px !important;
+            /* Panel Snippets */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets {
+                background: #0a0a0f !important;
+            }
+            
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .luna-list,
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets ul {
+                background: transparent !important;
             }
 
-            .eruda-dev-tools .eruda-list li,
-            .eruda-dev-tools .eruda-item,
-            .eruda-dev-tools .luna-list-item {
-                background-color: #161622 !important;
-                border-radius: 12px !important;
-                padding: 18px !important;
-                margin-bottom: 14px !important;
+            /* Kafelki listy (Tworzy ciemne bloki) */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets li,
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .luna-list-item,
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .eruda-item {
+                background: #161622 !important;
                 border: 1px solid #2a2a35 !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+                margin: 10px !important;
+                border-radius: 8px !important;
+                padding: 15px !important;
                 display: block !important;
                 position: relative !important;
-                transition: all 0.2s ease !important;
             }
 
-            .eruda-dev-tools .eruda-list li *,
-            .eruda-dev-tools .eruda-item *,
-            .eruda-dev-tools .luna-list-item * {
+            /* ELIMINACJA BIELI: Wymuszona przezroczystość na wszystkim wewnątrz kafelka */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets li *,
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .luna-list-item *,
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .eruda-item * {
+                background: transparent !important;
                 background-color: transparent !important;
             }
 
-            .eruda-dev-tools .eruda-list li:active,
-            .eruda-dev-tools .eruda-item:active {
-                border-color: #61afef !important;
-                box-shadow: 0 0 15px rgba(97, 175, 239, 0.3) !important;
-                transform: translateY(-2px) !important;
-            }
-
-            .eruda-dev-tools .eruda-title,
-            .eruda-dev-tools .luna-list-item-title,
-            .eruda-dev-tools .eruda-item span:first-child {
+            /* Kolorowanie tytułów */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets [class*="title"],
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets span:first-child {
                 color: #61afef !important;
-                font-size: 16px !important;
-                font-weight: 600 !important;
+                font-size: 15px !important;
+                font-weight: bold !important;
                 display: block !important;
-                margin-bottom: 6px !important;
+                margin-bottom: 5px !important;
             }
 
-            .eruda-dev-tools .eruda-desc,
-            .eruda-dev-tools .eruda-item p {
-                color: #8b94a5 !important;
+            /* Kolorowanie opisów */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets [class*="desc"],
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets p {
+                color: #a0a8b9 !important;
                 font-size: 13px !important;
-                margin-top: 4px !important;
             }
 
-            .eruda-snippets .eruda-list li > [class*="icon"],
-            .eruda-snippets .luna-list-item > [class*="icon"],
-            .eruda-snippets .eruda-item > [class*="icon"] {
+            /* Ikony strzałek po prawej (Z pominięciem zębatki ustawień) */
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets li > [class*="icon"],
+            .eruda-dev-tools.eruda-dev-tools .eruda-snippets .luna-list-item > [class*="icon"] {
                 color: #61afef !important;
                 position: absolute !important;
-                right: 18px !important;
+                right: 15px !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
-                font-size: 20px !important;
             }
 
+            /* Przycisk startowy Erudy */
             .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; }
         `;
         
@@ -116,6 +106,7 @@
             }
         }, 100);
 
+        // Edytor Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';

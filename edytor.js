@@ -11,25 +11,29 @@
             }
         });
         
-        // 2. Precyzyjne i ultra-bezpieczne gaszenie bieli (BEZ czarnej dziury)
+        // 2. Inteligentny, zaawansowany filtr CSS (Gasi tylko jasne tła w panelu)
         var css = `
-            /* Celujemy TYLKO w te białe paski i listy wtyczek ze screena */
+            /* Celujemy w listy, elementy i bloki wtyczek */
             .eruda-dev-tools .eruda-nested,
             .eruda-dev-tools .eruda-b-border,
-            .eruda-dev-tools [class*="plugin"] {
+            .eruda-dev-tools .eruda-list,
+            .eruda-dev-tools li,
+            .eruda-dev-tools [class*="plugin"],
+            .eruda-dev-tools [style*="background-color: rgb(255, 255, 255)"],
+            .eruda-dev-tools [style*="background: rgb(255, 255, 255)"] {
                 background-color: #1a1a22 !important; 
                 background: #1a1a22 !important;
                 color: #eee !important;
-                border-color: #333 !important;
+                border-color: #2a2a35 !important;
             }
             
-            /* Niebieskie napisy dla tytułów wtyczek */
+            /* Ładne niebieskie wyróżnienie dla głównych tytułów */
             .eruda-dev-tools .eruda-title,
             .eruda-dev-tools .eruda-name {
                 color: #61afef !important;
             }
-            
-            /* Okrągły przycisk Erudy */
+
+            /* Podświetlenie przycisku Erudy */
             .eruda-entry-btn { 
                 background: #61afef !important; 
                 box-shadow: 0 0 10px rgba(97, 175, 239, 0.5) !important; 
@@ -39,7 +43,7 @@
         style.innerHTML = css;
         if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
-        // 3. Tworzenie okna Edytora Pro
+        // 3. Tworzenie okna Edytora Pro (Wszystkie funkcje bez zmian)
         var w = d.createElement('div');
         w.id = 'edytor-pro';
         w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
@@ -60,7 +64,7 @@
         var area = d.getElementById('eAr');
         var search = d.getElementById('eSearch');
 
-        // 4. Funkcje wyszukiwania i autozapisu
+        // 4. Wyszukiwanie i autozapis
         search.oninput = function() {
             var val = search.value;
             if(!val) return;
@@ -73,7 +77,7 @@
             localStorage.setItem('edytor_time', new Date().getTime().toString());
         });
 
-        // 5. Obsługa interfejsu (minimalizacja, zamykanie, zapis)
+        // 5. Interfejs okna
         d.getElementById('eMi').onclick = function() {
             var isMin = w.style.height === '45px';
             w.style.height = isMin ? '75%' : '45px';
@@ -89,7 +93,7 @@
             w.style.display = 'none';
         };
 
-        // 6. Przeciąganie okna
+        // 6. Przeciąganie okna edytora
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; 
@@ -102,7 +106,7 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // 7. Integracja z Erudą (Snippet "Edytor" + Podświetlanie elementu)
+        // 7. Integracja z Erudą (Snippet "Edytor")
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -121,7 +125,7 @@
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // 8. Przywracanie zapisu
+        // 8. Przywracanie kopii zapasowej
         var savedData = localStorage.getItem('edytor_draft');
         var savedTime = localStorage.getItem('edytor_time');
         if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {

@@ -202,14 +202,7 @@
     };
     d.body.appendChild(s);
 })();
-a = localStorage.getItem('edytor_draft');
-        var savedTime = localStorage.getItem('edytor_time');
-        if(savedData && savedTime && (new Date().getTime() - parseInt(savedTime) < 60000)) {
-            area.value = savedData;
-            w.style.display = 'flex';
-        }
-    };
-    d.body.appendChild(s);
+  d.body.appendChild(s);
 })();
 hide();
         });

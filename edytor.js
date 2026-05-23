@@ -40,13 +40,21 @@
         var area = d.getElementById('eAr');
 
         // --- MECHANIZM AUTOSAVE ---
+        var area = d.getElementById('eAr');
+        var headerText = w.querySelector('b'); // Znajdujemy napis "Edytor Pro"
+
         // 1. Przy starcie: wczytaj to co było wcześniej
         var saved = localStorage.getItem('edytor_draft');
         if(saved) area.value = saved;
 
-        // 2. W trakcie pisania: zapisuj co 500ms (dla wydajności)
+        // 2. W trakcie pisania: zapisuj i daj znać użytkownikowi
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
+            
+            // Wizualne potwierdzenie
+            var originalText = headerText.innerText;
+            headerText.innerText = "Zapisywanie...";
+            setTimeout(function() { headerText.innerText = originalText; }, 1000);
         });
 
         // Minimalizacja

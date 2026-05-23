@@ -5,37 +5,123 @@
     s.onload = function() {
         
         // 1. Inicjalizacja Erudy z Dark Mode
-        eruda.init({ defaults: { theme: 'dark' } });
+        eruda.init({
+            defaults: { theme: 'dark' }
+        });
         
-        // 2. Bezpieczne wstrzykiwanie stylów
+        // 2. Kompleksowy, futurystyczny styl wizualny (Total Overhaul)
         var css = `
-            .eruda-dev-tools .eruda-nav-bar { background-color: #0d0d12 !important; border-bottom: 2px solid #1c1c28 !important; padding: 6px 0 !important; }
-            .eruda-dev-tools .eruda-tab { background-color: transparent !important; color: #9097a5 !important; font-family: sans-serif !important; font-size: 13px !important; font-weight: 500 !important; transition: all 0.25s ease-in-out !important; border-radius: 8px !important; margin: 0 4px !important; border: none !important; }
-            .eruda-dev-tools .eruda-tab:active { background-color: #1a1a28 !important; color: #fff !important; }
-            .eruda-dev-tools .eruda-tab.eruda-active { background-color: #161622 !important; color: #61afef !important; font-weight: 600 !important; box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important; }
-            .eruda-snippets .eruda-list { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; gap: 16px !important; padding: 16px !important; background: #111118 !important; }
-            .eruda-snippets .eruda-item { background: #161622 !important; border-radius: 12px !important; padding: 20px !important; border: 1px solid #1e1e2d !important; transition: all 0.2s ease-in-out !important; cursor: pointer !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; }
-            .eruda-snippets .eruda-item:active { border-color: #61afef !important; box-shadow: 0 0 15px rgba(97, 175, 239, 0.3) !important; transform: translateY(-2px) !important; }
-            .eruda-snippets .eruda-title { color: #61afef !important; font-size: 16px !important; font-weight: 600 !important; margin-bottom: 6px !important; }
-            .eruda-snippets [class*="icon"] { color: #61afef !important; font-size: 18px !important; margin-left: auto !important; opacity: 0.9 !important; transition: transform 0.2s !important; box-shadow: 0 0 5px rgba(97, 175, 239, 0.5) !important; }
-            .eruda-snippets .eruda-item:active [class*="icon"] { transform: rotate(90deg) !important; }
-            .eruda-snippets .eruda-desc, .eruda-snippets p { color: #a0a8b9 !important; font-size: 13px !important; line-height: 1.4 !important; margin-top: 4px !important; }
-            .eruda-entry-btn { background: #61afef !important; box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; }
-        `;
-
-        var injectStyles = setInterval(function() {
-            if (eruda._shadowRoot) {
-                var style = d.createElement('style');
-                style.innerHTML = css;
-                eruda._shadowRoot.appendChild(style);
-                clearInterval(injectStyles);
+            /* Cały górny pasek nawigacji - czysty, mroczny design */
+            .eruda-dev-tools .eruda-nav-bar {
+                background-color: #0d0d12 !important;
+                background: #0d0d12 !important;
+                border-bottom: 2px solid #1c1c28 !important;
+                padding: 6px 0 !important;
             }
-        }, 100);
+
+            /* Zakładki - zaokrąglone krawędzie i płynne przejście */
+            .eruda-dev-tools .eruda-tab {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #9097a5 !important;
+                font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                font-size: 13px !important;
+                font-weight: 500 !important;
+                transition: all 0.25s ease-in-out !important;
+                border-radius: 8px !important;
+                margin: 0 4px !important;
+                border: none !important;
+            }
+
+            /* Efekt po dotknięciu nieaktywnej zakładki */
+            .eruda-dev-tools .eruda-tab:active {
+                background-color: #1a1a28 !important;
+                color: #fff !important;
+            }
+
+            /* Aktywna zakładka z wyraźnym, neonowym podświetleniem */
+            .eruda-dev-tools .eruda-tab.eruda-active {
+                background-color: #161622 !important;
+                color: #61afef !important;
+                font-weight: 600 !important;
+                box-shadow: 0 0 10px rgba(97, 175, 239, 0.4) !important;
+            }
+
+            /* Całkowita zmiana układu wewnątrz Snippets - Siatka kafelków */
+            .eruda-snippets .eruda-list {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                gap: 16px !important;
+                padding: 16px !important;
+                background: #111118 !important;
+            }
+
+            /* Każdy snippet jako interaktywny kafelek z efektem głębi */
+            .eruda-snippets .eruda-item {
+                background: #161622 !important;
+                border-radius: 12px !important;
+                padding: 20px !important;
+                border: 1px solid #1e1e2d !important;
+                transition: all 0.2s ease-in-out !important;
+                cursor: pointer !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+
+            /* Podświetlenie kafelka po dotknięciu */
+            .eruda-snippets .eruda-item:active {
+                border-color: #61afef !important;
+                box-shadow: 0 0 15px rgba(97, 175, 239, 0.3) !important;
+                transform: translateY(-2px) !important;
+            }
+
+            /* Tytuły skryptów - neonowy błękit */
+            .eruda-snippets .eruda-title {
+                color: #61afef !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                margin-bottom: 6px !important;
+            }
+
+            /* Strzałki wykonawcze z poświatą */
+            .eruda-snippets [class*="icon"] {
+                color: #61afef !important;
+                font-size: 18px !important;
+                margin-left: auto !important;
+                opacity: 0.9 !important;
+                transition: transform 0.2s !important;
+                box-shadow: 0 0 5px rgba(97, 175, 239, 0.5) !important;
+            }
+
+            /* Efekt obrotu strzałki przy naciśnięciu */
+            .eruda-snippets .eruda-item:active [class*="icon"] {
+                transform: rotate(90deg) !important;
+            }
+
+            /* Wygładzone, jasnoszare opisy */
+            .eruda-snippets .eruda-desc,
+            .eruda-snippets p {
+                color: #a0a8b9 !important;
+                font-size: 13px !important;
+                line-height: 1.4 !important;
+                margin-top: 4px !important;
+            }
+            
+            /* Stylowy, świecący przycisk startowy Erudy */
+            .eruda-entry-btn { 
+                background: #61afef !important; 
+                box-shadow: 0 0 14px rgba(97, 175, 239, 0.7) !important; 
+            }
+        `;
+        var style = d.createElement('style');
+        style.innerHTML = css;
+        if (eruda._shadowRoot) eruda._shadowRoot.appendChild(style);
 
         // 3. Okno Edytora Pro
         var w = d.createElement('div');
         w.id = 'edytor-pro';
-        w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
+        w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
         w.innerHTML = `
             <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none;border-bottom: 2px solid #61afef;">
                 <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
@@ -100,7 +186,7 @@
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
             var e = null, b = d.createElement('div');
-            b.style.cssText = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
+            b.style = 'position:fixed;pointer-events:none;border:2px dashed #61afef;box-shadow: 0 0 10px rgba(97,175,239,0.5);z-index:999998;';
             d.body.appendChild(b);
             
             var tm = function(x) {

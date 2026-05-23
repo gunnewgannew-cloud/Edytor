@@ -4,57 +4,55 @@
     s.src = '//cdn.jsdelivr.net/npm/eruda';
     s.onload = function() {
         eruda.init();
-        // Stylizacja
         var st = d.createElement('style');
-        st.innerHTML = '.eruda-dev-tools { filter: invert(0.9) hue-rotate(180deg) !important; } .eruda-dev-tools .eruda-nav-bar .eruda-active { border-bottom: 2px solid #9e5010 !important; }';
+        st.innerHTML = '.eruda-dev-tools { filter: invert(0.9) hue-rotate(180deg) !important; }';
         eruda._shadowRoot.appendChild(st);
 
-        // Snippet otwierający Edytor Pro
         eruda.get('snippets').add('Edytor', function() {
-            var w = d.getElementById('edytor-pro');
-            if(w) w.style.display = 'flex';
-            eruda.hide();
+            var oldE = d.getElementById('e_l');
+            if(oldE) oldE.removeAttribute('id');
+            var e = null, b = d.createElement('div');
+            b.style = 'position:fixed;pointer-events:none;border:2px dashed #f52;z-index:999998;';
+            d.body.appendChild(b);
+            var tm = function(x) {
+                var m = x.touches[0], l = d.elementFromPoint(m.clientX, m.clientY);
+                if (l && l !== b) { e = l; var r = l.getBoundingClientRect(); b.style.left=r.left+'px'; b.style.top=r.top+'px'; b.style.width=r.width+'px'; b.style.height=r.height+'px'; b.style.display='block'; }
+            };
+            var nd = function() {
+                d.removeEventListener('touchmove', tm); d.removeEventListener('touchend', nd); b.remove();
+                if(e) { e.id = 'e_l'; d.getElementById('eAr').value = e.outerHTML; d.getElementById('edytor-pro').style.display = 'flex'; }
+            };
+            d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
 
-        // Tworzenie okna
         var oldW = d.getElementById('edytor-pro');
         if (oldW) oldW.remove();
 
         var w = d.createElement('div');
         w.id = 'edytor-pro';
-        w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;border:1px solid #333;border-radius:15px;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition: height 0.3s ease;';
-        
+        w.style = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 20px #000;transition: height 0.3s ease;';
         w.innerHTML = `
-            <div id="edytor-header" style="padding:10px;background:#1a1a22;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;border-radius:15px 15px 0 0;touch-action:none;cursor:move;">
+            <div id="edytor-header" style="padding:10px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none;">
                 <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
                 <div>
-                    <button id="eMi" style="background:#333;border:none;color:#fff;padding:5px 10px;margin-right:5px;border-radius:5px;">↕</button>
-                    <button id="eCa" style="background:#333;border:none;color:#fff;padding:5px 10px;margin-right:5px;border-radius:5px;">X</button>
-                    <button id="eSa" style="background:#61afef;border:none;padding:5px 15px;color:#fff;border-radius:5px;font-weight:bold;">Zapisz</button>
+                    <button id="eMi" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">↕</button>
+                    <button id="eCa" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">X</button>
+                    <button id="eSa" style="background:#61afef;border:none;border-radius:5px;padding:5px 15px;font-weight:bold;">Zapisz</button>
                 </div>
             </div>
-            <textarea id="eAr" style="flex:1;background:#000;color:#98c379;border:none;padding:10px;font-family:monospace;font-size:14px;outline:none;resize:none;"></textarea>
+            <textarea id="eAr" style="flex:1;background:#000;color:#98c379;border:none;padding:10px;font-family:monospace;"></textarea>
         `;
         d.body.appendChild(w);
 
-        var area = d.getElementById('eAr');
-
-        // --- MECHANIZM AUTOSAVE ---
-        var area = d.getElementById('eAr');
-        var headerText = w.querySelector('b'); // Znajdujemy napis "Edytor Pro"
-
-        // 1. Przy starcie: wczytaj to co było wcześniej
+        var area = d.getElementById('eAr'), headerText = w.querySelector('b');
+        
+        // Autozapis
         var saved = localStorage.getItem('edytor_draft');
         if(saved) area.value = saved;
-
-        // 2. W trakcie pisania: zapisuj i daj znać użytkownikowi
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
-            
-            // Wizualne potwierdzenie
-            var originalText = headerText.innerText;
-            headerText.innerText = "Zapisywanie...";
-            setTimeout(function() { headerText.innerText = originalText; }, 1000);
+            var o = headerText.innerText; headerText.innerText = "Zapisywanie...";
+            setTimeout(function() { headerText.innerText = o; }, 1000);
         });
 
         // Minimalizacja
@@ -66,29 +64,23 @@
         };
 
         // Przeciąganie
-        var header = w.querySelector('#edytor-header');
         var isDragging = false, offsetX, offsetY;
-        header.addEventListener('touchstart', function(e) {
-            isDragging = true;
-            offsetX = e.touches[0].clientX - w.offsetLeft;
-            offsetY = e.touches[0].clientY - w.offsetTop;
+        w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
+            isDragging = true; offsetX = e.touches[0].clientX - w.offsetLeft; offsetY = e.touches[0].clientY - w.offsetTop;
         }, {passive: false});
         d.addEventListener('touchmove', function(e) {
-            if (isDragging) {
-                e.preventDefault();
-                w.style.left = (e.touches[0].clientX - offsetX) + 'px';
-                w.style.top = (e.touches[0].clientY - offsetY) + 'px';
-            }
+            if (isDragging) { e.preventDefault(); w.style.left = (e.touches[0].clientX - offsetX) + 'px'; w.style.top = (e.touches[0].clientY - offsetY) + 'px'; }
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // Przyciski akcji
-        d.getElementById('eCa').onclick = function() { w.style.display = 'none'; eruda.show(); };
-        d.getElementById('eSa').onclick = function() { 
-            localStorage.removeItem('edytor_draft'); // Czyścimy po sukcesie
-            w.style.display = 'none'; 
-            eruda.show(); 
+        // Zapis i Wyjście
+        d.getElementById('eSa').onclick = function() {
+            var target = d.getElementById('e_l');
+            if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
+            localStorage.removeItem('edytor_draft');
+            w.style.display = 'none'; eruda.show();
         };
+        d.getElementById('eCa').onclick = function() { w.style.display = 'none'; eruda.show(); };
     };
     d.body.appendChild(s);
 })();

@@ -8,6 +8,18 @@
         st.innerHTML = '.eruda-dev-tools { filter: invert(0.9) hue-rotate(180deg) !important; }';
         eruda._shadowRoot.appendChild(st);
 
+        // Funkcja wczytywania (używana przy otwarciu)
+        function loadDraft() {
+            var area = d.getElementById('eAr');
+            if (!area) return;
+            var now = new Date().getTime();
+            var savedTime = localStorage.getItem('edytor_time');
+            var savedData = localStorage.getItem('edytor_draft');
+            if(savedData && savedTime && (now - parseInt(savedTime) < 60000)) {
+                area.value = savedData;
+            }
+        }
+
         eruda.get('snippets').add('Edytor', function() {
             var oldE = d.getElementById('e_l');
             if(oldE) oldE.removeAttribute('id');
@@ -20,7 +32,11 @@
             };
             var nd = function() {
                 d.removeEventListener('touchmove', tm); d.removeEventListener('touchend', nd); b.remove();
-                if(e) { e.id = 'e_l'; d.getElementById('eAr').value = e.outerHTML; d.getElementById('edytor-pro').style.display = 'flex'; }
+                if(e) { 
+                    e.id = 'e_l'; 
+                    d.getElementById('eAr').value = e.outerHTML; 
+                    d.getElementById('edytor-pro').style.display = 'flex';
+                }
             };
             d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd); eruda.hide();
         });
@@ -46,17 +62,8 @@
 
         var area = d.getElementById('eAr'), headerText = w.querySelector('b');
         
-        // --- MECHANIZM AUTOSAVE 60s ---
-        var now = new Date().getTime();
-        var savedTime = localStorage.getItem('edytor_time');
-        var savedData = localStorage.getItem('edytor_draft');
-
-        if(savedData && savedTime && (now - parseInt(savedTime) < 60000)) {
-            area.value = savedData;
-        } else {
-            localStorage.removeItem('edytor_draft');
-            localStorage.removeItem('edytor_time');
-        }
+        // Wywołanie wczytania przy starcie skryptu
+        loadDraft();
 
         area.addEventListener('input', function() {
             localStorage.setItem('edytor_draft', area.value);
@@ -65,15 +72,12 @@
             setTimeout(function() { headerText.innerText = o; }, 1000);
         });
 
-        // Minimalizacja
-        var isMinimized = false;
         d.getElementById('eMi').onclick = function() {
+            var isMinimized = w.style.height === '45px';
             w.style.height = isMinimized ? '75%' : '45px';
             area.style.display = isMinimized ? 'block' : 'none';
-            isMinimized = !isMinimized;
         };
 
-        // Przeciąganie
         var isDragging = false, offsetX, offsetY;
         w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
             isDragging = true; offsetX = e.touches[0].clientX - w.offsetLeft; offsetY = e.touches[0].clientY - w.offsetTop;
@@ -83,7 +87,6 @@
         }, {passive: false});
         d.addEventListener('touchend', function() { isDragging = false; });
 
-        // Akcje
         d.getElementById('eSa').onclick = function() {
             var target = d.getElementById('e_l');
             if (target) { target.outerHTML = area.value; target.removeAttribute('id'); }
@@ -94,3 +97,4 @@
     };
     d.body.appendChild(s);
 })();
+        

@@ -1,3 +1,4 @@
+/* Ukrycie domyślnej zębatki Erudy */
 .eruda-entry-btn, 
 div[class*="eruda-entry-btn"], 
 #eruda .eruda-entry-btn { 
@@ -7,9 +8,6 @@ div[class*="eruda-entry-btn"],
     width: 0 !important; 
     height: 0 !important; 
 }
-
-/* Ukrycie domyślnej zębatki Erudy */
-.eruda-entry-btn { display: none !important; }
 
 /* Pływający przycisk główny PRO */
 #pro-fab {
@@ -40,3 +38,14 @@ div[class*="eruda-entry-btn"],
 }
 .pro-menu-btn:hover, .pro-menu-btn:active { background: rgba(97, 175, 239, 0.2); color: #61afef; }
 .pro-menu-btn.accent { color: #e5c07b; font-weight: bold; border-bottom: 1px solid rgba(229, 192, 123, 0.2); margin-bottom: 10px; }
+
+/* ==========================================================================
+   BLOKADA LAGÓW EDYTORA
+   Wymuszenie braku jakichkolwiek animacji (transition) dla okna edytora.
+   Zabezpiecza przed nadpisywaniem zachowania przez globalne style stron trzecich.
+   ========================================================================== */
+#edytor-pro, #edytor-header {
+    transition: none !important;
+    animation: none !important;
+    will-change: transform;
+}

@@ -1,5 +1,6 @@
 /* Ukrycie domyślnego zielonego przycisku vConsole (zastępuje ukrywanie Erudy) */
-#__vconsole .vc-switch { 
+#__vconsole .vc-switch,
+.vc-switch { 
     display: none !important; 
     opacity: 0 !important; 
     pointer-events: none !important;
@@ -53,7 +54,7 @@
    HAKOWANIE WYGLĄDU vCONSOLE (Gannew DevKit Theme)
    Nadpisujemy domyślne zmienne CSS vConsole, by pasowały do naszego edytora
    ========================================================================== */
-#__vconsole {
+html body #__vconsole {
     /* Kolory tła */
     --vc-bg: #111111 !important;               /* Głęboka czerń z edytora */
     --vc-panel-bg: #1a1a22 !important;         /* Ciemnoszare tło paneli */
@@ -75,12 +76,23 @@
     --vc-log-border: rgba(97, 175, 239, 0.1) !important;
     
     /* Typografia - ujednolicenie czcionki z naszym menu */
-    font-family: 'SF Pro Display', sans-serif !important;
+    font-family: 'SF Pro Display', sans-serif, -apple-system !important;
 }
 
-/* Wymuszenie czcionki monospace w samej konsoli logów */
-#__vconsole .vc-log {
+/* Wymuszenie czcionki monospace i tła w samej konsoli logów */
+html body #__vconsole .vc-log, 
+html body #__vconsole .vc-plugin-content {
     font-family: monospace !important;
     color: #98c379 !important; /* Zielony hakerski kolor logów */
+    background-color: #111111 !important;
 }
 
+html body #__vconsole .vc-item.vc-item-error {
+    color: #ef5350 !important; /* Czerwony dla błędów */
+    background-color: rgba(239, 83, 80, 0.1) !important;
+}
+
+html body #__vconsole .vc-item.vc-item-warn {
+    color: #e5c07b !important; /* Złoty dla ostrzeżeń */
+    background-color: rgba(229, 192, 123, 0.1) !important;
+}

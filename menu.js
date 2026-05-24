@@ -1,20 +1,32 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 2.0 (Pancerna) załadowana ---");
+    console.log("--- Menu.js Wersja PRO (Bez zębatki) załadowana ---");
 
-    // Kuloodporna funkcja ładująca Erudę
+    // Funkcja konfigurująca i otwierająca Erudę bez pokazywania zębatki
     function loadAndShowEruda(tool) {
         var triggerEruda = function() {
             try {
-                // Inicjalizujemy Erudę tylko raz
-                eruda.init(); 
+                // KLUCZOWE: Konfiguracja Erudy PRZED inicjalizacją
+                // Ukrywamy domyślny przycisk wejściowy na stałe przez opcje Erudy
+                if (window.eruda && !eruda._isInit) {
+                    eruda.init({
+                        defaults: {
+                            displaySize: 50,
+                            theme: 'Monokai',
+                            themeActive: true
+                        }
+                    });
+                    
+                    // Schowanie zębatki generowanej przez skrypt Erudy
+                    var entryBtn = d.querySelector('.eruda-entry-btn');
+                    if (entryBtn) entryBtn.style.setProperty('display', 'none', 'important');
+                }
+
+                // Natychmiastowe wymuszenie otwarcia konkretnego narzędzia
+                eruda.show(tool);
                 
-                // Opóźnienie 50ms - ratuje sytuację, gdy Eruda nie nadąża z budowaniem okna
-                setTimeout(function() {
-                    eruda.show(tool);
-                }, 50);
             } catch(e) {
-                alert("Błąd podczas uruchamiania Erudy: " + e.message);
+                console.error("Błąd Erudy: ", e);
             }
         };
 
@@ -23,17 +35,12 @@
         } else {
             var s = d.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/eruda';
-            
             s.onload = triggerEruda;
-            
-            s.onerror = function() { 
-                alert("UWAGA: Przeglądarka zablokowała pobranie Erudy (np. przez zabezpieczenia strony CSP)."); 
-            };
             d.head.appendChild(s);
         }
     }
 
-    // Tworzenie menu
+    // Tworzenie menu (jeśli nie istnieje)
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -57,34 +64,29 @@
         };
     }
 
-    // Podpinanie przycisków
-    setTimeout(function() {
-        var btnConsole = d.getElementById('btn-console');
-        if(!btnConsole) return; // Zabezpieczenie przed podwójnym wykonaniem
+    // Podpinanie zdarzeń pod przyciski
+    d.getElementById('btn-edytor').onclick = function() { 
+        menu.style.display = 'none'; 
+        if(window.StartEdytorPro) StartEdytorPro();
+    };
 
-        d.getElementById('btn-edytor').onclick = function() { 
-            menu.style.display = 'none'; 
-            if(window.StartEdytorPro) StartEdytorPro(); else alert("Edytor.js nie został załadowany!");
-        };
+    d.getElementById('btn-console').onclick = function() { 
+        menu.style.display = 'none'; 
+        loadAndShowEruda('console'); 
+    };
 
-        d.getElementById('btn-console').onclick = function() { 
-            menu.style.display = 'none'; 
-            loadAndShowEruda('console'); 
-        };
+    d.getElementById('btn-elements').onclick = function() { 
+        menu.style.display = 'none'; 
+        loadAndShowEruda('elements'); 
+    };
 
-        d.getElementById('btn-elements').onclick = function() { 
-            menu.style.display = 'none'; 
-            loadAndShowEruda('elements'); 
-        };
+    d.getElementById('btn-network').onclick = function() { 
+        menu.style.display = 'none'; 
+        loadAndShowEruda('network'); 
+    };
 
-        d.getElementById('btn-network').onclick = function() { 
-            menu.style.display = 'none'; 
-            loadAndShowEruda('network'); 
-        };
-
-        d.getElementById('btn-close-eruda').onclick = function() { 
-            if(window.eruda) eruda.hide(); 
-            menu.style.display = 'none'; 
-        };
-    }, 100);
+    d.getElementById('btn-close-eruda').onclick = function() { 
+        if(window.eruda) eruda.hide(); 
+        menu.style.display = 'none'; 
+    };
 })();

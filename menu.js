@@ -1,22 +1,39 @@
 (function() {
     var d = document;
+    console.log("--- Menu.js Wersja 2.0 (Pancerna) załadowana ---");
 
-    // Funkcja czekająca na Erudę lub ładująca ją
+    // Kuloodporna funkcja ładująca Erudę
     function loadAndShowEruda(tool) {
+        var triggerEruda = function() {
+            try {
+                // Inicjalizujemy Erudę tylko raz
+                eruda.init(); 
+                
+                // Opóźnienie 50ms - ratuje sytuację, gdy Eruda nie nadąża z budowaniem okna
+                setTimeout(function() {
+                    eruda.show(tool);
+                }, 50);
+            } catch(e) {
+                alert("Błąd podczas uruchamiania Erudy: " + e.message);
+            }
+        };
+
         if (window.eruda) {
-            eruda.show(tool);
+            triggerEruda();
         } else {
             var s = d.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/eruda';
-            s.onload = function() { 
-                eruda.init(); 
-                eruda.show(tool); 
+            
+            s.onload = triggerEruda;
+            
+            s.onerror = function() { 
+                alert("UWAGA: Przeglądarka zablokowała pobranie Erudy (np. przez zabezpieczenia strony CSP)."); 
             };
             d.head.appendChild(s);
         }
     }
 
-    // Tworzenie menu (sprawdzenie czy już nie istnieje)
+    // Tworzenie menu
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -40,29 +57,34 @@
         };
     }
 
-    // Podpięcie guzików w momencie kliknięcia (dynamiczne)
-    d.getElementById('btn-edytor').onclick = function() { 
-        menu.style.display = 'none'; 
-        if(window.StartEdytorPro) StartEdytorPro(); 
-    };
+    // Podpinanie przycisków
+    setTimeout(function() {
+        var btnConsole = d.getElementById('btn-console');
+        if(!btnConsole) return; // Zabezpieczenie przed podwójnym wykonaniem
 
-    d.getElementById('btn-console').onclick = function() { 
-        menu.style.display = 'none'; 
-        loadAndShowEruda('console'); 
-    };
+        d.getElementById('btn-edytor').onclick = function() { 
+            menu.style.display = 'none'; 
+            if(window.StartEdytorPro) StartEdytorPro(); else alert("Edytor.js nie został załadowany!");
+        };
 
-    d.getElementById('btn-elements').onclick = function() { 
-        menu.style.display = 'none'; 
-        loadAndShowEruda('elements'); 
-    };
+        d.getElementById('btn-console').onclick = function() { 
+            menu.style.display = 'none'; 
+            loadAndShowEruda('console'); 
+        };
 
-    d.getElementById('btn-network').onclick = function() { 
-        menu.style.display = 'none'; 
-        loadAndShowEruda('network'); 
-    };
+        d.getElementById('btn-elements').onclick = function() { 
+            menu.style.display = 'none'; 
+            loadAndShowEruda('elements'); 
+        };
 
-    d.getElementById('btn-close-eruda').onclick = function() { 
-        if(window.eruda) eruda.hide(); 
-        menu.style.display = 'none'; 
-    };
+        d.getElementById('btn-network').onclick = function() { 
+            menu.style.display = 'none'; 
+            loadAndShowEruda('network'); 
+        };
+
+        d.getElementById('btn-close-eruda').onclick = function() { 
+            if(window.eruda) eruda.hide(); 
+            menu.style.display = 'none'; 
+        };
+    }, 100);
 })();

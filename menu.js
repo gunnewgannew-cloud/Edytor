@@ -1,32 +1,30 @@
 (function() {
     var d = document;
 
-    // Funkcja wczytująca Erudę, jeśli jeszcze nie istnieje
-    function loadEruda(callback) {
+    // Funkcja czekająca na Erudę lub ładująca ją
+    function loadAndShowEruda(tool) {
         if (window.eruda) {
-            callback();
+            eruda.show(tool);
         } else {
-            var script = d.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/eruda';
-            script.onload = function() { 
+            var s = d.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/eruda';
+            s.onload = function() { 
                 eruda.init(); 
-                callback(); 
+                eruda.show(tool); 
             };
-            d.head.appendChild(script);
+            d.head.appendChild(s);
         }
     }
 
-    // Tworzenie przycisku FAB, jeśli nie istnieje
-    var fab = d.getElementById('pro-fab') || d.createElement('div');
-    if (!fab.id) {
+    // Tworzenie menu (sprawdzenie czy już nie istnieje)
+    var menu = d.getElementById('pro-menu');
+    if (!menu) {
+        var fab = d.createElement('div');
         fab.id = 'pro-fab';
         fab.innerText = 'PRO';
         d.body.appendChild(fab);
-    }
 
-    // Tworzenie menu, jeśli nie istnieje
-    var menu = d.getElementById('pro-menu') || d.createElement('div');
-    if (!menu.id) {
+        menu = d.createElement('div');
         menu.id = 'pro-menu';
         menu.innerHTML = `
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
@@ -36,36 +34,31 @@
             <button class="pro-menu-btn" id="btn-close-eruda" style="color: #ef5350;">❌ Zamknij Narzędzia</button>
         `;
         d.body.appendChild(menu);
+
+        fab.onclick = function() {
+            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+        };
     }
 
-    // Obsługa FAB
-    fab.onclick = function() {
-        menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    };
-
-    // Podpięcie funkcji przycisków
+    // Podpięcie guzików w momencie kliknięcia (dynamiczne)
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
-        if(window.StartEdytorPro) {
-            StartEdytorPro(); 
-        } else {
-            console.error("Edytor Pro nie jest załadowany!");
-        }
+        if(window.StartEdytorPro) StartEdytorPro(); 
     };
 
     d.getElementById('btn-console').onclick = function() { 
         menu.style.display = 'none'; 
-        loadEruda(function() { eruda.show('console'); }); 
+        loadAndShowEruda('console'); 
     };
 
     d.getElementById('btn-elements').onclick = function() { 
         menu.style.display = 'none'; 
-        loadEruda(function() { eruda.show('elements'); }); 
+        loadAndShowEruda('elements'); 
     };
 
     d.getElementById('btn-network').onclick = function() { 
         menu.style.display = 'none'; 
-        loadEruda(function() { eruda.show('network'); }); 
+        loadAndShowEruda('network'); 
     };
 
     d.getElementById('btn-close-eruda').onclick = function() { 

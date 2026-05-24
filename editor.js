@@ -2,10 +2,11 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);';
+    // DODANO: transition: none !important i animation: none !important - to zabija efekt gumy
+    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition:none !important;animation:none !important;';
     w.innerHTML = `
-        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom: 2px solid #61afef;">
-            <b style="color:#61afef;font-family:sans-serif;">Gannew DevKit</b>
+        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom: 2px solid #61afef;transition:none !important;touch-action:none;">
+            <b style="color:#61afef;font-family:sans-serif;user-select:none;-webkit-user-select:none;">Gannew DevKit</b>
             <div>
                 <input id="eSearch" type="text" placeholder="Szukaj..." style="width:60px;background:#333;color:#fff;border:none;border-radius:5px;padding:2px 5px;margin-right:5px;font-size:12px;">
                 <button id="eMi" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">↕</button>
@@ -48,6 +49,7 @@
     var header = w.querySelector('#edytor-header');
 
     header.addEventListener('touchstart', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
         isDragging = true; 
         offsetX = e.touches[0].clientX - w.offsetLeft; 
         offsetY = e.touches[0].clientY - w.offsetTop;
@@ -65,8 +67,9 @@
         isDragging = false; 
     });
 
-    // Subtelny dodatek dla PC (żeby nie psuł działania myszką)
+    // Myszka dla PC
     header.addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
         isDragging = true; offsetX = e.clientX - w.offsetLeft; offsetY = e.clientY - w.offsetTop;
     });
     d.addEventListener('mousemove', function(e) {

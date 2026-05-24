@@ -2,7 +2,6 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    // Usunięte wszystkie "optymalizacje" transform, wracamy do czystego pozycjonowania
     w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);';
     w.innerHTML = `
         <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom: 2px solid #61afef;">
@@ -44,51 +43,37 @@
         w.style.display = 'none';
     };
 
-    // --- Klasyczne, bezbłędne przeciąganie (jak w Twoim pierwszym kodzie) ---
-    var dragHandle = w.querySelector('#edytor-header');
+    // --- TWOJA ORYGINALNA, SUROWA WERSJA PRZECIĄGANIA ---
     var isDragging = false, offsetX, offsetY;
+    var header = w.querySelector('#edytor-header');
 
-    function dragStart(e) {
-        // Nie blokuj klikania w przyciski i pole wyszukiwania
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-        
-        isDragging = true;
-        var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-        
-        // Zabezpieczenie przed przeskokiem
-        w.style.left = w.offsetLeft + 'px';
-        w.style.top = w.offsetTop + 'px';
-        
-        offsetX = clientX - w.offsetLeft;
-        offsetY = clientY - w.offsetTop;
-    }
+    header.addEventListener('touchstart', function(e) {
+        isDragging = true; 
+        offsetX = e.touches[0].clientX - w.offsetLeft; 
+        offsetY = e.touches[0].clientY - w.offsetTop;
+    }, {passive: false});
 
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault(); // Blokuje domyślne przewijanie strony
-            var currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            var currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            
-            w.style.left = (currentX - offsetX) + 'px';
-            w.style.top = (currentY - offsetY) + 'px';
+    d.addEventListener('touchmove', function(e) {
+        if (isDragging) { 
+            e.preventDefault(); 
+            w.style.left = (e.touches[0].clientX - offsetX) + 'px'; 
+            w.style.top = (e.touches[0].clientY - offsetY) + 'px'; 
         }
-    }
+    }, {passive: false});
 
-    function dragEnd() {
-        isDragging = false;
-    }
+    d.addEventListener('touchend', function() { 
+        isDragging = false; 
+    });
 
-    // Touch events (Mobile)
-    dragHandle.addEventListener("touchstart", dragStart, { passive: false });
-    d.addEventListener("touchmove", drag, { passive: false });
-    d.addEventListener("touchend", dragEnd);
-
-    // Mouse events (Desktop)
-    dragHandle.addEventListener("mousedown", dragStart);
-    d.addEventListener("mousemove", drag);
-    d.addEventListener("mouseup", dragEnd);
-    // ------------------------------------------------------------------------
+    // Subtelny dodatek dla PC (żeby nie psuł działania myszką)
+    header.addEventListener('mousedown', function(e) {
+        isDragging = true; offsetX = e.clientX - w.offsetLeft; offsetY = e.clientY - w.offsetTop;
+    });
+    d.addEventListener('mousemove', function(e) {
+        if (isDragging) { w.style.left = (e.clientX - offsetX) + 'px'; w.style.top = (e.clientY - offsetY) + 'px'; }
+    });
+    d.addEventListener('mouseup', function() { isDragging = false; });
+    // ----------------------------------------------------
 
     window.StartEdytorPro = function() {
         if(window.eruda) eruda.hide();

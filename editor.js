@@ -2,10 +2,10 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    // Używamy will-change: transform, dając znać GPU, że ma stale kontrolować ten obiekt
-    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:transform;';
+    // Usunięte wszystkie "optymalizacje" transform, wracamy do czystego pozycjonowania
+    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);';
     w.innerHTML = `
-        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none !important;-webkit-user-select:none;user-select:none;border-bottom: 2px solid #61afef;">
+        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom: 2px solid #61afef;">
             <b style="color:#61afef;font-family:sans-serif;">Gannew DevKit</b>
             <div>
                 <input id="eSearch" type="text" placeholder="Szukaj..." style="width:60px;background:#333;color:#fff;border:none;border-radius:5px;padding:2px 5px;margin-right:5px;font-size:12px;">
@@ -44,65 +44,51 @@
         w.style.display = 'none';
     };
 
-    // --- Ultra-płynne przeciąganie oparte na transformacji sprzętowej (GPU) ---
+    // --- Klasyczne, bezbłędne przeciąganie (jak w Twoim pierwszym kodzie) ---
     var dragHandle = w.querySelector('#edytor-header');
-    var isDragging = false;
-    var currentX = 0, currentY = 0, initialX = 0, initialY = 0;
-    var xOffset = 0, yOffset = 0;
-    var isInitialized = false;
+    var isDragging = false, offsetX, offsetY;
 
     function dragStart(e) {
-        if (e.cancelable) e.preventDefault();
-
+        // Nie blokuj klikania w przyciski i pole wyszukiwania
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+        
+        isDragging = true;
         var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-
-        // Przy pierwszym dotknięciu zamieniamy procenty CSS na wartości transformacji, bez mignięcia ekranu
-        if (!isInitialized) {
-            var rect = w.getBoundingClientRect();
-            w.style.top = '0px';
-            w.style.left = '0px';
-            xOffset = rect.left;
-            yOffset = rect.top;
-            w.style.transform = 'translate3d(' + xOffset + 'px, ' + yOffset + 'px, 0)';
-            isInitialized = true;
-        }
-
-        initialX = clientX - xOffset;
-        initialY = clientY - yOffset;
-        isDragging = true;
+        
+        // Zabezpieczenie przed przeskokiem
+        w.style.left = w.offsetLeft + 'px';
+        w.style.top = w.offsetTop + 'px';
+        
+        offsetX = clientX - w.offsetLeft;
+        offsetY = clientY - w.offsetTop;
     }
 
     function drag(e) {
-        if (!isDragging) return;
-        if (e.cancelable) e.preventDefault();
-
-        var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-
-        currentX = clientX - initialX;
-        currentY = clientY - initialY;
-
-        xOffset = currentX;
-        yOffset = currentY;
-
-        // Wykonanie operacji bezpośrednio na warstwie kompozycji GPU (zero lagów)
-        w.style.transform = 'translate3d(' + currentX + 'px, ' + currentY + 'px, 0)';
+        if (isDragging) {
+            e.preventDefault(); // Blokuje domyślne przewijanie strony
+            var currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            var currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            w.style.left = (currentX - offsetX) + 'px';
+            w.style.top = (currentY - offsetY) + 'px';
+        }
     }
 
     function dragEnd() {
         isDragging = false;
     }
 
-    // Pełna kontrola nad eventami zablokowanymi (passive: false)
+    // Touch events (Mobile)
     dragHandle.addEventListener("touchstart", dragStart, { passive: false });
     d.addEventListener("touchmove", drag, { passive: false });
-    d.addEventListener("touchend", dragEnd, { passive: false });
-    
-    dragHandle.addEventListener("mousedown", dragStart, false);
-    d.addEventListener("mousemove", drag, false);
-    d.addEventListener("mouseup", dragEnd, false);
-    // -------------------------------------------------------------------------
+    d.addEventListener("touchend", dragEnd);
+
+    // Mouse events (Desktop)
+    dragHandle.addEventListener("mousedown", dragStart);
+    d.addEventListener("mousemove", drag);
+    d.addEventListener("mouseup", dragEnd);
+    // ------------------------------------------------------------------------
 
     window.StartEdytorPro = function() {
         if(window.eruda) eruda.hide();

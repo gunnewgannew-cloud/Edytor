@@ -2,12 +2,11 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    // Usunięto 'transition: all 0.3s ease', bo mogło gryźć się z płynnym przesuwaniem palcem. 
-    // Dodano will-change dla lepszej optymalizacji GPU.
-    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:transform;';
+    // Usunięto transform, dodano will-change dla płynności
+    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:left,top;';
     w.innerHTML = `
         <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none;border-bottom: 2px solid #61afef;">
-            <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
+            <b style="color:#61afef;font-family:sans-serif;">Gannew DevKit</b>
             <div>
                 <input id="eSearch" type="text" placeholder="Szukaj..." style="width:60px;background:#333;color:#fff;border:none;border-radius:5px;padding:2px 5px;margin-right:5px;font-size:12px;">
                 <button id="eMi" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">↕</button>
@@ -45,46 +44,44 @@
         w.style.display = 'none';
     };
 
-    // --- Płynne przeciąganie (GPU + requestAnimationFrame) ---
+    // --- Płynne i ultra-precyzyjne przeciąganie ---
     var dragHandle = w.querySelector('#edytor-header');
-    var isDragging = false;
-    var currentX = 0, currentY = 0, initialX = 0, initialY = 0;
-    var xOffset = 0, yOffset = 0;
+    var isDragging = false, offsetX, offsetY, currentX, currentY;
+    var rafPending = false;
 
     function dragStart(e) {
-        if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-        }
+        var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        
+        // Zamienia procentowe pozycjonowanie na sztywne piksele przy 1. kliknięciu (likwiduje skoki)
+        w.style.left = w.offsetLeft + 'px';
+        w.style.top = w.offsetTop + 'px';
+        
+        offsetX = clientX - w.offsetLeft;
+        offsetY = clientY - w.offsetTop;
         isDragging = true;
     }
 
-    function dragEnd() {
-        initialX = currentX;
-        initialY = currentY;
-        isDragging = false;
-    }
-
     function drag(e) {
-        if (isDragging) {
-            e.preventDefault(); // Blokuje scrollowanie strony w tle
-            if (e.type === "touchmove") {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-            } else {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-            }
-            xOffset = currentX;
-            yOffset = currentY;
+        if (!isDragging) return;
+        e.preventDefault(); // Blokuje scrollowanie strony pod spodem
 
+        currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        // requestAnimationFrame sprawia, że klatki animacji się nie zapychają = brak zacinania
+        if (!rafPending) {
+            rafPending = true;
             requestAnimationFrame(function() {
-                w.style.transform = "translate3d(" + currentX + "px, " + currentY + "px, 0)";
+                w.style.left = (currentX - offsetX) + 'px';
+                w.style.top = (currentY - offsetY) + 'px';
+                rafPending = false;
             });
         }
+    }
+
+    function dragEnd() {
+        isDragging = false;
     }
 
     // Eventy dotykowe
@@ -96,7 +93,7 @@
     dragHandle.addEventListener("mousedown", dragStart, false);
     d.addEventListener("mousemove", drag, false);
     d.addEventListener("mouseup", dragEnd, false);
-    // ---------------------------------------------------------
+    // ----------------------------------------------
 
     // Globalna funkcja startująca Edytor
     window.StartEdytorPro = function() {

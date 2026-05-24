@@ -48,3 +48,39 @@
     animation: none !important;
     will-change: transform;
 }
+
+/* ==========================================================================
+   HAKOWANIE WYGLĄDU vCONSOLE (Gannew DevKit Theme)
+   Nadpisujemy domyślne zmienne CSS vConsole, by pasowały do naszego edytora
+   ========================================================================== */
+#__vconsole {
+    /* Kolory tła */
+    --vc-bg: #111111 !important;               /* Głęboka czerń z edytora */
+    --vc-panel-bg: #1a1a22 !important;         /* Ciemnoszare tło paneli */
+    --vc-tabbar-bg: #1a1a22 !important;        /* Tło dolnego paska */
+    --vc-topbar-bg: #111111 !important;        /* Tło górnego paska */
+    
+    /* Kolory tekstu i akcentów */
+    --vc-text-color: #a0a8b9 !important;       /* Zwykły tekst (szaroniebieski) */
+    --vc-text-highlight: #61afef !important;   /* Podświetlenia i linki (neonowy błękit) */
+    
+    /* Zakładki (Tabs) */
+    --vc-tab-color: #a0a8b9 !important;        /* Nieaktywna zakładka */
+    --vc-tab-active-color: #e5c07b !important; /* Aktywna zakładka (złota - PRO) */
+    --vc-tab-active-bg: rgba(229, 192, 123, 0.1) !important;
+    
+    /* Ramki i detale */
+    --vc-border: rgba(97, 175, 239, 0.2) !important; 
+    --vc-header-bg: #1a1a22 !important;
+    --vc-log-border: rgba(97, 175, 239, 0.1) !important;
+    
+    /* Typografia - ujednolicenie czcionki z naszym menu */
+    font-family: 'SF Pro Display', sans-serif !important;
+}
+
+/* Wymuszenie czcionki monospace w samej konsoli logów */
+#__vconsole .vc-log {
+    font-family: monospace !important;
+    color: #98c379 !important; /* Zielony hakerski kolor logów */
+}
+

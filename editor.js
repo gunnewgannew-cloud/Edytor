@@ -115,7 +115,9 @@
     // ------------------------------------------------------
 
     window.StartEdytorPro = function() {
-        if(window.eruda) eruda.hide();
+        // ZMIANA: Zamiana Erudy na vConsole (ukrywa konsolę, jeśli jest otwarta podczas włączania edytora)
+        if(window.vConsoleInstance) window.vConsoleInstance.hide();
+        
         var oldE = d.getElementById('e_l'); if(oldE) oldE.removeAttribute('id');
         var e = null, b = d.createElement('div');
         b.style.cssText = 'position:fixed;pointer-events:none;border:2px dashed #e5c07b;box-shadow: 0 0 15px rgba(229,192,123,0.6);z-index:999998;';
@@ -134,3 +136,4 @@
         d.addEventListener('touchmove', tm, {passive: false}); d.addEventListener('touchend', nd);
     };
 })();
+        

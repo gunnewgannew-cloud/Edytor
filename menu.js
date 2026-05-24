@@ -1,46 +1,42 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.0 (Silnik vConsole) załadowana ---");
+    console.log("--- Menu.js Wersja 5.1 (Naprawione Zakładki vConsole) załadowana ---");
 
-    // Natychmiastowe ukrycie zielonego przycisku vConsole
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // Funkcja ładująca vConsole zamiast Erudy
     function loadAndShowVConsole(tabName) {
         var triggerVConsole = function() {
             try {
                 if (!window.vConsoleInstance) {
-                    // Inicjalizacja vConsole (domyślnie generuje ukryty przez nas przycisk)
                     window.vConsoleInstance = new window.VConsole();
                 }
                 
                 // Otwarcie głównego panelu
                 window.vConsoleInstance.show();
                 
-                // Opcjonalne przełączenie zakładki (jeśli API vConsole na to pozwala w danej wersji)
-                if (typeof window.vConsoleInstance.showTab === 'function' && tabName) {
-                    window.vConsoleInstance.showTab(tabName);
+                // POPRAWKA: Użycie najnowszego API (showPlugin) zamiast przestarzałego (showTab)
+                if (typeof window.vConsoleInstance.showPlugin === 'function' && tabName) {
+                    window.vConsoleInstance.showPlugin(tabName);
+                } else if (typeof window.vConsoleInstance.showTab === 'function' && tabName) {
+                    window.vConsoleInstance.showTab(tabName); // Opcja awaryjna dla starszych wersji
                 }
             } catch(e) {
                 console.error("Błąd podczas uruchamiania vConsole: ", e);
             }
         };
 
-        // Sprawdzamy czy klasa VConsole już istnieje w pamięci
         if (window.VConsole) {
             triggerVConsole();
         } else {
             var s = d.createElement('script');
-            // Ładujemy vConsole z niezawodnego CDN
             s.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js';
             s.onload = triggerVConsole;
             d.head.appendChild(s);
         }
     }
 
-    // Tworzenie Twojego menu PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -64,7 +60,6 @@
         };
     }
 
-    // Podpięcie przycisków pod vConsole
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
         if(window.StartEdytorPro) window.StartEdytorPro();
@@ -72,17 +67,17 @@
 
     d.getElementById('btn-console').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('default'); // 'default' to przeważnie konsola
+        loadAndShowVConsole('default'); // Otwiera logi/konsolę
     };
 
     d.getElementById('btn-elements').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('element'); // Struktura DOM
+        loadAndShowVConsole('element'); // Otwiera normalne drzewo HTML
     };
 
     d.getElementById('btn-network').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('network'); // Sieć
+        loadAndShowVConsole('network'); // Otwiera żądania sieciowe
     };
 
     d.getElementById('btn-close-tools').onclick = function() { 

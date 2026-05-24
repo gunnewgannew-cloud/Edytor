@@ -1,25 +1,30 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 3.0 (Bezpieczne Window + Auto-CSS) załadowana ---");
+    console.log("--- Menu.js Wersja 4.0 (Shadow DOM Ninja) załadowana ---");
 
-    // DODATKOWA OPCJA: Wstrzyknięcie stylu ukrywającego zębatkę bezpośrednio w JS.
-    // Działa natychmiast, bez czekania na zewnętrzny plik styles.css.
-    var killGearStyle = d.createElement('style');
-    killGearStyle.innerHTML = '.eruda-entry-btn, #eruda .eruda-entry-btn { display: none !important; opacity: 0 !important; visibility: hidden !important; width: 0 !important; height: 0 !important; pointer-events: none !important; }';
-    d.head.appendChild(killGearStyle);
-
-    // Bezpieczna funkcja operująca wyłącznie na obiekcie window (brak ReferenceError)
     function loadAndShowEruda(tool) {
         var triggerEruda = function() {
             try {
-                // Sprawdzamy bezpiecznie przez window, czy obiekt istnieje
                 if (window.eruda) {
-                    // Inicjalizujemy tylko raz, używając flagi zabezpieczającej
                     if (!window._erudaInitialized) {
                         window.eruda.init();
                         window._erudaInitialized = true;
+                        
+                        // 1. ATAK NA SHADOW DOM: Wstrzykujemy CSS bezpośrednio do zamkniętego kodu Erudy
+                        var erudaHost = d.getElementById('eruda');
+                        if (erudaHost && erudaHost.shadowRoot) {
+                            var style = d.createElement('style');
+                            style.innerHTML = '.eruda-entry-btn { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
+                            erudaHost.shadowRoot.appendChild(style);
+                        }
+
+                        // 2. BACKUP: Wyrzucamy zębatkę w kosmos (poza widoczny ekran)
+                        if (typeof window.eruda.position === 'function') {
+                            window.eruda.position({x: -9999, y: -9999});
+                        }
                     }
-                    // Wywołujemy żądane podnarzędzie bezpośrednio
+                    
+                    // Bezpośrednie wywołanie narzędzia
                     window.eruda.show(tool);
                 }
             } catch(e) {
@@ -37,7 +42,7 @@
         }
     }
 
-    // Tworzenie struktury menu (jeśli nie istnieje)
+    // Tworzenie menu (jeśli nie istnieje)
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -61,7 +66,7 @@
         };
     }
 
-    // Podpięcie zdarzeń pod przyciski z użyciem bezpiecznych odwołań window
+    // Podpięcie zdarzeń
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
         if(window.StartEdytorPro) window.StartEdytorPro();

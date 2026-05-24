@@ -1,9 +1,8 @@
-/* Ukrycie domyślnej zębatki Erudy */
-.eruda-entry-btn, 
-div[class*="eruda-entry-btn"], 
-#eruda .eruda-entry-btn { 
+/* Ukrycie domyślnego zielonego przycisku vConsole (zastępuje ukrywanie Erudy) */
+#__vconsole .vc-switch { 
     display: none !important; 
     opacity: 0 !important; 
+    pointer-events: none !important;
     visibility: hidden !important; 
     width: 0 !important; 
     height: 0 !important; 

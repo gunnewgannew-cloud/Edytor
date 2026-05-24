@@ -1,6 +1,6 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.1 (Naprawione Zakładki vConsole) załadowana ---");
+    console.log("--- Menu.js Wersja 5.2 (Dark Mode) załadowana ---");
 
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
@@ -10,17 +10,16 @@
         var triggerVConsole = function() {
             try {
                 if (!window.vConsoleInstance) {
-                    window.vConsoleInstance = new window.VConsole();
+                    // DODANO: Wymuszenie ciemnego motywu
+                    window.vConsoleInstance = new window.VConsole({ theme: 'dark' });
                 }
                 
-                // Otwarcie głównego panelu
                 window.vConsoleInstance.show();
                 
-                // POPRAWKA: Użycie najnowszego API (showPlugin) zamiast przestarzałego (showTab)
                 if (typeof window.vConsoleInstance.showPlugin === 'function' && tabName) {
                     window.vConsoleInstance.showPlugin(tabName);
                 } else if (typeof window.vConsoleInstance.showTab === 'function' && tabName) {
-                    window.vConsoleInstance.showTab(tabName); // Opcja awaryjna dla starszych wersji
+                    window.vConsoleInstance.showTab(tabName);
                 }
             } catch(e) {
                 console.error("Błąd podczas uruchamiania vConsole: ", e);
@@ -67,17 +66,17 @@
 
     d.getElementById('btn-console').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('default'); // Otwiera logi/konsolę
+        loadAndShowVConsole('default');
     };
 
     d.getElementById('btn-elements').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('element'); // Otwiera normalne drzewo HTML
+        loadAndShowVConsole('element');
     };
 
     d.getElementById('btn-network').onclick = function() { 
         menu.style.display = 'none'; 
-        loadAndShowVConsole('network'); // Otwiera żądania sieciowe
+        loadAndShowVConsole('network');
     };
 
     d.getElementById('btn-close-tools').onclick = function() { 

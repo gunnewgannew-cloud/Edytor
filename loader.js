@@ -1,30 +1,39 @@
 javascript:(function(){
     var d = document;
-    
-    // Funkcja pobierająca skrypty
-    function loadScript(src, callback) {
-        var s = d.createElement('script');
-        s.src = src;
-        if(callback) s.onload = callback;
-        d.body.appendChild(s);
+    var t = Date.now();
+    var baseUrl = 'https://raw.githubusercontent.com/gunnewgannew-cloud/Edytor/main/';
+    var cmt = "\n/* CacheBuster: " + t + " */";
+
+    // Funkcja wstrzykująca skrypty JS prosto z GitHuba (omija blokady MIME i Cache)
+    function loadScript(file) {
+        fetch(baseUrl + file + '?t=' + t)
+            .then(response => response.text())
+            .then(text => {
+                var s = d.createElement('script');
+                s.textContent = text + cmt;
+                d.body.appendChild(s);
+            })
+            .catch(err => console.error("Błąd ładowania " + file, err));
     }
 
-    // 1. Ładowanie CSS (Wygląd panelu)
-    var link = d.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://raw.githubusercontent.com/gunnewgannew-cloud/Edytor/refs/heads/main/styles.css';
-    d.head.appendChild(link);
+    // Funkcja wstrzykująca plik CSS
+    function loadStyle(file) {
+        fetch(baseUrl + file + '?t=' + t)
+            .then(response => response.text())
+            .then(text => {
+                var style = d.createElement('style');
+                style.textContent = text + cmt;
+                d.head.appendChild(style);
+            })
+            .catch(err => console.error("Błąd ładowania " + file, err));
+    }
 
-    // 2. Start silnika Erudy
-    loadScript('//cdn.jsdelivr.net/npm/eruda', function() {
-        eruda.init({ defaults: { theme: 'dark' } });
-        
-        // 3. Ładowanie modułu Edytora
-        loadScript('https://raw.githubusercontent.com/gunnewgannew-cloud/Edytor/refs/heads/main/editor.js', function() {
-            
-            // 4. Ładowanie modułu Menu
-            loadScript('https://raw.githubusercontent.com/gunnewgannew-cloud/Edytor/refs/heads/main/menu.js');
-            
-        });
-    });
+    console.log("🚀 Gannew DevKit: Uruchamianie loadera...");
+
+    // 1. Ładowanie stylów CSS
+    loadStyle('styles.css');
+
+    // 2. Ładowanie modułów (vConsole zostanie załadowane automatycznie przez menu.js)
+    loadScript('editor.js');
+    loadScript('menu.js');
 })();

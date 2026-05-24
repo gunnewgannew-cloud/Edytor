@@ -2,7 +2,9 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);transition: all 0.3s ease;';
+    // Usunięto 'transition: all 0.3s ease', bo mogło gryźć się z płynnym przesuwaniem palcem. 
+    // Dodano will-change dla lepszej optymalizacji GPU.
+    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:transform;';
     w.innerHTML = `
         <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none;border-bottom: 2px solid #61afef;">
             <b style="color:#61afef;font-family:sans-serif;">Edytor Pro</b>
@@ -43,17 +45,60 @@
         w.style.display = 'none';
     };
 
-    // Przeciąganie
-    var isDragging = false, offsetX, offsetY;
-    w.querySelector('#edytor-header').addEventListener('touchstart', function(e) {
-        isDragging = true; offsetX = e.touches[0].clientX - w.offsetLeft; offsetY = e.touches[0].clientY - w.offsetTop;
-    }, {passive: false});
-    d.addEventListener('touchmove', function(e) {
-        if (isDragging) { e.preventDefault(); w.style.left = (e.touches[0].clientX - offsetX) + 'px'; w.style.top = (e.touches[0].clientY - offsetY) + 'px'; }
-    }, {passive: false});
-    d.addEventListener('touchend', function() { isDragging = false; });
+    // --- Płynne przeciąganie (GPU + requestAnimationFrame) ---
+    var dragHandle = w.querySelector('#edytor-header');
+    var isDragging = false;
+    var currentX = 0, currentY = 0, initialX = 0, initialY = 0;
+    var xOffset = 0, yOffset = 0;
 
-    // Globalna funkcja startująca Edytor (żeby Menu mogło jej użyć)
+    function dragStart(e) {
+        if (e.type === "touchstart") {
+            initialX = e.touches[0].clientX - xOffset;
+            initialY = e.touches[0].clientY - yOffset;
+        } else {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+        }
+        isDragging = true;
+    }
+
+    function dragEnd() {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault(); // Blokuje scrollowanie strony w tle
+            if (e.type === "touchmove") {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            } else {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            }
+            xOffset = currentX;
+            yOffset = currentY;
+
+            requestAnimationFrame(function() {
+                w.style.transform = "translate3d(" + currentX + "px, " + currentY + "px, 0)";
+            });
+        }
+    }
+
+    // Eventy dotykowe
+    dragHandle.addEventListener("touchstart", dragStart, { passive: false });
+    d.addEventListener("touchmove", drag, { passive: false });
+    d.addEventListener("touchend", dragEnd, false);
+    
+    // Eventy myszki (Desktop)
+    dragHandle.addEventListener("mousedown", dragStart, false);
+    d.addEventListener("mousemove", drag, false);
+    d.addEventListener("mouseup", dragEnd, false);
+    // ---------------------------------------------------------
+
+    // Globalna funkcja startująca Edytor
     window.StartEdytorPro = function() {
         if(window.eruda) eruda.hide();
         var oldE = d.getElementById('e_l'); if(oldE) oldE.removeAttribute('id');
@@ -71,6 +116,6 @@
             d.removeEventListener('touchmove', tm); d.removeEventListener('touchend', nd); b.remove();
             if(e) { e.id = 'e_l'; area.value = e.outerHTML; w.style.display = 'flex'; }
         };
-        d.addEventListener('touchmove', tm); d.addEventListener('touchend', nd);
+        d.addEventListener('touchmove', tm, {passive: false}); d.addEventListener('touchend', nd);
     };
 })();

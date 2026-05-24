@@ -1,18 +1,22 @@
 (function() {
     var d = document;
-    
-    // Funkcja wczytująca Erudę, jeśli jej nie ma
+
+    // Funkcja wczytująca Erudę, jeśli jeszcze nie istnieje
     function loadEruda(callback) {
         if (window.eruda) {
             callback();
         } else {
             var script = d.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/eruda';
-            script.onload = function() { eruda.init(); callback(); };
+            script.onload = function() { 
+                eruda.init(); 
+                callback(); 
+            };
             d.head.appendChild(script);
         }
     }
 
+    // Tworzenie przycisku FAB, jeśli nie istnieje
     var fab = d.getElementById('pro-fab') || d.createElement('div');
     if (!fab.id) {
         fab.id = 'pro-fab';
@@ -20,6 +24,7 @@
         d.body.appendChild(fab);
     }
 
+    // Tworzenie menu, jeśli nie istnieje
     var menu = d.getElementById('pro-menu') || d.createElement('div');
     if (!menu.id) {
         menu.id = 'pro-menu';
@@ -33,14 +38,19 @@
         d.body.appendChild(menu);
     }
 
+    // Obsługa FAB
     fab.onclick = function() {
         menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     };
 
-    // Podpięcie z zabezpieczeniem przed brakiem Erudy
+    // Podpięcie funkcji przycisków
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
-        if(window.StartEdytorPro) StartEdytorPro(); 
+        if(window.StartEdytorPro) {
+            StartEdytorPro(); 
+        } else {
+            console.error("Edytor Pro nie jest załadowany!");
+        }
     };
 
     d.getElementById('btn-console').onclick = function() { 

@@ -2,10 +2,11 @@
     var d = document;
     var w = d.createElement('div');
     w.id = 'edytor-pro';
-    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:left,top;';
+    // Używamy will-change: transform, dając znać GPU, że ma stale kontrolować ten obiekt
+    w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:transform;';
     w.innerHTML = `
-        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none !important;-ms-touch-action:none !important;border-bottom: 2px solid #61afef;">
-            <b style="color:#61afef;font-family:sans-serif;user-select:none;-webkit-user-select:none;">Gannew DevKit</b>
+        <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;touch-action:none !important;-webkit-user-select:none;user-select:none;border-bottom: 2px solid #61afef;">
+            <b style="color:#61afef;font-family:sans-serif;">Gannew DevKit</b>
             <div>
                 <input id="eSearch" type="text" placeholder="Szukaj..." style="width:60px;background:#333;color:#fff;border:none;border-radius:5px;padding:2px 5px;margin-right:5px;font-size:12px;">
                 <button id="eMi" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">↕</button>
@@ -43,52 +44,65 @@
         w.style.display = 'none';
     };
 
-    // --- Naprawione, natychmiastowe przeciąganie ---
+    // --- Ultra-płynne przeciąganie oparte na transformacji sprzętowej (GPU) ---
     var dragHandle = w.querySelector('#edytor-header');
-    var isDragging = false, offsetX, offsetY;
+    var isDragging = false;
+    var currentX = 0, currentY = 0, initialX = 0, initialY = 0;
+    var xOffset = 0, yOffset = 0;
+    var isInitialized = false;
 
     function dragStart(e) {
-        // Natychmiastowe zablokowanie domyślnego zachowania przeglądarki (eliminacja laga startowego)
         if (e.cancelable) e.preventDefault();
 
         var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-        
-        w.style.left = w.offsetLeft + 'px';
-        w.style.top = w.offsetTop + 'px';
-        
-        offsetX = clientX - w.offsetLeft;
-        offsetY = clientY - w.offsetTop;
+
+        // Przy pierwszym dotknięciu zamieniamy procenty CSS na wartości transformacji, bez mignięcia ekranu
+        if (!isInitialized) {
+            var rect = w.getBoundingClientRect();
+            w.style.top = '0px';
+            w.style.left = '0px';
+            xOffset = rect.left;
+            yOffset = rect.top;
+            w.style.transform = 'translate3d(' + xOffset + 'px, ' + yOffset + 'px, 0)';
+            isInitialized = true;
+        }
+
+        initialX = clientX - xOffset;
+        initialY = clientY - yOffset;
         isDragging = true;
     }
 
     function drag(e) {
         if (!isDragging) return;
-        if (e.cancelable) e.preventDefault(); // Całkowite odcięcie scrolla systemowego
+        if (e.cancelable) e.preventDefault();
 
-        var currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        var currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        var clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        var clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
 
-        // Rezygnujemy z pośrednika RAF dla bezpośredniego przypisania pozycji przy nagłówku z touch-action:none.
-        // Daje to natychmiastową reakcję piksel w piksel za palcem.
-        w.style.left = (currentX - offsetX) + 'px';
-        w.style.top = (currentY - offsetY) + 'px';
+        currentX = clientX - initialX;
+        currentY = clientY - initialY;
+
+        xOffset = currentX;
+        yOffset = currentY;
+
+        // Wykonanie operacji bezpośrednio na warstwie kompozycji GPU (zero lagów)
+        w.style.transform = 'translate3d(' + currentX + 'px, ' + currentY + 'px, 0)';
     }
 
     function dragEnd() {
         isDragging = false;
     }
 
-    // Eventy dotykowe z jawnym wyłączeniem passive (umożliwia natychmiastowe e.preventDefault)
+    // Pełna kontrola nad eventami zablokowanymi (passive: false)
     dragHandle.addEventListener("touchstart", dragStart, { passive: false });
     d.addEventListener("touchmove", drag, { passive: false });
     d.addEventListener("touchend", dragEnd, { passive: false });
     
-    // Eventy myszki
     dragHandle.addEventListener("mousedown", dragStart, false);
     d.addEventListener("mousemove", drag, false);
     d.addEventListener("mouseup", dragEnd, false);
-    // ----------------------------------------------
+    // -------------------------------------------------------------------------
 
     window.StartEdytorPro = function() {
         if(window.eruda) eruda.hide();

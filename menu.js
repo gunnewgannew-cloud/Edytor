@@ -1,15 +1,14 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 6.3 (The Time Machine Update) załadowana ---");
+    console.log("--- Menu.js Wersja 6.4 (Full Session Auto-Resume) załadowana ---");
 
-    // [KROK 1] PRZYWRACANIE STANU PO ODŚWIEŻENIU (Jeśli funkcja jest aktywna)
+    // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
     var savedHTML = localStorage.getItem('pro_persisted_html');
 
     if (isSaveOnRefreshActive && savedHTML) {
-        // Wstrzykujemy zapisaną strukturę HTML zanim załadujemy menu, aby uniknąć pętli
         d.body.innerHTML = savedHTML;
-        console.log("🚀 [PRO] Stan strony został pomyślnie przywrócony z pamięci podręcznej!");
+        console.log("🚀 [PRO] Stan struktury HTML został pomyślnie przywrócony!");
     }
 
     // Ukrycie domyślnego przycisku vConsole na stronie
@@ -86,7 +85,6 @@
             .vc-toggle-btn, span[class*="toggle"], i[class*="arrow"] { color: #ffd700 !important; font-weight: 900 !important; }
             div[class*="element-node"]:hover { background-color: rgba(255, 215, 0, 0.04) !important; border-radius: 4px !important; }
 
-            /* Pozostałe elementy */
             .vc-topbar { background-color: transparent !important; border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important; height: 38px !important; }
             .vc-topbar .vc-tab { color: #8b949e !important; font-weight: 600 !important; }
             .vc-topbar .vc-tab.vc-actived { color: #ffd700 !important; border-bottom: 2px solid #ffd700 !important; }
@@ -104,17 +102,14 @@
         targetRoot.appendChild(style);
     }
 
-    // AUTOMATYCZNY ZAPIS PRZED OPUSZCZENIEM STRONY
+    // AUTOMATYCZNY ZAPIS KODU PRZED ZAMKNIĘCIEM STRONY
     window.addEventListener('beforeunload', function() {
         if (localStorage.getItem('pro_save_on_refresh') === 'true') {
-            // Klonujemy body, aby wyczyścić je z naszych narzędzi deweloperskich przed zapisem
             var clone = d.body.cloneNode(true);
             var menuEl = clone.querySelector('#pro-menu'); if (menuEl) menuEl.remove();
             var fabEl = clone.querySelector('#pro-fab'); if (fabEl) fabEl.remove();
             var vcEl = clone.querySelector('#__vconsole'); if (vcEl) vcEl.remove();
             var themeEl = clone.querySelector('#gannew-devkit-theme'); if (themeEl) themeEl.remove();
-            
-            // Zapisujemy czysty kod HTML zmodyfikowanej strony
             localStorage.setItem('pro_persisted_html', clone.innerHTML);
         }
     });
@@ -192,7 +187,6 @@
             var stan = confirm("⚠️ FUNKCJA EKSPERYMALNA\n\nCzy na pewno chcesz włączyć 'Save on refresh'? \n\nSkrypt spróbuje zamrozić i odtworzyć obecny stan kodu HTML po odświeżeniu strony. Może to kolidować z niektórymi zaawansowanymi skryptami na oryginalnej witrynie.");
             if (stan) {
                 localStorage.setItem('pro_save_on_refresh', 'true');
-                // Od razu robimy pierwszy zapis i odświeżamy
                 var clone = d.body.cloneNode(true);
                 var m = clone.querySelector('#pro-menu'); if(m) m.remove();
                 var f = clone.querySelector('#pro-fab'); if(f) f.remove();
@@ -201,18 +195,58 @@
                 location.reload();
             }
         } else {
-            // Wyłączanie funkcji
             localStorage.removeItem('pro_save_on_refresh');
             localStorage.removeItem('pro_persisted_html');
+            localStorage.removeItem('pro_last_active_tool'); // Czyszczenie autostartu
             alert("Funkcja została wyłączona. Przy następnym odświeżeniu strona powróci do swojego oryginalnego stanu.");
             location.reload();
         }
     };
 
-    // Reszta przycisków
-    d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; if(window.StartEdytorPro) window.StartEdytorPro(); };
-    d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; loadAndShowVConsole('default'); };
-    d.getElementById('btn-elements').onclick = function() { menu.style.display = 'none'; loadAndShowVConsole('element'); };
-    d.getElementById('btn-network').onclick = function() { menu.style.display = 'none'; loadAndShowVConsole('network'); };
-    d.getElementById('btn-close-tools').onclick = function() { if(window.vConsoleInstance) window.vConsoleInstance.hide(); menu.style.display = 'none'; };
+    // ZAPISYWANIE OSTATNIEJ AKTYWNOŚCI I URUCHAMIANIE
+    d.getElementById('btn-edytor').onclick = function() { 
+        menu.style.display = 'none'; 
+        localStorage.setItem('pro_last_active_tool', 'edytor');
+        if(window.StartEdytorPro) window.StartEdytorPro(); 
+    };
+    d.getElementById('btn-console').onclick = function() { 
+        menu.style.display = 'none'; 
+        localStorage.setItem('pro_last_active_tool', 'console');
+        loadAndShowVConsole('default'); 
+    };
+    d.getElementById('btn-elements').onclick = function() { 
+        menu.style.display = 'none'; 
+        localStorage.setItem('pro_last_active_tool', 'element');
+        loadAndShowVConsole('element'); 
+    };
+    d.getElementById('btn-network').onclick = function() { 
+        menu.style.display = 'none'; 
+        localStorage.setItem('pro_last_active_tool', 'network');
+        loadAndShowVConsole('network'); 
+    };
+    d.getElementById('btn-close-tools').onclick = function() { 
+        if(window.vConsoleInstance) window.vConsoleInstance.hide(); 
+        menu.style.display = 'none'; 
+        localStorage.removeItem('pro_last_active_tool'); // Całkowite wyłączenie autostartu narzędzi
+    };
+
+    // [KROK 2] SYSTEM INTELIGENTNEGO AUTOWZNAWIANIA SESJI
+    if (isSaveOnRefreshActive) {
+        var lastTool = localStorage.getItem('pro_last_active_tool');
+        if (lastTool === 'edytor') {
+            // Czekamy bezpiecznie w pętli, aż funkcja zewnętrznego edytora pojawi się w pamięci okna
+            var checkEditor = setInterval(function() {
+                if (typeof window.StartEdytorPro === 'function') {
+                    clearInterval(checkEditor);
+                    window.StartEdytorPro();
+                    console.log("⚡ [PRO] Edytor został automatycznie przywrócony!");
+                }
+            }, 50);
+            setTimeout(function() { clearInterval(checkEditor); }, 3000); // Zabezpieczenie przed nieskończoną pętlą
+        } else if (lastTool) {
+            // Automatyczne wznawianie odpowiedniej karty vConsole
+            loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
+            console.log("⚡ [PRO] Panel vConsole (" + lastTool + ") został automatycznie przywrócony!");
+        }
+    }
 })();

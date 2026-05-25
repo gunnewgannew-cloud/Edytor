@@ -1,6 +1,6 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.5 (Shadow DOM Style Injection) załadowana ---");
+    console.log("--- Menu.js Wersja 5.6 (Fixed Shadow DOM) załadowana ---");
 
     // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
@@ -14,7 +14,9 @@
 
         // Szukamy kontenera stylów w Shadow DOM (lub normalnym DOM jako fallback)
         var targetRoot = vcDom.shadowRoot || vcDom;
-        if (targetRoot.getElementById('gannew-devkit-theme')) return; // Styl już istnieje
+        
+        // NAPRAWIONO: Zmiana getElementById na querySelector, aby uniknąć crashu w Shadow DOM
+        if (targetRoot.querySelector('#gannew-devkit-theme')) return; 
 
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
@@ -154,7 +156,7 @@
                     window.vConsoleInstance.showTab(tabName);
                 }
 
-                // Wymuszamy aplikację stylu natychmiast oraz po krótkiej chwili na załadowanie DOMu vConsole
+                // Bezpieczne wymuszenie stylów
                 applyGannewTheme();
                 setTimeout(applyGannewTheme, 50);
                 setTimeout(applyGannewTheme, 250);
@@ -186,7 +188,7 @@
         menu.innerHTML = `
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
             <button class="pro-menu-btn" id="btn-console">💻 Konsola</button>
-            <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
+            <button class="pro-menu-btn" id="btn-elements">🔍 ... (DOM)</button>
             <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
             <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350;">❌ Zamknij Narzędzia</button>
         `;

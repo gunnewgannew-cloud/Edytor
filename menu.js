@@ -16,7 +16,90 @@
         }
     }
 
-    console.log("--- Menu.js Wersja 6.5 (Security Guard + Auto-Resume) załadowana ---");
+    console.log("--- Menu.js Wersja 7.0 (Security Guard + X-Ray Inspector + Auto-Resume) załadowana ---");
+
+    // ==========================================
+    // [MODUŁ] TRYB X-RAY (WIZUALNY EDYTOR)
+    // ==========================================
+    window.StartEdytorPro = function() {
+        if (window.__proXRayActive) return;
+        window.__proXRayActive = true;
+
+        // Tworzenie nakładki przechwytującej kliknięcia/dotyk
+        var overlay = d.createElement('div');
+        overlay.id = 'pro-xray-overlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:999999;cursor:crosshair;background:transparent;touch-action:none;';
+        d.body.appendChild(overlay);
+
+        // Tworzenie podświetlenia (złoty kwadrat)
+        var highlight = d.createElement('div');
+        highlight.id = 'pro-xray-highlight';
+        highlight.style.cssText = 'position:absolute;z-index:999998;pointer-events:none;background:rgba(255, 215, 0, 0.25);border:2px dashed #ffd700;border-radius:4px;transition:all 0.05s ease-out;display:none;backdrop-filter:contrast(1.2);';
+        d.body.appendChild(highlight);
+
+        var targetEl = null;
+
+        function updateHighlight(clientX, clientY) {
+            // Na ułamek sekundy wyłączamy nakładkę, by sprawdzić, co jest pod nią
+            overlay.style.pointerEvents = 'none';
+            var el = d.elementFromPoint(clientX, clientY);
+            overlay.style.pointerEvents = 'auto';
+
+            if (el && el !== highlight && el !== overlay && !el.closest('#pro-menu') && !el.closest('#__vconsole')) {
+                targetEl = el;
+                var rect = el.getBoundingClientRect();
+                highlight.style.width = rect.width + 'px';
+                highlight.style.height = rect.height + 'px';
+                highlight.style.top = (rect.top + window.scrollY) + 'px';
+                highlight.style.left = (rect.left + window.scrollX) + 'px';
+                highlight.style.display = 'block';
+            } else {
+                targetEl = null;
+                highlight.style.display = 'none';
+            }
+        }
+
+        function handleMove(e) {
+            var cx = e.touches ? e.touches[0].clientX : e.clientX;
+            var cy = e.touches ? e.touches[0].clientY : e.clientY;
+            updateHighlight(cx, cy);
+        }
+
+        function stopXRay() {
+            window.__proXRayActive = false;
+            overlay.remove();
+            highlight.remove();
+            d.removeEventListener('mousemove', handleMove);
+            d.removeEventListener('touchmove', handleMove);
+        }
+
+        d.addEventListener('mousemove', handleMove);
+        d.addEventListener('touchmove', handleMove, { passive: false });
+
+        overlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            stopXRay();
+
+            if (targetEl) {
+                var currentVal = targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA' ? targetEl.value : targetEl.innerText;
+                var newVal = prompt("⚡ Edytor PRO\n\nWprowadź nową zawartość dla tego elementu:", currentVal);
+                
+                if (newVal !== null) {
+                    if (targetEl.tagName === 'INPUT' || targetEl.tagName === 'TEXTAREA') {
+                        targetEl.value = newVal;
+                    } else {
+                        targetEl.innerText = newVal;
+                    }
+                    console.log("✅ [PRO] Zmodyfikowano element:", targetEl);
+                }
+            }
+        });
+        
+        alert("🔍 Tryb X-Ray aktywny!\n\nPoruszaj palcem/myszką po ekranie, aby podświetlać elementy. Kliknij dowolny z nich, aby błyskawicznie podmienić jego tekst.");
+    };
+    // ==========================================
+
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -83,6 +166,10 @@
             var fabEl = clone.querySelector('#pro-fab'); if (fabEl) fabEl.remove();
             var vcEl = clone.querySelector('#__vconsole'); if (vcEl) vcEl.remove();
             var themeEl = clone.querySelector('#gannew-devkit-theme'); if (themeEl) themeEl.remove();
+            // Usuwamy też resztki z X-Ray, gdyby zostały
+            var xrayO = clone.querySelector('#pro-xray-overlay'); if (xrayO) xrayO.remove();
+            var xrayH = clone.querySelector('#pro-xray-highlight'); if (xrayH) xrayH.remove();
+            
             localStorage.setItem('pro_persisted_html', clone.innerHTML);
         }
     });
@@ -122,17 +209,26 @@
         var fab = d.createElement('div');
         fab.id = 'pro-fab';
         fab.innerText = 'PRO';
+        // Proste style dla przycisku włączającego
+        fab.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#ffd700;color:#000;padding:12px 18px;border-radius:30px;font-weight:bold;z-index:999997;box-shadow:0 4px 15px rgba(255,215,0,0.4);cursor:pointer;';
         d.body.appendChild(fab);
 
         menu = d.createElement('div');
         menu.id = 'pro-menu';
+        // Style dla samego menu
+        menu.style.cssText = 'display:none;flex-direction:column;position:fixed;bottom:80px;right:20px;background:rgba(10,13,20,0.95);padding:15px;border-radius:15px;border:1px solid rgba(255,215,0,0.3);z-index:999997;box-shadow:0 10px 30px rgba(0,0,0,0.8);backdrop-filter:blur(10px);';
         menu.innerHTML = `
+            <style>
+                .pro-menu-btn { background:rgba(255,255,255,0.05);color:#fff;border:1px solid rgba(255,255,255,0.1);padding:10px 15px;margin-bottom:8px;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.2s;text-align:center;width:100%; }
+                .pro-menu-btn:hover { background:rgba(255,255,255,0.1); }
+                .pro-menu-btn.accent { background:rgba(255,215,0,0.1);color:#ffd700;border:1px solid rgba(255,215,0,0.4); }
+            </style>
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
             <button class="pro-menu-btn" id="btn-console">💻 Konsola</button>
             <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
             <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
             <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh (Experimental)</button>
-            <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Zamknij Narzędzia</button>
+            <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; border-color: rgba(239,83,80,0.3); margin-top: 5px; margin-bottom: 0;">❌ Zamknij Narzędzia</button>
         `;
         d.body.appendChild(menu);
 

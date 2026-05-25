@@ -1,4 +1,4 @@
-/* Ukrycie domyślnego zielonego przycisku vConsole (zastępuje ukrywanie Erudy) */
+/* Ukrycie domyślnego zielonego przycisku vConsole na stronie */
 #__vconsole .vc-switch,
 .vc-switch { 
     display: none !important; 
@@ -48,60 +48,4 @@
     transition: none !important;
     animation: none !important;
     will-change: transform;
-}
-
-/* ==========================================================================
-   BRUTE-FORCE WYGLĄDU vCONSOLE (Gannew DevKit Theme)
-   Bezpośrednie nadpisywanie klas interfejsu
-   ========================================================================== */
-
-/* Główne tła (Głęboka czerń) */
-#__vconsole .vc-panel, 
-#__vconsole .vc-content {
-    background-color: #111111 !important;
-}
-
-/* Paski narzędzi (Ciemny szary) */
-#__vconsole .vc-tabbar,
-#__vconsole .vc-topbar,
-#__vconsole .vc-toolbar {
-    background-color: #1a1a22 !important;
-    border-color: rgba(97, 175, 239, 0.2) !important;
-}
-
-/* Zakładki (Szaroniebieskie) */
-#__vconsole .vc-tabbar .vc-tab,
-#__vconsole .vc-topbar .vc-tab {
-    color: #a0a8b9 !important;
-    font-family: 'SF Pro Display', sans-serif !important;
-}
-
-/* Aktywna zakładka (Złota) */
-#__vconsole .vc-tabbar .vc-tab.vc-active,
-#__vconsole .vc-topbar .vc-tab.vc-active {
-    color: #e5c07b !important;
-    border-bottom: 2px solid #e5c07b !important;
-    font-weight: bold !important;
-}
-
-/* Pole wpisywania komend */
-#__vconsole .vc-cmd,
-#__vconsole .vc-cmd-input {
-    background-color: #1a1a22 !important;
-    color: #a0a8b9 !important;
-    border-top: 1px solid rgba(97, 175, 239, 0.2) !important;
-}
-
-/* Przyciski w konsoli */
-#__vconsole .vc-btn {
-    color: #61afef !important;
-    background-color: #1a1a22 !important;
-    border-left: 1px solid rgba(97, 175, 239, 0.2) !important;
-}
-
-/* Typografia samej konsoli i logów (Hakerska zieleń) */
-#__vconsole .vc-logbox, 
-#__vconsole .vc-log {
-    font-family: monospace !important;
-    color: #98c379 !important;
 }

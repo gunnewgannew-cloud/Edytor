@@ -1,13 +1,13 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 6.1 (Premium IDE & Solid Borders) załadowana ---");
+    console.log("--- Menu.js Wersja 6.2 (IDE Architecture Update) załadowana ---");
 
     // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM i tuninguje grafikę
+    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM i rewolucjonizuje podgląd kodu
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
@@ -24,10 +24,10 @@
                 background: rgba(10, 13, 20, 0.82) !important;
             }
 
-            /* Główny panel z pogrubioną ramką górną */
+            /* Główny panel z solidną ramką górną */
             .vc-main {
                 border-radius: 20px 20px 0 0 !important;
-                border-top: 3px solid #ffd700 !important; /* Pogrubiony złoty pasek główny */
+                border-top: 3px solid #ffd700 !important;
                 overflow: hidden !important;
                 box-shadow: 0 -15px 40px rgba(0,0,0,0.85) !important;
                 font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important;
@@ -38,24 +38,24 @@
             /* Górny pasek menu */
             .vc-tabbar {
                 background-color: rgba(17, 22, 34, 0.7) !important;
-                border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important; /* Grubsze, prestiżowe odcięcie góry od dołu */
+                border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important;
                 height: 44px !important;
                 display: flex !important;
                 align-items: center !important;
                 padding: 0 !important;
             }
 
-            /* Single Tool Mode - ukrywanie innych zakładek */
+            /* Single Tool Mode - izolacja wybranej zakładki */
             .vc-tabbar .vc-tab:not(.vc-actived):not(.vc-active) {
                 display: none !important;
             }
 
-            /* Aktywna zakładka jako nagłówek okna */
+            /* Aktywna zakładka jako elegancki nagłówek okna */
             .vc-tabbar .vc-tab.vc-actived, 
             .vc-tabbar .vc-tab.vc-active {
                 width: 100% !important;
                 color: #ffd700 !important;
-                border-bottom: 3px solid #ffd700 !important; /* Solidne, grubsze podkreślenie */
+                border-bottom: 3px solid #ffd700 !important;
                 background-color: transparent !important;
                 text-shadow: 0 0 6px rgba(255, 215, 0, 0.6) !important;
                 pointer-events: none !important;
@@ -73,42 +73,71 @@
                 content: none !important;
             }
 
-            /* TUNING STRUKTURY DOM (ZAKŁADKA ELEMENT) - STYL PREMIUM IDE */
+            /* ODSTARCZENIE I ODDECH DLA STRUKTURY KODU (Separacja od nagłówka) */
+            .vc-content {
+                padding-top: 20px !important; /* Komfortowy odstęp od góry */
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+
+            /* PERFEKCYJNE DRZEWO DOM (ZAKŁADKA ELEMENT) - DESIGN KLASY PRO IDE */
+            .vc-panel[data-plugin="element"] *, 
+            .vc-html-tree *, 
+            div[class*="element-node"] {
+                font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+                font-size: 13px !important;
+                line-height: 1.8 !important; /* Znacznie większa interlinia – napisy przestają być zbite */
+            }
+
+            /* Linie pionowe ułatwiające czytanie struktury zagnieżdżeń */
+            div[class*="element-node"], 
+            .vc-html-tree div {
+                border-left: 1px dotted rgba(255, 215, 0, 0.15) !important; /* Delikatne złote linie pomocnicze */
+                padding-left: 14px !important;
+                margin-left: 6px !important;
+            }
+
+            /* Wyraziste, nasycone kolorowanie składni HTML */
             .vc-panel .vc-html-tag, 
-            span[class*="html-tag"], 
+            span[class*="tag"], 
             span[class*="node-tag"] {
-                color: #4fc3f7 !important; /* Piękny neonowy cyjan dla znaczników (html, body, div) */
+                color: #51afef !important; /* Profesjonalny, jasny błękit dla tagów (<html, body, div) */
                 font-weight: bold !important;
             }
 
             .vc-panel .vc-html-attr-name, 
             span[class*="attr-name"] {
-                color: #ffb74d !important; /* Ciepłe złoto/pomarańcz dla nazw atrybutów (class, id, style) */
+                color: #e5c07b !important; /* Prestiżowe złoto dla nazw atrybutów (class, id, style) */
                 font-weight: 500 !important;
             }
 
             .vc-panel .vc-html-attr-val, 
             span[class*="attr-val"], 
             span[class*="attr-value"] {
-                color: #81c784 !important; /* Żywa, hakerska zieleń dla wartości w cudzysłowach */
+                color: #98c379 !important; /* Wyrazista, neonowa zieleń dla wartości w cudzysłowach */
             }
 
-            /* Strzałki do rozwijania drzewa DOM */
+            /* Kolor tekstu ukrytego wewnątrz elementów oraz znaków interpunkcyjnych kodu (=, ", <, >) */
+            .vc-panel {
+                color: #abb2bf !important; /* Stonowany szary dla tekstu i klamer kodu, by nie raził w oczy */
+            }
+
+            /* Wygląd strzałek rozwijania elementów */
             .vc-toggle-btn, 
             span[class*="toggle"], 
             i[class*="arrow"] {
-                color: #ffd700 !important; /* Złote strzałeczki menu */
-                font-weight: bold !important;
+                color: #ffd700 !important;
+                font-weight: 900 !important;
+                margin-right: 4px !important;
             }
 
-            /* Podświetlenie wiersza kodu po najechaniu myszką/palcem */
-            div[class*="element-node"]:hover, 
-            .vc-logbox .vc-item:hover {
+            /* Delikatne podświetlenie linijki kodu po najechaniu */
+            div[class*="element-node"]:hover {
                 background-color: rgba(255, 215, 0, 0.04) !important;
                 border-radius: 4px !important;
             }
 
-            /* Pasek filtrów pod menu */
+            /* Pasek filtrów pod menu (dla konsoli) */
             .vc-topbar {
                 background-color: transparent !important;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -123,7 +152,7 @@
                 border-bottom: 2px solid #ffd700 !important;
             }
 
-            /* Wiersze logów */
+            /* Wiersze logów w konsoli */
             .vc-logbox .vc-item {
                 border-bottom: 1px solid rgba(255,255,255,0.02) !important;
                 padding: 10px 14px !important;
@@ -183,13 +212,6 @@
                 color: #0a0d14 !important;
                 border-radius: 10px !important;
                 font-weight: 800 !important;
-            }
-
-            /* Główna czcionka kodu */
-            .vc-logbox .vc-item, .vc-log, .vc-empty {
-                font-family: 'JetBrains Mono', monospace !important;
-                color: #c9d1d9 !important;
-                font-size: 13px !important;
             }
         `;
         targetRoot.appendChild(style);

@@ -51,48 +51,57 @@
 }
 
 /* ==========================================================================
-   HAKOWANIE WYGLĄDU vCONSOLE (Gannew DevKit Theme)
-   Nadpisujemy domyślne zmienne CSS vConsole, by pasowały do naszego edytora
+   BRUTE-FORCE WYGLĄDU vCONSOLE (Gannew DevKit Theme)
+   Bezpośrednie nadpisywanie klas interfejsu
    ========================================================================== */
-html body #__vconsole {
-    /* Kolory tła */
-    --vc-bg: #111111 !important;               /* Głęboka czerń z edytora */
-    --vc-panel-bg: #1a1a22 !important;         /* Ciemnoszare tło paneli */
-    --vc-tabbar-bg: #1a1a22 !important;        /* Tło dolnego paska */
-    --vc-topbar-bg: #111111 !important;        /* Tło górnego paska */
-    
-    /* Kolory tekstu i akcentów */
-    --vc-text-color: #a0a8b9 !important;       /* Zwykły tekst (szaroniebieski) */
-    --vc-text-highlight: #61afef !important;   /* Podświetlenia i linki (neonowy błękit) */
-    
-    /* Zakładki (Tabs) */
-    --vc-tab-color: #a0a8b9 !important;        /* Nieaktywna zakładka */
-    --vc-tab-active-color: #e5c07b !important; /* Aktywna zakładka (złota - PRO) */
-    --vc-tab-active-bg: rgba(229, 192, 123, 0.1) !important;
-    
-    /* Ramki i detale */
-    --vc-border: rgba(97, 175, 239, 0.2) !important; 
-    --vc-header-bg: #1a1a22 !important;
-    --vc-log-border: rgba(97, 175, 239, 0.1) !important;
-    
-    /* Typografia - ujednolicenie czcionki z naszym menu */
-    font-family: 'SF Pro Display', sans-serif, -apple-system !important;
-}
 
-/* Wymuszenie czcionki monospace i tła w samej konsoli logów */
-html body #__vconsole .vc-log, 
-html body #__vconsole .vc-plugin-content {
-    font-family: monospace !important;
-    color: #98c379 !important; /* Zielony hakerski kolor logów */
+/* Główne tła (Głęboka czerń) */
+#__vconsole .vc-panel, 
+#__vconsole .vc-content {
     background-color: #111111 !important;
 }
 
-html body #__vconsole .vc-item.vc-item-error {
-    color: #ef5350 !important; /* Czerwony dla błędów */
-    background-color: rgba(239, 83, 80, 0.1) !important;
+/* Paski narzędzi (Ciemny szary) */
+#__vconsole .vc-tabbar,
+#__vconsole .vc-topbar,
+#__vconsole .vc-toolbar {
+    background-color: #1a1a22 !important;
+    border-color: rgba(97, 175, 239, 0.2) !important;
 }
 
-html body #__vconsole .vc-item.vc-item-warn {
-    color: #e5c07b !important; /* Złoty dla ostrzeżeń */
-    background-color: rgba(229, 192, 123, 0.1) !important;
+/* Zakładki (Szaroniebieskie) */
+#__vconsole .vc-tabbar .vc-tab,
+#__vconsole .vc-topbar .vc-tab {
+    color: #a0a8b9 !important;
+    font-family: 'SF Pro Display', sans-serif !important;
+}
+
+/* Aktywna zakładka (Złota) */
+#__vconsole .vc-tabbar .vc-tab.vc-active,
+#__vconsole .vc-topbar .vc-tab.vc-active {
+    color: #e5c07b !important;
+    border-bottom: 2px solid #e5c07b !important;
+    font-weight: bold !important;
+}
+
+/* Pole wpisywania komend */
+#__vconsole .vc-cmd,
+#__vconsole .vc-cmd-input {
+    background-color: #1a1a22 !important;
+    color: #a0a8b9 !important;
+    border-top: 1px solid rgba(97, 175, 239, 0.2) !important;
+}
+
+/* Przyciski w konsoli */
+#__vconsole .vc-btn {
+    color: #61afef !important;
+    background-color: #1a1a22 !important;
+    border-left: 1px solid rgba(97, 175, 239, 0.2) !important;
+}
+
+/* Typografia samej konsoli i logów (Hakerska zieleń) */
+#__vconsole .vc-logbox, 
+#__vconsole .vc-log {
+    font-family: monospace !important;
+    color: #98c379 !important;
 }

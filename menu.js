@@ -1,13 +1,13 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.6 (Fixed Shadow DOM) załadowana ---");
+    console.log("--- Menu.js Wersja 5.7 (Mega PRO Gold Edition) załadowana ---");
 
     // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole i nadpisuje absolutnie wszystko
+    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole i nadpisuje styl na "Mega PRO"
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
@@ -15,127 +15,147 @@
         // Szukamy kontenera stylów w Shadow DOM (lub normalnym DOM jako fallback)
         var targetRoot = vcDom.shadowRoot || vcDom;
         
-        // NAPRAWIONO: Zmiana getElementById na querySelector, aby uniknąć crashu w Shadow DOM
+        // Unikamy duplikacji stylów
         if (targetRoot.querySelector('#gannew-devkit-theme')) return; 
 
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
         style.textContent = `
-            /* Cały panel (Cyberpunkowy, zaokrąglony kształt) */
+            /* Cały panel (Głęboka czerń, zaokrąglony kształt) */
             .vc-main {
-                background-color: #111116 !important;
+                background-color: #0d1117 !important;
                 border-radius: 20px 20px 0 0 !important;
                 overflow: hidden !important;
-                box-shadow: 0 -10px 30px rgba(0,0,0,0.5) !important;
-                font-family: 'SF Pro Display', -apple-system, sans-serif !important;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.8) !important;
+                font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important;
             }
 
-            /* Górny główny pasek (Log, System, Network...) */
+            /* Górny główny pasek */
             .vc-tabbar {
-                background-color: #1a1a22 !important;
-                border-bottom: 2px solid #21252b !important;
+                background-color: #161b22 !important;
+                border-bottom: 1px solid #30363d !important;
                 height: 45px !important;
             }
 
             /* Przyciski zakładek */
-            .vc-tabbar .vc-tab {
-                color: #a0a8b9 !important;
-                border-right: 1px solid rgba(255,255,255,0.03) !important;
-                font-weight: 500 !important;
+            .vc-tabbar .vc-tab, .vc-topbar .vc-tab {
+                color: #8b949e !important;
+                font-weight: 600 !important;
                 transition: all 0.2s ease !important;
+                text-shadow: 0 1px rgba(0,0,0,0.5) !important;
+            }
+            .vc-tabbar .vc-tab {
+                border-right: 1px solid #30363d !important;
             }
 
-            /* Aktywna zakładka główna (Efektowny Neonowy Gradient z przycisku PRO) */
+            /* Aktywna zakładka (Ekskluzywny Czysto Złoty Gradient) */
             .vc-tabbar .vc-tab.vc-actived, 
-            .vc-tabbar .vc-tab.vc-active {
-                color: #ffffff !important;
-                background: rgba(97, 175, 239, 0.08) !important;
+            .vc-tabbar .vc-tab.vc-active,
+            .vc-topbar .vc-tab.vc-actived,
+            .vc-topbar .vc-tab.vc-active {
+                color: #ffd700 !important;
                 position: relative !important;
-                font-weight: bold !important;
+                background: rgba(255, 215, 0, 0.05) !important;
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
             }
             .vc-tabbar .vc-tab.vc-actived::after,
-            .vc-tabbar .vc-tab.vc-active::after {
+            .vc-tabbar .vc-tab.vc-active::after,
+            .vc-topbar .vc-tab.vc-actived::after,
+            .vc-topbar .vc-tab.vc-active::after {
                 content: '' !important;
                 position: absolute !important;
                 bottom: 0 !important;
                 left: 15% !important;
                 width: 70% !important;
-                height: 3px !important;
-                background: linear-gradient(90deg, #61afef, #c678dd) !important;
-                border-radius: 3px 3px 0 0 !important;
+                height: 2px !important;
+                background: linear-gradient(90deg, #c5a037, #ffd700, #c5a037) !important;
+                border-radius: 2px 2px 0 0 !important;
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.5) !important;
             }
 
-            /* Podpasek filtrów (All, Log, Info, Warn, Error) */
+            /* Podpasek filtrów */
             .vc-topbar {
-                background-color: #13131a !important;
-                border-bottom: 1px solid #1a1a22 !important;
-            }
-            .vc-topbar .vc-tab {
-                color: #7d8595 !important;
-                font-size: 13px !important;
-            }
-            .vc-topbar .vc-tab.vc-actived,
-            .vc-topbar .vc-tab.vc-active {
-                color: #e5c07b !important; /* Złoty akcent PRO dla filtrów logów */
-                border-bottom: 2px solid #e5c07b !important;
-                background: none !important;
+                background-color: #0d1117 !important;
+                border-bottom: 1px solid #161b22 !important;
             }
 
             /* Główna strefa logów i paneli */
             .vc-content, .vc-panel {
-                background-color: #111116 !important;
+                background-color: #0d1117 !important;
             }
 
             /* Tekst "Empty" (Stylowy, wygaszony design) */
             .vc-empty {
-                color: #4b5263 !important;
-                font-style: italic !important;
-                font-family: monospace !important;
-                font-size: 15px !important;
+                color: #8b949e !important;
+                font-family: 'JetBrains Mono', monospace !important;
+                font-size: 14px !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.1em !important;
+                margin-top: 80px !important;
             }
 
             /* Dolny pasek akcji (Clear, Top, Bottom, Hide) */
             .vc-toolbar {
-                background-color: #1a1a22 !important;
-                border-top: 1px solid #21252b !important;
+                background-color: #161b22 !important;
+                border-top: 1px solid #30363d !important;
+                padding: 4px !important;
             }
             .vc-toolbar .vc-btn {
-                background: transparent !important;
-                color: #a0a8b9 !important;
-                border-right: 1px solid rgba(255,255,255,0.05) !important;
-                font-size: 14px !important;
+                background: linear-gradient(180deg, #1f242e, #13171e) !important;
+                color: #ffd700 !important;
+                border: 1px solid #30363d !important;
+                border-radius: 6px !important;
+                margin: 0 2px !important;
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                text-shadow: 0 1px rgba(0,0,0,0.5) !important;
+                box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 1px 1px rgba(0,0,0,0.1) !important;
+            }
+            .vc-toolbar .vc-btn:hover {
+                border-color: #c5a037 !important;
+                background: linear-gradient(180deg, #2a2f3b, #191e28) !important;
+                box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 0 5px rgba(255, 215, 0, 0.2) !important;
             }
             .vc-toolbar .vc-btn:active {
-                background: rgba(198, 120, 221, 0.15) !important;
-                color: #c678dd !important;
+                background: #161b22 !important;
+                border-color: #c5a037 !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
             }
 
             /* Wiersze wpisywania komend i filtrów na dole */
             .vc-cmd {
-                background-color: #111116 !important;
-                border-top: 1px solid #21252b !important;
-                padding: 5px !important;
+                background-color: #0d1117 !important;
+                border-top: 1px solid #30363d !important;
+                padding: 6px !important;
             }
             .vc-cmd-input, .vc-search-input, input[class*="input"] {
-                background-color: #1a1a22 !important;
-                border: 1px solid rgba(97, 175, 239, 0.2) !important;
-                border-radius: 8px !important;
-                color: #98c379 !important; /* Zielony hakerski tekst wpisywania */
-                font-family: monospace !important;
+                background-color: #161b22 !important;
+                border: 1px solid #30363d !important;
+                border-radius: 6px !important;
+                color: #c9d1d9 !important;
+                font-family: 'JetBrains Mono', monospace !important;
                 padding: 6px 10px !important;
             }
+            .vc-cmd-input:focus, .vc-search-input:focus, input[class*="input"]:focus {
+                border-color: #ffd700 !important;
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.3) !important;
+                outline: none !important;
+            }
             .vc-cmd-btn {
-                background-color: #61afef !important;
-                color: #111116 !important;
-                border-radius: 8px !important;
+                background: linear-gradient(180deg, #c5a037, #ffd700) !important;
+                color: #0d1117 !important;
+                border: none !important;
+                border-radius: 6px !important;
                 font-weight: bold !important;
+                text-shadow: none !important;
             }
 
-            /* Same logi w konsoli - rasowy czysty Monospace */
+            /* Same logi w konsoli */
             .vc-logbox .vc-item, .vc-log {
-                font-family: monospace !important;
+                font-family: 'JetBrains Mono', monospace !important;
                 border-bottom: 1px solid rgba(255,255,255,0.02) !important;
-                color: #abb2bf !important;
+                color: #c9d1d9 !important;
+                font-size: 13px !important;
             }
         `;
         targetRoot.appendChild(style);
@@ -188,7 +208,7 @@
         menu.innerHTML = `
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
             <button class="pro-menu-btn" id="btn-console">💻 Konsola</button>
-            <button class="pro-menu-btn" id="btn-elements">🔍 ... (DOM)</button>
+            <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
             <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
             <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350;">❌ Zamknij Narzędzia</button>
         `;

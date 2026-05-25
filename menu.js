@@ -176,14 +176,14 @@
     // OBSŁUGA DYNAMICZNEGO WYGLĄDU PRZYCISKU "SAVE ON REFRESH"
     var btnSaveRefresh = d.getElementById('btn-save-refresh');
     if (isSaveOnRefreshActive) {
-        btnSaveRefresh.style.background = 'rgba(76, 175, 80, 0.2)' !important;
-        btnSaveRefresh.style.border = '1px solid #4caf50' !important;
-        btnSaveRefresh.style.color = '#81c784' !important;
+        btnSaveRefresh.style.setProperty('background', 'rgba(76, 175, 80, 0.2)', 'important');
+        btnSaveRefresh.style.setProperty('border', '1px solid #4caf50', 'important');
+        btnSaveRefresh.style.setProperty('color', '#81c784', 'important');
         btnSaveRefresh.innerText = '💾 Save on refresh: [AKTYWNY]';
     } else {
-        btnSaveRefresh.style.background = 'rgba(255, 152, 0, 0.1)' !important;
-        btnSaveRefresh.style.border = '1px solid rgba(255, 152, 0, 0.4)' !important;
-        btnSaveRefresh.style.color = '#ffb74d' !important;
+        btnSaveRefresh.style.setProperty('background', 'rgba(255, 152, 0, 0.1)', 'important');
+        btnSaveRefresh.style.setProperty('border', '1px solid rgba(255, 152, 0, 0.4)', 'important');
+        btnSaveRefresh.style.setProperty('color', '#ffb74d', 'important');
     }
 
     // LOGIKA PRZYCISKU Z POTWIERDZENIEM OK / ANULUJ

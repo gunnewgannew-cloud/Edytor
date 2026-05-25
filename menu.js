@@ -1,62 +1,67 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.7 (Mega PRO Gold Edition) załadowana ---");
+    console.log("--- Menu.js Wersja 5.8 (Elite Detail Edition) załadowana ---");
 
     // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole i nadpisuje styl na "Mega PRO"
+    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole i aplikuje detale Ultra-PRO
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
 
-        // Szukamy kontenera stylów w Shadow DOM (lub normalnym DOM jako fallback)
         var targetRoot = vcDom.shadowRoot || vcDom;
-        
-        // Unikamy duplikacji stylów
         if (targetRoot.querySelector('#gannew-devkit-theme')) return; 
 
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
         style.textContent = `
-            /* Cały panel (Głęboka czerń, zaokrąglony kształt) */
+            /* Cały panel (Cyberpunkowa ramka, gradientowe tło 3D) */
             .vc-main {
-                background-color: #0d1117 !important;
-                border-radius: 20px 20px 0 0 !important;
+                background: linear-gradient(145deg, #11151d, #070a0e) !important;
+                border-radius: 24px 24px 0 0 !important;
+                border-top: 2px solid #ffd700 !important; /* Ekskluzywne złote zwieńczenie panelu */
                 overflow: hidden !important;
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.8) !important;
+                box-shadow: 0 -15px 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05) !important;
                 font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important;
             }
 
-            /* Górny główny pasek */
+            /* Górny główny pasek (Matowy grafit premium) */
             .vc-tabbar {
                 background-color: #161b22 !important;
-                border-bottom: 1px solid #30363d !important;
-                height: 45px !important;
+                border-bottom: 1px solid #21262d !important;
+                height: 48px !important;
+                display: flex !important;
+                align-items: center !important;
             }
 
-            /* Przyciski zakładek */
+            /* Przyciski zakładek (Większy kontrast i płynne przejścia) */
             .vc-tabbar .vc-tab, .vc-topbar .vc-tab {
                 color: #8b949e !important;
-                font-weight: 600 !important;
-                transition: all 0.2s ease !important;
-                text-shadow: 0 1px rgba(0,0,0,0.5) !important;
+                font-weight: 700 !important;
+                letter-spacing: 0.03em !important;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
             }
             .vc-tabbar .vc-tab {
-                border-right: 1px solid #30363d !important;
+                border-right: 1px solid #21262d !important;
+                height: 100% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
-            /* Aktywna zakładka (Ekskluzywny Czysto Złoty Gradient) */
+            /* Aktywna zakładka (Neonowa złota łuna i luksusowy akcent) */
             .vc-tabbar .vc-tab.vc-actived, 
             .vc-tabbar .vc-tab.vc-active,
             .vc-topbar .vc-tab.vc-actived,
             .vc-topbar .vc-tab.vc-active {
-                color: #ffd700 !important;
-                position: relative !important;
-                background: rgba(255, 215, 0, 0.05) !important;
-                text-shadow: 0 0 10px rgba(255, 215, 0, 0.4) !important;
+                color: #ffffff !important;
+                background: linear-gradient(180deg, rgba(255,215,0,0.02), rgba(255,215,0,0.07)) !important;
+                box-shadow: inset 0 -4px 10px rgba(255,215,0,0.05) !important;
+                text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
             }
             .vc-tabbar .vc-tab.vc-actived::after,
             .vc-tabbar .vc-tab.vc-active::after,
@@ -65,97 +70,122 @@
                 content: '' !important;
                 position: absolute !important;
                 bottom: 0 !important;
-                left: 15% !important;
-                width: 70% !important;
-                height: 2px !important;
-                background: linear-gradient(90deg, #c5a037, #ffd700, #c5a037) !important;
-                border-radius: 2px 2px 0 0 !important;
-                box-shadow: 0 0 5px rgba(255, 215, 0, 0.5) !important;
+                left: 10% !important;
+                width: 80% !important;
+                height: 3px !important;
+                background: linear-gradient(90deg, #c5a037, #ffd700, #e5c07b) !important;
+                border-radius: 3px 3px 0 0 !important;
+                box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.8) !important;
             }
 
-            /* Podpasek filtrów */
+            /* Pasek filtrów logów */
             .vc-topbar {
-                background-color: #0d1117 !important;
+                background-color: #090d13 !important;
                 border-bottom: 1px solid #161b22 !important;
+                height: 38px !important;
             }
 
-            /* Główna strefa logów i paneli */
+            /* Główna strefa robocza */
             .vc-content, .vc-panel {
-                background-color: #0d1117 !important;
+                background: transparent !important;
             }
 
-            /* Tekst "Empty" (Stylowy, wygaszony design) */
+            /* Przeprojektowane, naprzemienne wiersze logów (Zebra) dla czytelności */
+            .vc-logbox .vc-item {
+                border-bottom: 1px solid rgba(255,255,255,0.01) !important;
+                padding: 8px 12px !important;
+                transition: background 0.1s ease !important;
+            }
+            .vc-logbox .vc-item:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.01) !important;
+            }
+            .vc-logbox .vc-item:hover {
+                background-color: rgba(255, 215, 0, 0.03) !important;
+            }
+
+            /* Tekst informacyjny o pustej konsoli (Design Terminala) */
             .vc-empty {
-                color: #8b949e !important;
+                color: #484f58 !important;
                 font-family: 'JetBrains Mono', monospace !important;
-                font-size: 14px !important;
+                font-size: 13px !important;
                 text-transform: uppercase !important;
-                letter-spacing: 0.1em !important;
-                margin-top: 80px !important;
+                letter-spacing: 0.15em !important;
+                margin-top: 120px !important;
+                text-shadow: 0 1px 1px rgba(0,0,0,0.5) !important;
+            }
+            .vc-empty::before {
+                content: '🤖 SYSTEM READY \\A\\A' !important;
+                white-space: pre !important;
+                color: #c5a037 !important;
+                font-weight: bold !important;
             }
 
-            /* Dolny pasek akcji (Clear, Top, Bottom, Hide) */
+            /* CUSTOMOWE ZŁOTE SCROLLBARY - Koniec z nudą systemową */
+            ::-webkit-scrollbar {
+                width: 6px !important;
+                height: 6px !important;
+            }
+            ::-webkit-scrollbar-track {
+                background: #070a0e !important;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #c5a037, #ffd700) !important;
+                border-radius: 10px !important;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #ffffff !important;
+            }
+
+            /* Dolny panel narzędziowy z przyciskami akcji */
             .vc-toolbar {
                 background-color: #161b22 !important;
-                border-top: 1px solid #30363d !important;
-                padding: 4px !important;
+                border-top: 1px solid #21262d !important;
+                padding: 6px 4px !important;
             }
             .vc-toolbar .vc-btn {
-                background: linear-gradient(180deg, #1f242e, #13171e) !important;
-                color: #ffd700 !important;
+                background: linear-gradient(180deg, #21262d, #161b22) !important;
+                color: #e5c07b !important;
                 border: 1px solid #30363d !important;
-                border-radius: 6px !important;
-                margin: 0 2px !important;
+                border-radius: 8px !important;
+                margin: 0 3px !important;
                 font-size: 13px !important;
-                font-weight: 600 !important;
-                text-shadow: 0 1px rgba(0,0,0,0.5) !important;
-                box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 1px 1px rgba(0,0,0,0.1) !important;
+                font-weight: 700 !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.6) !important;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.3) !important;
             }
             .vc-toolbar .vc-btn:hover {
-                border-color: #c5a037 !important;
-                background: linear-gradient(180deg, #2a2f3b, #191e28) !important;
-                box-shadow: inset 0 1px rgba(255,255,255,0.05), 0 0 5px rgba(255, 215, 0, 0.2) !important;
-            }
-            .vc-toolbar .vc-btn:active {
-                background: #161b22 !important;
-                border-color: #c5a037 !important;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.4) !important;
+                border-color: #ffd700 !important;
+                color: #ffffff !important;
+                background: linear-gradient(180deg, #2d333b, #1f242c) !important;
+                box-shadow: 0 0 8px rgba(255, 215, 0, 0.2) !important;
             }
 
-            /* Wiersze wpisywania komend i filtrów na dole */
+            /* Input do wpisywania komend JS */
             .vc-cmd {
-                background-color: #0d1117 !important;
-                border-top: 1px solid #30363d !important;
-                padding: 6px !important;
+                background-color: #070a0e !important;
+                border-top: 1px solid #21262d !important;
+                padding: 8px !important;
             }
             .vc-cmd-input, .vc-search-input, input[class*="input"] {
                 background-color: #161b22 !important;
                 border: 1px solid #30363d !important;
-                border-radius: 6px !important;
-                color: #c9d1d9 !important;
+                border-radius: 8px !important;
+                color: #ffd700 !important;
                 font-family: 'JetBrains Mono', monospace !important;
-                padding: 6px 10px !important;
+                padding: 8px 12px !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
             }
-            .vc-cmd-input:focus, .vc-search-input:focus, input[class*="input"]:focus {
+            .vc-cmd-input:focus {
                 border-color: #ffd700 !important;
-                box-shadow: 0 0 5px rgba(255, 215, 0, 0.3) !important;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255, 215, 0, 0.2) !important;
                 outline: none !important;
             }
             .vc-cmd-btn {
-                background: linear-gradient(180deg, #c5a037, #ffd700) !important;
-                color: #0d1117 !important;
-                border: none !important;
-                border-radius: 6px !important;
-                font-weight: bold !important;
-                text-shadow: none !important;
-            }
-
-            /* Same logi w konsoli */
-            .vc-logbox .vc-item, .vc-log {
-                font-family: 'JetBrains Mono', monospace !important;
-                border-bottom: 1px solid rgba(255,255,255,0.02) !important;
-                color: #c9d1d9 !important;
-                font-size: 13px !important;
+                background: linear-gradient(135deg, #c5a037, #ffd700) !important;
+                color: #070a0e !important;
+                border-radius: 8px !important;
+                font-weight: 800 !important;
+                box-shadow: 0 2px 6px rgba(255,215,0,0.3) !important;
             }
         `;
         targetRoot.appendChild(style);
@@ -176,7 +206,6 @@
                     window.vConsoleInstance.showTab(tabName);
                 }
 
-                // Bezpieczne wymuszenie stylów
                 applyGannewTheme();
                 setTimeout(applyGannewTheme, 50);
                 setTimeout(applyGannewTheme, 250);
@@ -195,7 +224,7 @@
         }
     }
 
-    // Tworzenie struktury menu PRO
+    // Menu kontrolne PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -219,7 +248,7 @@
         };
     }
 
-    // Obsługa przycisków
+    // Obsługa zdarzeń przycisków
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
         if(window.StartEdytorPro) window.StartEdytorPro();

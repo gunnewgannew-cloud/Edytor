@@ -1,22 +1,4 @@
-(function() {
-    var d = document;
-
-    // [KROK 0] BEZPIECZEŃSTWO - INTELIGENTNE OSTRZEŻENIE (SECURITY GUARD)
-    var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
-    var currentUrl = window.location.href.toLowerCase();
-    var isSensitive = sensitiveKeywords.some(function(keyword) {
-        return currentUrl.indexOf(keyword) !== -1;
-    });
-
-    if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co robisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
-        if (!proceed) {
-            console.warn("🔒 [PRO] Uruchomienie zablokowane ze względów bezpieczeństwa.");
-            return; // Całkowite przerwanie działania skryptu
-        }
-    }
-
-    console.log("--- Menu.js Wersja 7.0 (Security Guard + X-Ray Inspector + Auto-Resume) załadowana ---");
+console.log("--- Menu.js Wersja 7.0 (Security Guard + X-Ray Inspector + Auto-Resume) załadowana ---");
 
     // ==========================================
     // [MODUŁ] TRYB X-RAY (WIZUALNY EDYTOR)
@@ -295,3 +277,4 @@
         }
     }
 })();
+            

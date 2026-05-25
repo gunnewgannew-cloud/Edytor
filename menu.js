@@ -1,13 +1,13 @@
 (function() {
     var d = document;
-    console.log("--- Menu.js Wersja 5.8 (Elite Detail Edition) załadowana ---");
+    console.log("--- Menu.js Wersja 5.9 (Solid Gold & Rounded) załadowana ---");
 
     // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole i aplikuje detale Ultra-PRO
+    // FUNKCJA STYLIZUJĄCA - Włamuje się do Shadow DOM vConsole
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
@@ -18,174 +18,152 @@
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
         style.textContent = `
-            /* Cały panel (Cyberpunkowa ramka, gradientowe tło 3D) */
+            /* Całkowicie lite, nieprzezroczyste tło główne (Zero prześwitów) */
+            .vc-main, .vc-content, .vc-panel, .vc-logbox {
+                background-color: #0a0d14 !important;
+                background: #0a0d14 !important;
+                opacity: 1 !important;
+            }
+
+            /* Zaokrąglony główny panel */
             .vc-main {
-                background: linear-gradient(145deg, #11151d, #070a0e) !important;
-                border-radius: 24px 24px 0 0 !important;
-                border-top: 2px solid #ffd700 !important; /* Ekskluzywne złote zwieńczenie panelu */
+                border-radius: 20px 20px 0 0 !important;
+                border-top: 2px solid #ffd700 !important;
                 overflow: hidden !important;
-                box-shadow: 0 -15px 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+                box-shadow: 0 -15px 40px rgba(0,0,0,0.9) !important;
                 font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important;
             }
 
-            /* Górny główny pasek (Matowy grafit premium) */
+            /* Górny główny pasek */
             .vc-tabbar {
-                background-color: #161b22 !important;
+                background-color: #111622 !important;
                 border-bottom: 1px solid #21262d !important;
-                height: 48px !important;
+                height: 46px !important;
                 display: flex !important;
                 align-items: center !important;
+                padding: 0 5px !important;
             }
 
-            /* Przyciski zakładek (Większy kontrast i płynne przejścia) */
+            /* Stylizowanie zakładek z cornerami */
             .vc-tabbar .vc-tab, .vc-topbar .vc-tab {
                 color: #8b949e !important;
                 font-weight: 700 !important;
-                letter-spacing: 0.03em !important;
-                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                letter-spacing: 0.02em !important;
+                transition: all 0.2s ease !important;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
+                border: none !important;
             }
             .vc-tabbar .vc-tab {
-                border-right: 1px solid #21262d !important;
-                height: 100% !important;
+                border-radius: 8px 8px 0 0 !important; /* Cornery dla głównych zakładek */
+                margin: 0 3px !important;
+                height: 36px !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
             }
 
-            /* Aktywna zakładka (Neonowa złota łuna i luksusowy akcent) */
+            /* Wyraziste, klasyczne złote podkreślenie aktywnej zakładki */
             .vc-tabbar .vc-tab.vc-actived, 
             .vc-tabbar .vc-tab.vc-active,
             .vc-topbar .vc-tab.vc-actived,
             .vc-topbar .vc-tab.vc-active {
-                color: #ffffff !important;
-                background: linear-gradient(180deg, rgba(255,215,0,0.02), rgba(255,215,0,0.07)) !important;
-                box-shadow: inset 0 -4px 10px rgba(255,215,0,0.05) !important;
-                text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
+                color: #ffd700 !important;
+                border-bottom: 3px solid #ffd700 !important; /* Powrót do czystego podkreślenia */
+                background-color: #161b26 !important;
+                text-shadow: 0 0 5px rgba(255, 215, 0, 0.5) !important;
             }
-            .vc-tabbar .vc-tab.vc-actived::after,
-            .vc-tabbar .vc-tab.vc-active::after,
-            .vc-topbar .vc-tab.vc-actived::after,
-            .vc-topbar .vc-tab.vc-active::after {
-                content: '' !important;
-                position: absolute !important;
-                bottom: 0 !important;
-                left: 10% !important;
-                width: 80% !important;
-                height: 3px !important;
-                background: linear-gradient(90deg, #c5a037, #ffd700, #e5c07b) !important;
-                border-radius: 3px 3px 0 0 !important;
-                box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.8) !important;
+
+            /* Wyłączenie starych pseudo-elementów linii, żeby się nie dublowały */
+            .vc-tabbar .vc-tab::after, .vc-topbar .vc-tab::after {
+                display: none !important;
+                content: none !important;
             }
 
             /* Pasek filtrów logów */
             .vc-topbar {
-                background-color: #090d13 !important;
+                background-color: #0a0d14 !important;
                 border-bottom: 1px solid #161b22 !important;
                 height: 38px !important;
             }
 
-            /* Główna strefa robocza */
-            .vc-content, .vc-panel {
-                background: transparent !important;
-            }
-
-            /* Przeprojektowane, naprzemienne wiersze logów (Zebra) dla czytelności */
+            /* Zaokrąglone i odseparowane wiersze logów (Zebra) */
             .vc-logbox .vc-item {
                 border-bottom: 1px solid rgba(255,255,255,0.01) !important;
-                padding: 8px 12px !important;
-                transition: background 0.1s ease !important;
+                padding: 10px 14px !important;
+                margin: 2px 6px !important;
+                border-radius: 6px !important; /* Delikatne cornery na logach */
             }
             .vc-logbox .vc-item:nth-child(even) {
                 background-color: rgba(255, 255, 255, 0.01) !important;
             }
             .vc-logbox .vc-item:hover {
-                background-color: rgba(255, 215, 0, 0.03) !important;
+                background-color: rgba(255, 215, 0, 0.02) !important;
             }
 
-            /* Tekst informacyjny o pustej konsoli (Design Terminala) */
-            .vc-empty {
-                color: #484f58 !important;
-                font-family: 'JetBrains Mono', monospace !important;
-                font-size: 13px !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.15em !important;
-                margin-top: 120px !important;
-                text-shadow: 0 1px 1px rgba(0,0,0,0.5) !important;
-            }
-            .vc-empty::before {
-                content: '🤖 SYSTEM READY \\A\\A' !important;
-                white-space: pre !important;
-                color: #c5a037 !important;
-                font-weight: bold !important;
-            }
-
-            /* CUSTOMOWE ZŁOTE SCROLLBARY - Koniec z nudą systemową */
+            /* Customowe luksusowe scrollbary */
             ::-webkit-scrollbar {
                 width: 6px !important;
                 height: 6px !important;
             }
             ::-webkit-scrollbar-track {
-                background: #070a0e !important;
+                background: #0a0d14 !important;
             }
             ::-webkit-scrollbar-thumb {
-                background: linear-gradient(180deg, #c5a037, #ffd700) !important;
+                background: #c5a037 !important;
                 border-radius: 10px !important;
             }
-            ::-webkit-scrollbar-thumb:hover {
-                background: #ffffff !important;
-            }
 
-            /* Dolny panel narzędziowy z przyciskami akcji */
+            /* Dolny toolbar z cornery przyciskami */
             .vc-toolbar {
-                background-color: #161b22 !important;
+                background-color: #111622 !important;
                 border-top: 1px solid #21262d !important;
-                padding: 6px 4px !important;
+                padding: 6px !important;
             }
             .vc-toolbar .vc-btn {
-                background: linear-gradient(180deg, #21262d, #161b22) !important;
+                background: #161b26 !important;
                 color: #e5c07b !important;
                 border: 1px solid #30363d !important;
-                border-radius: 8px !important;
-                margin: 0 3px !important;
+                border-radius: 8px !important; /* Wyraźne cornery dla dolnych przycisków */
+                margin: 0 4px !important;
                 font-size: 13px !important;
                 font-weight: 700 !important;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.6) !important;
-                box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.3) !important;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
             }
-            .vc-toolbar .vc-btn:hover {
+            .vc-toolbar .vc-btn:active {
+                background: #0a0d14 !important;
                 border-color: #ffd700 !important;
-                color: #ffffff !important;
-                background: linear-gradient(180deg, #2d333b, #1f242c) !important;
-                box-shadow: 0 0 8px rgba(255, 215, 0, 0.2) !important;
             }
 
-            /* Input do wpisywania komend JS */
+            /* Inputy z ładnymi zaokrągleniami krawędzi */
             .vc-cmd {
-                background-color: #070a0e !important;
+                background-color: #0a0d14 !important;
                 border-top: 1px solid #21262d !important;
                 padding: 8px !important;
             }
             .vc-cmd-input, .vc-search-input, input[class*="input"] {
-                background-color: #161b22 !important;
+                background-color: #111622 !important;
                 border: 1px solid #30363d !important;
-                border-radius: 8px !important;
+                border-radius: 10px !important; /* Wyraźne zaokrąglenie pól wpisywania */
                 color: #ffd700 !important;
                 font-family: 'JetBrains Mono', monospace !important;
                 padding: 8px 12px !important;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
             }
             .vc-cmd-input:focus {
                 border-color: #ffd700 !important;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255, 215, 0, 0.2) !important;
                 outline: none !important;
             }
             .vc-cmd-btn {
-                background: linear-gradient(135deg, #c5a037, #ffd700) !important;
-                color: #070a0e !important;
-                border-radius: 8px !important;
+                background: #ffd700 !important;
+                color: #0a0d14 !important;
+                border-radius: 10px !important; /* Cornery dla przycisku OK */
                 font-weight: 800 !important;
-                box-shadow: 0 2px 6px rgba(255,215,0,0.3) !important;
+            }
+
+            /* Czcionka kodu logów */
+            .vc-logbox .vc-item, .vc-log, .vc-empty {
+                font-family: 'JetBrains Mono', monospace !important;
+                color: #c9d1d9 !important;
+                font-size: 13px !important;
             }
         `;
         targetRoot.appendChild(style);
@@ -224,7 +202,7 @@
         }
     }
 
-    // Menu kontrolne PRO
+    // Tworzenie struktury menu PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var fab = d.createElement('div');
@@ -248,7 +226,7 @@
         };
     }
 
-    // Obsługa zdarzeń przycisków
+    // Obsługa przycisków
     d.getElementById('btn-edytor').onclick = function() { 
         menu.style.display = 'none'; 
         if(window.StartEdytorPro) window.StartEdytorPro();

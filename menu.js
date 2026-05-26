@@ -14,32 +14,6 @@
     ];
 
     // =========================================================================
-    // INIEKCJA STYLI CSS (NA SAMYMKU POCZĄTKU, ŻEBY NIC ICH NIE ZABLOKOWAŁO)
-    // =========================================================================
-    if (!d.getElementById('pro-core-styles')) {
-        var proStyles = d.createElement('style');
-        proStyles.id = 'pro-core-styles';
-        proStyles.innerHTML = `
-            #pro-fab { position: fixed !important; bottom: 20px !important; right: 20px !important; width: 60px !important; height: 60px !important; border-radius: 50% !important; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-size: 19px !important; font-weight: 900 !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 9999999 !important; cursor: pointer !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; user-select: none !important; }
-            #devkit-error-badge { position: absolute !important; top: -2px !important; right: -2px !important; background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 2px !important; border-radius: 50% !important; display: none !important; align-items: center !important; justify-content: center !important; z-index: 10000000 !important; }
-            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center !important; justify-content: center !important; }
-            
-            #pro-menu { position: fixed !important; bottom: 90px !important; right: 20px !important; width: 280px !important; max-height: 70vh !important; overflow-y: auto !important; background: rgba(30, 30, 40, 0.96) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; padding: 12px !important; z-index: 9999999 !important; display: none; flex-direction: column; box-sizing: border-box !important; backdrop-filter: blur(10px) !important; }
-            .pro-menu-view-container { width: 100% !important; display: flex !important; flex-direction: column !important; }
-            
-            .pro-menu-btn { width: 100% !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #ffffff !important; padding: 10px !important; margin: 4px 0 !important; border-radius: 8px !important; cursor: pointer !important; font-size: 13px !important; font-weight: 500 !important; text-align: left !important; transition: all 0.2s !important; box-sizing: border-box !important; }
-            .pro-menu-btn:hover { background: rgba(255,255,255,0.12) !important; }
-            .pro-menu-btn.accent { background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-weight: bold !important; }
-            
-            .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
-            .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
-            .pro-settings-checkbox { width: 18px !important; height: 18px !important; cursor: pointer !important; accent-color: #7abcff !important; margin: 0 !important; padding: 0 !important; }
-            .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
-        `;
-        d.head.appendChild(proStyles);
-    }
-
-    // =========================================================================
     // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE
     // =========================================================================
     if (!window.__devKitErrors) {
@@ -80,19 +54,19 @@
     });
     // =========================================================================
 
-    // BEZPIECZEŃSTWO - WYCZYSZCZONE SŁOWA KLUCZOWE
-    var sensitiveKeywords = ['bank', 'paypal', 'platnosci', 'payu', 'mojeid'];
+    // BEZPIECZEŃSTWO - SECURITY GUARD
+    var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
     var currentUrl = window.location.href.toLowerCase();
     var isSensitive = sensitiveKeywords.some(function(keyword) {
         return currentUrl.indexOf(keyword) !== -1;
     });
 
     if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto stronę płatności. Czy na pewno chcesz uruchomić skrypt?");
+        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto wrażliwe dane na stronie. Czy na pewno chcesz uruchomić skrypt?");
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.3 (Syntactical Error Fix) załadowana ---");
+    console.log("--- Menu.js Wersja 7.0 (Settings Interface Modular System) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -152,12 +126,27 @@
         }
     }
 
-    // TWORZENIE STRUKTURY MENU I FAB (JEŚLI NIE ISTNIEJĄ)
+    // TWORZENIE STRUKTURY MENU I STYLE
     var menu = d.getElementById('pro-menu');
-    var fab = d.getElementById('pro-fab');
-
     if (!menu) {
-        fab = d.createElement('div');
+        var proStyles = d.createElement('style');
+        proStyles.innerHTML = `
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-size: 19px !important; font-weight: 900 !important; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); user-select: none; }
+            #devkit-error-badge { position: absolute; top: -2px; right: -2px; background: #ff3b30 !important; color: #ffffff !important; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; z-index: 1000000; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; }
+            
+            #pro-menu { max-height: 80vh !important; overflow-y: auto !important; display: none; flex-direction: column; }
+            .pro-menu-view-container { width: 100%; display: flex; flex-direction: column; }
+            
+            /* Style dla wierszy ustawień */
+            .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+            .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
+            .pro-settings-checkbox { width: 18px !important; height: 18px !important; cursor: pointer !important; accent-color: #7abcff !important; }
+            .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
+        `;
+        d.head.appendChild(proStyles);
+
+        var fab = d.createElement('div');
         fab.id = 'pro-fab'; fab.innerText = 'PRO';
         var badge = d.createElement('div'); badge.id = 'devkit-error-badge'; badge.innerText = '0';
         fab.appendChild(badge); d.body.appendChild(fab);
@@ -165,6 +154,7 @@
         menu = d.createElement('div');
         menu.id = 'pro-menu';
         
+        // WYGENEROWANIE STRUKTURY WIDOKÓW (GŁÓWNY I USTAWIENIA)
         menu.innerHTML = `
             <div id="pro-view-main" class="pro-menu-view-container">
                 <div class="pro-menu-section-title">🛠️ Core Dev Tools</div>
@@ -193,37 +183,22 @@
 
         fab.onclick = function() {
             var isVisible = menu.style.display === 'flex';
-            if (isVisible) {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'flex';
-                switchView('main');
+            menu.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) {
+                // Zawsze wracaj do głównego menu przy otwieraniu panelu na nowo
+                d.getElementById('pro-view-main').style.display = 'flex';
+                d.getElementById('pro-view-settings').style.display = 'none';
                 __updateDevKitBadge();
             }
         };
     }
 
-    // CENTRALNA FUNKCJA DO KONTROLI WIDOKÓW
-    function switchView(viewName) {
-        var viewMain = d.getElementById('pro-view-main');
-        var viewSettings = d.getElementById('pro-view-settings');
-        
-        if (viewName === 'main') {
-            if (viewMain) viewMain.style.setProperty('display', 'flex', 'important');
-            if (viewSettings) viewSettings.style.setProperty('display', 'none', 'important');
-        } else if (viewName === 'settings') {
-            if (viewMain) viewMain.style.setProperty('display', 'none', 'important');
-            if (viewSettings) viewSettings.style.setProperty('display', 'flex', 'important');
-        }
-    }
-
-    // GENEROWANIE WIDŻETÓW W USTAWIENIACH I CHECKBOXÓW
+    // GENEROWANIE WIDŻETÓW W USTAWIENIACH I CHALLLENGE DLA CHECKBOXÓW
     var settingsListContainer = d.getElementById('pro-settings-list');
     var shortcutsContainer = d.getElementById('pro-dynamic-shortcuts');
 
     function renderDynamicMenu() {
-        if (!shortcutsContainer) return;
-        shortcutsContainer.innerHTML = ''; 
+        shortcutsContainer.innerHTML = ''; // Czyszczenie starych skrótów w menu głównym
         var hasDynamicItems = false;
 
         proFeatures.forEach(function(feat) {
@@ -231,6 +206,7 @@
             
             if (isActive) {
                 if (!hasDynamicItems) {
+                    // Dodaj nagłówek sekcji, jeśli pojawi się choć jeden przypięty przycisk
                     var title = d.createElement('div');
                     title.className = 'pro-menu-section-title';
                     title.style.color = '#7abcff';
@@ -240,18 +216,20 @@
                     hasDynamicItems = true;
                 }
 
+                // Tworzenie dynamicznego przycisku w menu głównym
                 var btn = d.createElement('button');
                 btn.className = 'pro-menu-btn';
                 btn.id = 'btn-run-' + feat.id;
                 btn.style.setProperty('color', feat.color, 'important');
                 btn.innerText = feat.name;
                 
+                // Przypisanie logiki wykonawczej (podpięte pod zrobione już Ad-Killer i UnBlur)
                 btn.onclick = function() {
                     menu.style.display = 'none';
                     if (feat.id === 'adkiller') runAdKillerLogic();
                     if (feat.id === 'unblur') runUnBlurLogic();
                     if (['fps', 'video', 'qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
-                        alert("Wybrano: " + feat.name + "\n\nKonfiguracja mechaniki tego modułu nastąpi w kolejnych krokach projektowych.");
+                        alert("Wybrano: " + feat.name + "\n\nTa funkcja jest zarejestrowana w module zarządcy! Skonfigurujemy jej działanie w kolejnym kroku.");
                     }
                 };
                 shortcutsContainer.appendChild(btn);
@@ -259,46 +237,40 @@
         });
     }
 
-    // Budowanie listy opcji w widoku ustawień
-    if (settingsListContainer && settingsListContainer.children.length === 0) {
-        proFeatures.forEach(function(feat) {
-            var row = d.createElement('div');
-            row.className = 'pro-settings-row';
-            
-            var label = d.createElement('span');
-            label.className = 'pro-settings-label';
-            label.innerText = feat.name;
-            
-            var checkbox = d.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'pro-settings-checkbox';
-            checkbox.checked = localStorage.getItem(feat.key) === 'true';
-            
-            checkbox.onchange = function() {
-                localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
-                renderDynamicMenu(); 
-            };
-
-            row.appendChild(label);
-            row.appendChild(checkbox);
-            settingsListContainer.appendChild(row);
-        });
-    }
-
-    // PODPIĘCIE ELEMENTÓW NAWIGACYJNYCH POD CENTRALNY SWITCHER
-    var btnGoSettings = d.getElementById('btn-go-settings');
-    if (btnGoSettings) {
-        btnGoSettings.onclick = function() {
-            switchView('settings');
+    // Budowanie listy checkboxów w widoku ustawień
+    proFeatures.forEach(function(feat) {
+        var row = d.createElement('div');
+        row.className = 'pro-settings-row';
+        
+        var label = d.createElement('span');
+        label.className = 'pro-settings-label';
+        label.innerText = feat.name;
+        
+        var checkbox = d.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'pro-settings-checkbox';
+        checkbox.checked = localStorage.getItem(feat.key) === 'true';
+        
+        checkbox.onchange = function() {
+            localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
+            renderDynamicMenu(); // Natychmiastowa aktualizacja wyglądu głównego menu
         };
-    }
 
-    var btnBackToMain = d.getElementById('btn-back-to-main');
-    if (btnBackToMain) {
-        btnBackToMain.onclick = function() {
-            switchView('main');
-        };
-    }
+        row.appendChild(label);
+        row.appendChild(checkbox);
+        settingsListContainer.appendChild(row);
+    });
+
+    // NAWIGACJA WIDOKÓW (PRZEŁĄCZANIE)
+    d.getElementById('btn-go-settings').onclick = function() {
+        d.getElementById('pro-view-main').style.display = 'none';
+        d.getElementById('pro-view-settings').style.display = 'flex';
+    };
+
+    d.getElementById('btn-back-to-main').onclick = function() {
+        d.getElementById('pro-view-settings').style.display = 'none';
+        d.getElementById('pro-view-main').style.display = 'flex';
+    };
 
     // =========================================================================
     // LOGIKI PROCEDURALNE (AD-KILLER I UNBLUR)
@@ -338,5 +310,48 @@
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
     var btnSaveRefresh = d.getElementById('btn-save-refresh');
-    if (btnSaveRefresh) {
-        if (isSa
+    if (isSaveOnRefreshActive) {
+        btnSaveRefresh.style.setProperty('background', 'rgba(76, 175, 80, 0.2)', 'important');
+        btnSaveRefresh.style.setProperty('border', '1px solid #4caf50', 'important');
+        btnSaveRefresh.style.setProperty('color', '#81c784', 'important');
+        btnSaveRefresh.innerText = '💾 Save on refresh: [ON]';
+    } else {
+        btnSaveRefresh.style.setProperty('background', 'rgba(255, 152, 0, 0.1)', 'important');
+        btnSaveRefresh.style.setProperty('border', '1px solid rgba(255, 152, 0, 0.4)', 'important');
+        btnSaveRefresh.style.setProperty('color', '#ffb74d', 'important');
+    }
+
+    btnSaveRefresh.onclick = function() {
+        if (localStorage.getItem('pro_save_on_refresh') !== 'true') {
+            if (confirm("Uaktywnić 'Save on refresh'? Zamrozi strukturę HTML.")) {
+                localStorage.setItem('pro_save_on_refresh', 'true');
+                var clone = d.body.cloneNode(true);
+                var m = clone.querySelector('#pro-menu'); if(m) m.remove();
+                var f = clone.querySelector('#pro-fab'); if(f) f.remove();
+                localStorage.setItem('pro_persisted_html', clone.innerHTML);
+                location.reload();
+            }
+        } else {
+            localStorage.removeItem('pro_save_on_refresh');
+            localStorage.removeItem('pro_persisted_html');
+            location.reload();
+        }
+    };
+
+    // AKCJE PRZYCISKÓW PODSTAWOWYCH
+    d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'edytor'); if(window.StartEdytorPro) window.StartEdytorPro(); };
+    d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'console'); loadAndShowVConsole('default'); };
+    d.getElementById('btn-elements').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'element'); loadAndShowVConsole('element'); };
+    d.getElementById('btn-network').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'network'); loadAndShowVConsole('network'); };
+    d.getElementById('btn-close-tools').onclick = function() { if(window.vConsoleInstance) window.vConsoleInstance.hide(); menu.style.display = 'none'; localStorage.removeItem('pro_last_active_tool'); };
+
+    if (isSaveOnRefreshActive) {
+        var lastTool = localStorage.getItem('pro_last_active_tool');
+        if (lastTool === 'edytor') setTimeout(function(){ if(window.StartEdytorPro) window.StartEdytorPro(); }, 200);
+        else if (lastTool) loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
+    }
+    
+    // PIERWSZE RENDEROWANIE SKRÓTÓW NA BAZIE ZAPISANYCH USTAWIEŃ
+    renderDynamicMenu();
+    __updateDevKitBadge();
+})();

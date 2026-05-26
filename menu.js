@@ -2,7 +2,7 @@
     var d = document;
 
     // =========================================================================
-    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE (GRADIENT BADGES)
+    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE (CZERWONE KÓŁKA)
     // =========================================================================
     if (!window.__devKitErrors) {
         window.__devKitErrors = {
@@ -58,11 +58,11 @@
         var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co robisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
         if (!proceed) {
             console.warn("🔒 [PRO] Uruchomienie zablokowane ze względów bezpieczeństwa.");
-            return; // Całkowite przerwanie działania skryptu
+            return; 
         }
     }
 
-    console.log("--- Menu.js Wersja 6.5 (+ Security Guard, Auto-Resume & Gradient Badges) załadowana ---");
+    console.log("--- Menu.js Wersja 6.5 (+ Gradient PRO Button & Red Badges) załadowana ---");
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -162,14 +162,17 @@
         }
     }
 
-    // TWORZENIE STRUKTURY MENU PRO ORAZ STYLÓW DLA LICZNIKÓW
+    // TWORZENIE STRUKTURY MENU PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var proStyles = d.createElement('style');
         proStyles.innerHTML = `
-            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #222; border: none !important; color: #ffd700; font-family: sans-serif; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); user-select: none; }
-            #devkit-error-badge { position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #ffd700, #c5a037) !important; color: #0a0d14 !important; font-family: sans-serif; font-size: 11px; font-weight: 900; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4); z-index: 1000000; }
-            #menu-console-error-badge { background: linear-gradient(135deg, #ffd700, #c5a037) !important; color: #0a0d14 !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: 900 !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; margin-left: 8px !important; vertical-align: middle !important; box-sizing: border-box !important; box-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important; text-shadow: none !important; }
+            /* [NOWOŚĆ] Przycisk z identycznym gradientem jak na Twoim zdjęciu */
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); user-select: none; }
+            
+            /* [NOWOŚĆ] Czerwone jaskrawe kółka powiadomień o błędach */
+            #devkit-error-badge { position: absolute; top: -2px; right: -2px; background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(255,0,0,0.4); z-index: 1000000; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 5px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; margin-left: 8px !important; vertical-align: middle !important; box-sizing: border-box !important; }
         `;
         d.head.appendChild(proStyles);
 
@@ -260,6 +263,5 @@
         }
     }
     
-    // Uruchomienie przeliczenia powiadomień przy starcie
     __updateDevKitBadge();
 })();

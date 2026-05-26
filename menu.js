@@ -1,6 +1,56 @@
 (function() {
     var d = document;
 
+    // =========================================================================
+    // [ZMIANA - POMYSŁ NR 1] INICJALIZACJA SYSTEMU WYŁAPYWANIA BŁĘDÓW (ERROR BADGE)
+    // =========================================================================
+    if (!window.__devKitErrors) {
+        window.__devKitErrors = {
+            count: 0,
+            logs: []
+        };
+    }
+
+    function __updateDevKitBadge() {
+        var badge = d.getElementById('devkit-error-badge');
+        if (badge) {
+            badge.innerText = window.__devKitErrors.count;
+            badge.style.setProperty('display', window.__devKitErrors.count > 0 ? 'flex' : 'none', 'important');
+        }
+    }
+
+    // Przechwytywanie standardowych błędów JS
+    var originalOnError = window.onerror;
+    window.onerror = function(message, source, lineno, colno, error) {
+        window.__devKitErrors.count++;
+        window.__devKitErrors.logs.push({
+            type: 'JS_ERROR',
+            message: message,
+            file: source ? source.split('/').pop() : 'unknown',
+            line: lineno + ':' + colno,
+            time: new Date().toLocaleTimeString()
+        });
+        __updateDevKitBadge();
+        if (typeof originalOnError === 'function') {
+            return originalOnError(message, source, lineno, colno, error);
+        }
+        return false;
+    };
+
+    // Przechwytywanie asynchronicznych Promise Rejections (np. błędy API)
+    window.addEventListener('unhandledrejection', function(event) {
+        window.__devKitErrors.count++;
+        window.__devKitErrors.logs.push({
+            type: 'PROMISE_REJECTION',
+            message: event.reason?.message || event.reason || 'Unhandled Promise Rejection',
+            file: 'async_operation',
+            line: 'N/A',
+            time: new Date().toLocaleTimeString()
+        });
+        __updateDevKitBadge();
+    });
+    // =========================================================================
+
     // [KROK 0] BEZPIECZEŃSTWO - INTELIGENTNE OSTRZEŻENIE (SECURITY GUARD)
     var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
     var currentUrl = window.location.href.toLowerCase();
@@ -9,14 +59,14 @@
     });
 
     if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co robisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
+        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co rozpisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
         if (!proceed) {
             console.warn("🔒 [PRO] Uruchomienie zablokowane ze względów bezpieczeństwa.");
-            return; // Całkowite przerwanie działania skryptu
+            return; 
         }
     }
 
-    console.log("--- Menu.js Wersja 6.5 (Security Guard + Auto-Resume) załadowana ---");
+    console.log("--- Menu.js Wersja 7.0 (Error Badge Enabled) załadowana ---");
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -119,14 +169,30 @@
     // TWORZENIE STRUKTURY MENU PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
+        // [ZMIANA] DODANIE STYLE DLA FAB I BADGE ABY BYŁY ZINTEGROWANE
+        var proStyles = d.createElement('style');
+        proStyles.innerHTML = `
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #222; border: 2px solid #ffd700; color: #ffd700; font-family: sans-serif; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+            #devkit-error-badge { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 9px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000000; }
+        `;
+        d.head.appendChild(proStyles);
+
         var fab = d.createElement('div');
         fab.id = 'pro-fab';
         fab.innerText = 'PRO';
+
+        // [ZMIANA] WSTRZYKNIĘCIE BADGE DO ELEMENTU FAB
+        var badge = d.createElement('div');
+        badge.id = 'devkit-error-badge';
+        badge.innerText = '0';
+        fab.appendChild(badge);
+        
         d.body.appendChild(fab);
 
         menu = d.createElement('div');
         menu.id = 'pro-menu';
         menu.innerHTML = `
+            <button class="pro-menu-btn" id="btn-show-errors" style="background: rgba(255, 59, 48, 0.15) !important; border: 1px solid #ff3b30 !important; color: #ff8177 !important;">⚠️ Pokaż Błędy Strony</button>
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
             <button class="pro-menu-btn" id="btn-console">💻 Konsola</button>
             <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
@@ -138,6 +204,7 @@
 
         fab.onclick = function() {
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+            __updateDevKitBadge(); // Odśwież stan badge przy otwarciu menu
         };
     }
 
@@ -176,6 +243,27 @@
         }
     };
 
+    // [ZMIANA] OBSŁUGA NOWEGO PRZYCISKU POKAZYWANIA BŁĘDÓW
+    d.getElementById('btn-show-errors').onclick = function() {
+        menu.style.display = 'none';
+        if (window.__devKitErrors.logs.length === 0) {
+            alert("Brak wykrytych błędów na stronie! 🎉");
+            return;
+        }
+        var raport = "WYKRYTE BŁĘDY (" + window.__devKitErrors.count + "):\n\n";
+        window.__devKitErrors.logs.forEach(function(log, index) {
+            raport += "[" + (index + 1) + "] " + log.time + " | " + log.type + "\n";
+            raport += "Wiadomość: " + log.message + "\n";
+            raport += "Plik: " + log.file + " (Linia: " + log.line + ")\n";
+            raport += "---------------------------\n";
+        });
+        
+        var alertResult = confirm(raport + "\n\nCzy chcesz otworzyć pełną Konsolę vConsole dewelopera?");
+        if (alertResult) {
+            loadAndShowVConsole('default');
+        }
+    };
+
     // ZAPISYWANIE OSTATNIEJ AKTYWNOŚCI I URUCHAMIANIE
     d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'edytor'); if(window.StartEdytorPro) window.StartEdytorPro(); };
     d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'console'); loadAndShowVConsole('default'); };
@@ -198,4 +286,7 @@
             loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
         }
     }
+
+    // Odpalenie aktualizacji po załadowaniu skryptu (na wypadek wcześniejszych błędów)
+    __updateDevKitBadge();
 })();

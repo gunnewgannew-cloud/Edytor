@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.2 (Zoptymalizowane Toggles) załadowana ---");
+    console.log("--- Menu.js Wersja 7.3 (Ad-Killer Survival Upgrade) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -231,7 +231,7 @@
                 
                 btn.onclick = function() {
                     menu.style.display = 'none';
-                    if (feat.id === 'adkiller') runAdKillerLogic();
+                    if (feat.id === 'adkiller') runAdKillerLogic(true); // true oznacza wywołanie ręczne (pokazuje raport)
                     if (feat.id === 'unblur') runUnBlurLogic();
                     if (['fps', 'video', 'qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
                         alert("Wybrano: " + feat.name + "\n\nTa funkcja jest zarejestrowana w module zarządcy! Skonfigurujemy jej działanie w kolejnym kroku.");
@@ -265,6 +265,11 @@
         checkbox.onchange = function() {
             localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
             renderDynamicMenu(); // Natychmiastowa aktualizacja wyglądu głównego menu
+            
+            // Jeśli użytkownik włączył Ad-Killera przełącznikiem, uruchom go od razu w tle
+            if (feat.id === 'adkiller' && checkbox.checked) {
+                runAdKillerLogic(false);
+            }
         };
 
         switchLabel.appendChild(checkbox);
@@ -289,19 +294,66 @@
     // =========================================================================
     // LOGIKI PROCEDURALNE (AD-KILLER I UNBLUR)
     // =========================================================================
-    function runAdKillerLogic() {
-        var selectors = ['div[class*="cookie"]', 'div[id*="cookie"]', 'div[class*="consent"]', 'div[id*="consent"]', 'div[class*="modal"]', 'div[id*="modal"]', 'div[class*="popup"]', 'div[id*="popup"]', 'iframe[src*="googleads"]', 'div[class*="banner"]', '.cmp-root', '#cmp-wrapper'];
+    
+    // Zaawansowane selektory ułatwiające natychmiastowe ukrywanie elementów tarczą CSS
+    var adSelectors = [
+        'div[class*="cookie"]', 'div[id*="cookie"]', 'div[class*="consent"]', 'div[id*="consent"]',
+        'div[class*="modal"]', 'div[id*="modal"]', 'div[class*="popup"]', 'div[id*="popup"]',
+        'iframe[src*="googleads"]', 'div[class*="banner"]', '.cmp-root', '#cmp-wrapper',
+        'div[id*="google_ads"]', 'div[class*="adsbygoogle"]', 'amp-embed[type="ads"]',
+        'div[class*="-ad-"]', 'div[class$="-ad"]', 'div[class^="ad-"]'
+    ];
+
+    function runAdKillerLogic(isManual) {
+        // 1. Wstrzyknięcie tarczy CSS (błyskawiczne ukrywanie przed renderem)
+        if (!d.getElementById('pro-adkiller-static-shield')) {
+            var shield = d.createElement('style');
+            shield.id = 'pro-adkiller-static-shield';
+            shield.textContent = adSelectors.join(', ') + ' { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
+            d.head.appendChild(shield);
+        }
+
+        // 2. Fizyczne czyszczenie DOM z wykrytych śmieci
         var removed = 0;
-        selectors.forEach(function(sel) {
+        adSelectors.forEach(function(sel) {
             try {
                 d.querySelectorAll(sel).forEach(function(node) {
-                    if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { node.remove(); removed++; }
+                    // Krytyczne zabezpieczenie: Ad-Killer nie może usunąć naszego menu deweloperskiego!
+                    if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { 
+                        node.remove(); 
+                        removed++; 
+                    }
                 });
             } catch(e){}
         });
+
+        // 3. Odblokowanie przewijania strony (niszczenie barier RODO/paywalli)
         d.body.style.setProperty('overflow', 'auto', 'important');
         d.documentElement.style.setProperty('overflow', 'auto', 'important');
-        alert("💥 Ad-Killer: Oczyszczono stronę z " + removed + " elementów blokujących.");
+        if (d.body.classList.contains('modal-open')) d.body.classList.remove('modal-open');
+
+        // 4. Jeśli włączone, odpalamy Aktywnego Strażnika (MutationObserver), by wyłapywał reklamy ładowane asynchronicznie
+        if (!window.__adKillerObserver) {
+            window.__adKillerObserver = new MutationObserver(function(mutations) {
+                adSelectors.forEach(function(sel) {
+                    try {
+                        d.querySelectorAll(sel).forEach(function(node) {
+                            if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { 
+                                node.remove(); 
+                            }
+                        });
+                    } catch(e){}
+                });
+                // Ciągłe pilnowanie blokad scrolla
+                if (d.body.style.overflow === 'hidden') d.body.style.setProperty('overflow', 'auto', 'important');
+            });
+            window.__adKillerObserver.observe(d.documentElement, { childList: true, subtree: true });
+        }
+
+        // Komunikat alert pokazujemy tylko, gdy użytkownik kliknął przycisk ręcznie w menu głównym
+        if (isManual) {
+            alert("💥 Ad-Killer (Survival):\nTarcza CSS aktywna. Usunięto fizycznie " + removed + " śmieci reklamowych. Strażnik czasu rzeczywistego czuwa!");
+        }
     }
 
     function runUnBlurLogic() {
@@ -365,6 +417,13 @@
         else if (lastTool) loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
     }
     
+    // =========================================================================
+    // INICJALIZACJA AUTOMATYCZNA (AUTO-RUN DLA AKTYWNYCH MODUŁÓW TŁA)
+    // =========================================================================
+    if (localStorage.getItem('pro_mod_adkiller') === 'true') {
+        runAdKillerLogic(false); // Uruchomienie bez alertu, cichy start w tle
+    }
+
     // PIERWSZE RENDEROWANIE SKRÓTÓW NA BAZIE ZAPISANYCH USTAWIEŃ
     renderDynamicMenu();
     __updateDevKitBadge();

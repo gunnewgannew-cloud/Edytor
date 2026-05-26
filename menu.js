@@ -76,7 +76,7 @@
         }
     }
 
-    console.log("--- Menu.js Wersja 7.6 (Integrated Error Badges) załadowana ---");
+    console.log("--- Menu.js Wersja 7.7 (Premium Gradient Badges) załadowana ---");
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -179,12 +179,16 @@
     // TWORZENIE STRUKTURY MENU PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
-        // STYLE DLA PRO-FAB (BEZRAMKOWY) ORAZ ZINTEGROWANYCH BADGÓW
+        // [ZMIANA] ELEGANCKIE GRADIENTOWE STYLE DLA ZŁOTYCH BADGÓW (GANNEW DEVKIT STYLE)
         var proStyles = d.createElement('style');
         proStyles.innerHTML = `
             #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #222; border: none !important; color: #ffd700; font-family: sans-serif; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); user-select: none; }
-            #devkit-error-badge { position: absolute; top: -3px; right: -3px; background: #ff3b30; color: white; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000000; }
-            #menu-console-error-badge { background: #ff3b30 !important; color: white !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 5px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; margin-left: 8px !important; vertical-align: middle !important; box-sizing: border-box !important; }
+            
+            /* Badge na przycisku głównym PRO */
+            #devkit-error-badge { position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #ffd700, #c5a037) !important; color: #0a0d14 !important; font-family: sans-serif; font-size: 11px; font-weight: 900; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4); z-index: 1000000; }
+            
+            /* Badge w menu obok przycisku "Konsola" */
+            #menu-console-error-badge { background: linear-gradient(135deg, #ffd700, #c5a037) !important; color: #0a0d14 !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: 900 !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; margin-left: 8px !important; vertical-align: middle !important; box-sizing: border-box !important; box-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important; text-shadow: none !important; }
         `;
         d.head.appendChild(proStyles);
 
@@ -192,7 +196,6 @@
         fab.id = 'pro-fab';
         fab.innerText = 'PRO';
 
-        // Mały licznik na głównym kółku PRO (w prawym górnym rogu)
         var badge = d.createElement('div');
         badge.id = 'devkit-error-badge';
         badge.innerText = '0';
@@ -276,6 +279,5 @@
         }
     }
 
-    // Wywołanie startowe na wypadek błędów, które wywaliły się przed załadowaniem skryptu bazowego
     __updateDevKitBadge();
 })();

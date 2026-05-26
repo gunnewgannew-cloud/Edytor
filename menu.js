@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.1 (Modern UI Toggles) załadowana ---");
+    console.log("--- Menu.js Wersja 7.2 (Zoptymalizowane Toggles) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -138,17 +138,17 @@
             #pro-menu { max-height: 80vh !important; overflow-y: auto !important; display: none; flex-direction: column; }
             .pro-menu-view-container { width: 100%; display: flex; flex-direction: column; }
             
-            /* Style dla wierszy ustawień */
-            .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
-            .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
+            /* Style dla wierszy ustawień - ZOPTYMALIZOWANE */
+            .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 12px 14px !important; background: rgba(255,255,255,0.03) !important; margin: 6px 0 !important; border-radius: 10px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+            .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; margin-right: 15px !important; line-height: 1.2 !important; }
             
-            /* NOWE STYLE: Nowoczesne Suwaki (Toggles) */
-            .pro-toggle-switch { position: relative; display: inline-block; width: 38px; height: 22px; margin-left: 10px; }
+            /* NOWE STYLE: Nowoczesne Suwaki (Toggles) ze sztywną szerokością */
+            .pro-toggle-switch { position: relative; display: inline-block; width: 44px !important; height: 24px !important; flex-shrink: 0 !important; }
             .pro-toggle-switch input { opacity: 0; width: 0; height: 0; }
-            .pro-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 22px; border: 1px solid rgba(255,255,255,0.2); }
-            .pro-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: #888; transition: .3s; border-radius: 50%; }
+            .pro-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 24px; border: 1px solid rgba(255,255,255,0.2); }
+            .pro-slider:before { position: absolute; content: ""; height: 18px !important; width: 18px !important; left: 2px; bottom: 2px; background-color: #888; transition: .3s; border-radius: 50%; }
             .pro-toggle-switch input:checked + .pro-slider { background-color: rgba(122,188,255,0.2); border-color: #7abcff; }
-            .pro-toggle-switch input:checked + .pro-slider:before { transform: translateX(16px); background-color: #7abcff; box-shadow: 0 0 8px rgba(122,188,255,0.6); }
+            .pro-toggle-switch input:checked + .pro-slider:before { transform: translateX(20px) !important; background-color: #7abcff; box-shadow: 0 0 8px rgba(122,188,255,0.6); }
 
             .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
         `;

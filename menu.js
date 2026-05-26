@@ -22,10 +22,14 @@
         proStyles.innerHTML = `
             #pro-fab { position: fixed !important; bottom: 20px !important; right: 20px !important; width: 60px !important; height: 60px !important; border-radius: 50% !important; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-size: 19px !important; font-weight: 900 !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 9999999 !important; cursor: pointer !important; box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important; user-select: none !important; }
             #devkit-error-badge { position: absolute !important; top: -2px !important; right: -2px !important; background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 2px !important; border-radius: 50% !important; display: none !important; align-items: center !important; justify-content: center !important; z-index: 10000000 !important; }
-            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none !important; align-items: center !important; justify-content: center !important; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center !important; justify-content: center !important; }
             
-            #pro-menu { max-height: 80vh !important; overflow-y: auto !important; display: none; flex-direction: column; }
+            #pro-menu { position: fixed !important; bottom: 90px !important; right: 20px !important; width: 280px !important; max-height: 70vh !important; overflow-y: auto !important; background: rgba(30, 30, 40, 0.96) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 12px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; padding: 12px !important; z-index: 9999999 !important; display: none; flex-direction: column; box-sizing: border-box !important; backdrop-filter: blur(10px) !important; }
             .pro-menu-view-container { width: 100% !important; display: flex !important; flex-direction: column !important; }
+            
+            .pro-menu-btn { width: 100% !important; background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #ffffff !important; padding: 10px !important; margin: 4px 0 !important; border-radius: 8px !important; cursor: pointer !important; font-size: 13px !important; font-weight: 500 !important; text-align: left !important; transition: all 0.2s !important; box-sizing: border-box !important; }
+            .pro-menu-btn:hover { background: rgba(255,255,255,0.12) !important; }
+            .pro-menu-btn.accent { background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-weight: bold !important; }
             
             .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
             .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
@@ -76,7 +80,7 @@
     });
     // =========================================================================
 
-    // BEZPIECZEŃSTWO - WYCZYSZCZONE SŁOWA KLUCZOWE (ŻEBY NIE BLOKOWAĆ PANELU DEWELOPERSKIEGO)
+    // BEZPIECZEŃSTWO - WYCZYSZCZONE SŁOWA KLUCZOWE
     var sensitiveKeywords = ['bank', 'paypal', 'platnosci', 'payu', 'mojeid'];
     var currentUrl = window.location.href.toLowerCase();
     var isSensitive = sensitiveKeywords.some(function(keyword) {
@@ -84,11 +88,11 @@
     });
 
     if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto stronę bankowości/płatności. Czy na pewno chcesz uruchomić skrypt?");
+        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto stronę płatności. Czy na pewno chcesz uruchomić skrypt?");
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.2 (Bookmarklet Launch Fix) załadowana ---");
+    console.log("--- Menu.js Wersja 7.3 (Syntactical Error Fix) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -335,20 +339,4 @@
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
     var btnSaveRefresh = d.getElementById('btn-save-refresh');
     if (btnSaveRefresh) {
-        if (isSaveOnRefreshActive) {
-            btnSaveRefresh.style.setProperty('background', 'rgba(76, 175, 80, 0.2)', 'important');
-            btnSaveRefresh.style.setProperty('border', '1px solid #4caf50', 'important');
-            btnSaveRefresh.style.setProperty('color', '#81c784', 'important');
-            btnSaveRefresh.innerText = '💾 Save on refresh: [ON]';
-        } else {
-            btnSaveRefresh.style.setProperty('background', 'rgba(255, 152, 0, 0.1)', 'important');
-            btnSaveRefresh.style.setProperty('border', '1px solid rgba(255, 152, 0, 0.4)', 'important');
-            btnSaveRefresh.style.setProperty('color', '#ffb74d', 'important');
-        }
-
-        btnSaveRefresh.onclick = function() {
-            if (localStorage.getItem('pro_save_on_refresh') !== 'true') {
-                if (confirm("Uaktywnić 'Save on refresh'? Zamrozi strukturę HTML.")) {
-                    localStorage.setItem('pro_save_on_refresh', 'true');
-                    var clone = d.body.cloneNode(true);
-                    var m = clone.querySelector('#pro-menu'); if(m) m.re
+        if (isSa

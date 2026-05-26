@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.5 (Video Accelerator) załadowana ---");
+    console.log("--- Menu.js Wersja 7.6 (QR Transfer) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -105,6 +105,7 @@
             var fabEl = clone.querySelector('#pro-fab'); if (fabEl) fabEl.remove();
             var vcEl = clone.querySelector('#__vconsole'); if (vcEl) vcEl.remove();
             var fpsHud = clone.querySelector('#pro-fps-hud'); if (fpsHud) fpsHud.remove();
+            var qrModal = clone.querySelector('#pro-qr-modal'); if (qrModal) qrModal.remove();
             localStorage.setItem('pro_persisted_html', clone.innerHTML);
         }
     });
@@ -231,12 +232,13 @@
                     menu.style.display = 'none';
                     if (feat.id === 'adkiller') runAdKillerLogic(true);
                     if (feat.id === 'unblur') runUnBlurLogic();
-                    if (feat.id === 'video') runVideoAcceleratorLogic(); // NOWE PODPIĘCIE
+                    if (feat.id === 'video') runVideoAcceleratorLogic();
+                    if (feat.id === 'qr') runQrTransferLogic(); // NOWE PODPIĘCIE
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
                     }
-                    if (['qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
+                    if (['linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
                         alert("Wybrano: " + feat.name + "\n\nTa funkcja zostanie wdrożona w kolejnym kroku.");
                     }
                 };
@@ -269,7 +271,6 @@
             
             if (feat.id === 'adkiller' && checkbox.checked) runAdKillerLogic(false);
             if (feat.id === 'fps') runFpsHudLogic(checkbox.checked);
-            // Akcelerator wideo działa tylko "na klik" w skrót, suwak służy do przypinania go w menu
         };
 
         switchLabel.appendChild(checkbox);
@@ -394,8 +395,7 @@
         }
         
         var speedPrompt = prompt("🎬 Znaleziono " + videos.length + " wideo na tej stronie.\n\nPodaj mnożnik prędkości odtwarzania:\n(np. 2 dla 200%, 16 aby błyskawicznie pominąć reklamy)", "2");
-        
-        if (!speedPrompt) return; // Anulowano
+        if (!speedPrompt) return; 
         
         var speed = parseFloat(speedPrompt.replace(',', '.'));
         if (isNaN(speed) || speed <= 0) {
@@ -407,17 +407,50 @@
         videos.forEach(function(v) {
             try {
                 v.playbackRate = speed;
-                v.controls = true; // Wymuszamy pokazanie kontrolek na wypadek ukrytych odtwarzaczy
+                v.controls = true; 
                 applied++;
-            } catch(e) {
-                console.error("Akcelerator błąd na wideo:", e);
-            }
+            } catch(e) {}
         });
         
         alert("🚀 Zakończono!\nPrzyspieszono " + applied + " wideo do prędkości " + speed + "x i wymuszono pokazanie kontrolek.");
     }
 
-    // --- 4. UN-BLUR ---
+    // --- 4. TRANSFER QR ---
+    function runQrTransferLogic() {
+        if (d.getElementById('pro-qr-modal')) return;
+
+        var currentUrl = encodeURIComponent(window.location.href);
+        var qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + currentUrl;
+
+        var overlay = d.createElement('div');
+        overlay.id = 'pro-qr-modal';
+        // Przyciemnione tło i blur
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif;';
+
+        var title = d.createElement('div');
+        title.innerText = '🔮 Zeskanuj i prześlij';
+        title.style.cssText = 'color: #ff66cc; font-size: 22px; font-weight: bold; margin-bottom: 25px; text-shadow: 0 2px 15px rgba(255, 102, 204, 0.6); text-transform: uppercase; letter-spacing: 1px;';
+
+        var img = d.createElement('img');
+        img.src = qrApiUrl;
+        img.style.cssText = 'width: 250px; height: 250px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); border: 3px solid #ff66cc; background: white; padding: 10px;';
+
+        var closeBtn = d.createElement('button');
+        closeBtn.innerText = '❌ Zamknij';
+        closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
+        
+        // Kliknięcie w tło lub przycisk usuwa modal
+        var closeFunc = function() { overlay.remove(); };
+        closeBtn.onclick = closeFunc;
+        overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
+
+        overlay.appendChild(title);
+        overlay.appendChild(img);
+        overlay.appendChild(closeBtn);
+        d.body.appendChild(overlay);
+    }
+
+    // --- 5. UN-BLUR ---
     function runUnBlurLogic() {
         var unblurred = 0;
         d.querySelectorAll('*').forEach(function(el) {

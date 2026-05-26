@@ -2,28 +2,50 @@
     var d = document;
 
     // =========================================================================
-    // [NOWOŚĆ] SYSTEM WYŁAPYWANIA BŁĘDÓW (Przed Security Guard, aby łapać wszystko)
+    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE (CZERWONE KÓŁKA)
     // =========================================================================
-    window.__devkitErrors = window.__devkitErrors || { count: 0, logs: [] };
-
-    function updateErrorMenuBadge() {
-        var el = d.getElementById('devkit-err-count');
-        if (el) el.innerText = window.__devkitErrors.count;
+    if (!window.__devKitErrors) {
+        window.__devKitErrors = {
+            count: 0,
+            logs: []
+        };
     }
 
-    var oldOnErr = window.onerror;
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-        window.__devkitErrors.count++;
-        window.__devkitErrors.logs.push({msg, url, lineNo, error, time: new Date().toLocaleTimeString()});
-        updateErrorMenuBadge();
-        if (oldOnErr) return oldOnErr(msg, url, lineNo, columnNo, error);
+    function __updateDevKitBadge() {
+        var count = window.__devKitErrors.count;
+        
+        // Kółko na głównym przycisku PRO
+        var badge = d.getElementById('devkit-error-badge');
+        if (badge) {
+            badge.innerText = count;
+            badge.style.setProperty('display', count > 0 ? 'flex' : 'none', 'important');
+        }
+
+        // Kółko wewnątrz menu na przycisku "Konsola"
+        var menuBadge = d.getElementById('menu-console-error-badge');
+        if (menuBadge) {
+            menuBadge.innerText = count;
+            menuBadge.style.setProperty('display', count > 0 ? 'inline-flex' : 'none', 'important');
+        }
+    }
+
+    var originalOnError = window.onerror;
+    window.onerror = function(message, source, lineno, colno, error) {
+        window.__devKitErrors.count++;
+        window.__devKitErrors.logs.push({
+            type: 'JS_ERROR', message: message, file: source ? source.split('/').pop() : 'unknown', line: lineno + ':' + colno, time: new Date().toLocaleTimeString()
+        });
+        __updateDevKitBadge();
+        if (typeof originalOnError === 'function') return originalOnError(message, source, lineno, colno, error);
         return false;
     };
 
     window.addEventListener('unhandledrejection', function(event) {
-        window.__devkitErrors.count++;
-        window.__devkitErrors.logs.push({type:'Promise', error: event.reason, time: new Date().toLocaleTimeString()});
-        updateErrorMenuBadge();
+        window.__devKitErrors.count++;
+        window.__devKitErrors.logs.push({
+            type: 'PROMISE_REJECTION', message: event.reason?.message || event.reason || 'Unhandled Promise Rejection', file: 'async', line: 'N/A', time: new Date().toLocaleTimeString()
+        });
+        __updateDevKitBadge();
     });
     // =========================================================================
 
@@ -38,11 +60,11 @@
         var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co robisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
         if (!proceed) {
             console.warn("🔒 [PRO] Uruchomienie zablokowane ze względów bezpieczeństwa.");
-            return; // Całkowite przerwanie działania skryptu
+            return; 
         }
     }
 
-    console.log("--- Menu.js Wersja 6.7 (Large PRO + Console Row Layout) załadowana ---");
+    console.log("--- Menu.js Wersja 6.8 (Gradient PRO 19px + Space-Between Console) załadowana ---");
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -53,47 +75,18 @@
         console.log("🚀 [PRO] Stan struktury HTML został pomyślnie przywrócony!");
     }
 
-    // Ukrycie domyślnego przycisku vConsole na stronie I STYLIZACJA MENU/FAB
+    // Ukrycie domyślnego przycisku vConsole na stronie
     var vcStyle = d.createElement('style');
-    vcStyle.innerHTML = `
-        #__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }
-
-        /* [ZMIANA] Powiększony napis PRO i czysty wygląd */
-        #pro-fab {
-            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%;
-            background: #222; color: #ffd700;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 999999; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            /* --- NOWE: Powiększenie PRO --- */
-            font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important;
-            font-size: 19px !important;
-            font-weight: 900 !important;
-            text-transform: uppercase;
-            border: none !important; /* Usunięto ramkę dla lepszego wyglądu PRO */
-        }
-
-        /* Stylizacja przycisków menu, aby działały w rzędzie */
-        .pro-menu-btn {
-            background: rgba(22, 27, 38, 0.85); color: #abb2bf;
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px;
-            padding: 10px 14px; font-size: 13px; font-family: sans-serif;
-            margin-bottom: 2px; cursor: pointer; transition: background 0.2s;
-            text-align: left; box-sizing: border-box; display: block;
-            width: calc(100% - 12px); margin-left: 6px; margin-right: 6px;
-        }
-        .pro-menu-btn:active { background: rgba(22, 27, 38, 1); }
-        .pro-menu-btn.accent { color: #ffd700; border-color: rgba(255, 215, 0, 0.4); }
-    `;
+    vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA vConsole (applyGannewTheme - Keep as is)
+    // FUNKCJA STYLIZUJĄCA vConsole
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
 
         var targetRoot = vcDom.shadowRoot || vcDom;
-        if (targetRoot.querySelector('#gannew-devkit-theme')) return;
+        if (targetRoot.querySelector('#gannew-devkit-theme')) return; 
 
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
@@ -162,7 +155,7 @@
             }
         };
 
-        if (window.VConsole) { triggerVConsole(); }
+        if (window.VConsole) { triggerVConsole(); } 
         else {
             var s = d.createElement('script');
             s.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js';
@@ -174,24 +167,40 @@
     // TWORZENIE STRUKTURY MENU PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
+        var proStyles = d.createElement('style');
+        proStyles.innerHTML = `
+            /* [NOWOŚĆ] Gradient z obrazka, większa i pogrubiona czcionka (19px) */
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 19px !important; font-weight: 900 !important; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); user-select: none; }
+            
+            /* Czerwone jaskrawe kółka powiadomień o błędach */
+            #devkit-error-badge { position: absolute; top: -2px; right: -2px; background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(255,0,0,0.4); z-index: 1000000; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(255,0,0,0.3) !important; }
+        `;
+        d.head.appendChild(proStyles);
+
         var fab = d.createElement('div');
         fab.id = 'pro-fab';
-        fab.innerText = 'PRO'; // CSS powiększy napis
+        fab.innerText = 'PRO';
+        
+        var badge = d.createElement('div');
+        badge.id = 'devkit-error-badge';
+        badge.innerText = '0';
+        fab.appendChild(badge);
+        
         d.body.appendChild(fab);
 
         menu = d.createElement('div');
         menu.id = 'pro-menu';
-        // --- NOWA STRUKTURA LAYOUTU ---
         menu.innerHTML = `
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
+            
+            <button class="pro-menu-btn" id="btn-console" style="display: flex !important; justify-content: space-between !important; align-items: center !important; text-align: left;">
+                <span>💻 Konsola</span>
+                <span id="menu-console-error-badge">0</span>
+            </button>
+            
             <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
             <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
-
-            <div style="display: flex; gap: 4px; margin-bottom: 2px; margin-left: 6px; margin-right: 6px;">
-                <button class="pro-menu-btn" id="btn-console" style="flex: 1; text-align: center; margin: 0 !important; width: auto !important;">💻 Konsola</button>
-                <button class="pro-menu-btn" id="btn-show-errors" style="flex: 1; text-align: center; margin: 0 !important; width: auto !important; background: rgba(255, 59, 48, 0.1) !important; border-color: #ff3b30 !important; color: #ff8177 !important;">⚠️ Błędy (<span id="devkit-err-count">0</span>)</button>
-            </div>
-
             <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh (Experimental)</button>
             <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Zamknij Narzędzia</button>
         `;
@@ -199,26 +208,8 @@
 
         fab.onclick = function() {
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+            __updateDevKitBadge();
         };
-    }
-
-    // [NOWOŚĆ] Inicjalizacja licznika
-    updateErrorMenuBadge();
-
-    // [NOWOŚĆ] Logika dla przycisku błędów
-    d.getElementById('btn-show-errors').onclick = function() {
-        if (window.__devkitErrors.count === 0) {
-            alert("DevKit PRO: Brak błędów na stronie! 🎉");
-            return;
-        }
-        var errStr = "DevKit PRO - Wykryte Błędy:\n--------------------\n";
-        window.__devkitErrors.logs.slice(0, 5).forEach((e, i) => {
-            errStr += `[${i+1}] ${e.time}: ${e.msg || e.error}\nW: ${e.url ? e.url.split('/').pop() : 'async'} @ L${e.lineNo}\n\n`;
-        });
-        if (window.__devkitErrors.logs.length > 5) errStr += "(...) Więcej w vConsole Default.";
-        alert(errStr);
-        loadAndShowVConsole('default'); // Otwórz konsolę, aby zobaczyć szczegóły
-        menu.style.display = 'none';
     }
 
     // OBSŁUGA DYNAMICZNEGO WYGLĄDU PRZYCISKU "SAVE ON REFRESH"
@@ -278,5 +269,6 @@
             loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
         }
     }
-})();
     
+    __updateDevKitBadge();
+})();

@@ -1,7 +1,7 @@
 (function() {
     var d = document;
 
-    // DEFINICJA NASZEJ WIELKIEJ DZIESIĄTKI (FUNKCJE DO ZARZĄDZANIA W SETTINGS)
+    // DEFINICJA NASZEJ WIELKIEJ DZIESIĄTKI
     var proFeatures = [
         { id: 'adkiller', name: '💥 Ad-Killer (Tryb Przetrwania)', key: 'pro_mod_adkiller', color: '#ffaa66' },
         { id: 'fps', name: '📊 FPS & Performance HUD', key: 'pro_mod_fps', color: '#66ffaa' },
@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.4 (Dodano FPS & Perf HUD) załadowana ---");
+    console.log("--- Menu.js Wersja 7.5 (Video Accelerator) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -104,10 +104,7 @@
             var menuEl = clone.querySelector('#pro-menu'); if (menuEl) menuEl.remove();
             var fabEl = clone.querySelector('#pro-fab'); if (fabEl) fabEl.remove();
             var vcEl = clone.querySelector('#__vconsole'); if (vcEl) vcEl.remove();
-            
-            // Czyścimy HUD z zapisywanego stanu, żeby nie duplikować
             var fpsHud = clone.querySelector('#pro-fps-hud'); if (fpsHud) fpsHud.remove();
-            
             localStorage.setItem('pro_persisted_html', clone.innerHTML);
         }
     });
@@ -154,7 +151,6 @@
 
             .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
             
-            /* Styl dla HUDa FPS */
             #pro-fps-hud { position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: #66ffaa; padding: 4px 10px; border-radius: 8px; font-family: monospace; font-size: 12px; font-weight: bold; z-index: 999998; border: 1px solid rgba(102,255,170,0.3); backdrop-filter: blur(5px); pointer-events: none; user-select: none; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         `;
         d.head.appendChild(proStyles);
@@ -167,7 +163,6 @@
         menu = d.createElement('div');
         menu.id = 'pro-menu';
         
-        // WYGENEROWANIE STRUKTURY WIDOKÓW
         menu.innerHTML = `
             <div id="pro-view-main" class="pro-menu-view-container">
                 <div class="pro-menu-section-title">🛠️ Core Dev Tools</div>
@@ -236,12 +231,12 @@
                     menu.style.display = 'none';
                     if (feat.id === 'adkiller') runAdKillerLogic(true);
                     if (feat.id === 'unblur') runUnBlurLogic();
+                    if (feat.id === 'video') runVideoAcceleratorLogic(); // NOWE PODPIĘCIE
                     if (feat.id === 'fps') {
-                        // Jeśli wciśnięto skrót, wymuszamy restart/pokazanie HUD-a na wypadek, gdyby np. inny skrypt go usunął
-                        runFpsHudLogic(false); // wyłącz
-                        setTimeout(function(){ runFpsHudLogic(true); }, 50); // włącz ponownie
+                        runFpsHudLogic(false); 
+                        setTimeout(function(){ runFpsHudLogic(true); }, 50); 
                     }
-                    if (['video', 'qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
+                    if (['qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
                         alert("Wybrano: " + feat.name + "\n\nTa funkcja zostanie wdrożona w kolejnym kroku.");
                     }
                 };
@@ -272,9 +267,9 @@
             localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
             renderDynamicMenu(); 
             
-            // Bezpośrednia reakcja suwaków na logikę
             if (feat.id === 'adkiller' && checkbox.checked) runAdKillerLogic(false);
             if (feat.id === 'fps') runFpsHudLogic(checkbox.checked);
+            // Akcelerator wideo działa tylko "na klik" w skrót, suwak służy do przypinania go w menu
         };
 
         switchLabel.appendChild(checkbox);
@@ -320,10 +315,7 @@
         adSelectors.forEach(function(sel) {
             try {
                 d.querySelectorAll(sel).forEach(function(node) {
-                    if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { 
-                        node.remove(); 
-                        removed++; 
-                    }
+                    if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { node.remove(); removed++; }
                 });
             } catch(e){}
         });
@@ -333,13 +325,11 @@
         if (d.body.classList.contains('modal-open')) d.body.classList.remove('modal-open');
 
         if (!window.__adKillerObserver) {
-            window.__adKillerObserver = new MutationObserver(function(mutations) {
+            window.__adKillerObserver = new MutationObserver(function() {
                 adSelectors.forEach(function(sel) {
-                    try {
-                        d.querySelectorAll(sel).forEach(function(node) {
-                            if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) node.remove(); 
-                        });
-                    } catch(e){}
+                    try { d.querySelectorAll(sel).forEach(function(node) {
+                        if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) node.remove(); 
+                    });} catch(e){}
                 });
                 if (d.body.style.overflow === 'hidden') d.body.style.setProperty('overflow', 'auto', 'important');
             });
@@ -356,15 +346,11 @@
 
     function runFpsHudLogic(turnOn) {
         var existingHud = d.getElementById('pro-fps-hud');
-        
-        // Zatrzymanie HUD-a
         if (!turnOn) {
             if (existingHud) existingHud.remove();
             if (fpsReqId) cancelAnimationFrame(fpsReqId);
             return;
         }
-        
-        // Zabezpieczenie przed podwójnym startem
         if (existingHud) return; 
 
         var hud = d.createElement('div');
@@ -372,28 +358,21 @@
         hud.innerText = 'FPS: -- | RAM: -- MB';
         d.body.appendChild(hud);
 
-        // Reset liczników przed startem pętli
         fpsFrameCount = 0;
         fpsLastTime = performance.now();
 
         function updateFPS() {
             var now = performance.now();
             fpsFrameCount++;
-            
-            // Odświeżaj HUD dokładnie co 1 sekundę (1000ms)
             if (now - fpsLastTime >= 1000) {
-                // Skalowanie proporcjonalne w razie minimalnych przesunięć czasu
                 var fps = Math.round((fpsFrameCount * 1000) / (now - fpsLastTime));
-                
                 var memStr = '';
                 if (performance.memory) {
-                    var memUsage = Math.round(performance.memory.usedJSHeapSize / 1048576); // Konwersja B na MB
+                    var memUsage = Math.round(performance.memory.usedJSHeapSize / 1048576);
                     memStr = ' | RAM: ' + memUsage + 'MB';
                 }
-                
                 hud.innerText = 'FPS: ' + fps + memStr;
                 
-                // Dynamiczne kolorowanie na bazie klatek
                 if (fps >= 50) { hud.style.color = '#66ffaa'; hud.style.borderColor = 'rgba(102,255,170,0.3)'; }
                 else if (fps >= 30) { hud.style.color = '#ffee66'; hud.style.borderColor = 'rgba(255,238,102,0.3)'; }
                 else { hud.style.color = '#ff6666'; hud.style.borderColor = 'rgba(255,102,102,0.3)'; }
@@ -406,7 +385,39 @@
         fpsReqId = requestAnimationFrame(updateFPS);
     }
 
-    // --- 3. UN-BLUR ---
+    // --- 3. AKCELERATOR WIDEO ---
+    function runVideoAcceleratorLogic() {
+        var videos = d.querySelectorAll('video');
+        if (videos.length === 0) {
+            alert("🎬 Akcelerator Wideo:\nNie znaleziono żadnych tagów <video> na tej stronie.");
+            return;
+        }
+        
+        var speedPrompt = prompt("🎬 Znaleziono " + videos.length + " wideo na tej stronie.\n\nPodaj mnożnik prędkości odtwarzania:\n(np. 2 dla 200%, 16 aby błyskawicznie pominąć reklamy)", "2");
+        
+        if (!speedPrompt) return; // Anulowano
+        
+        var speed = parseFloat(speedPrompt.replace(',', '.'));
+        if (isNaN(speed) || speed <= 0) {
+            alert("❌ Błąd: Wpisz prawidłową liczbę (np. 1.5, 2, 10).");
+            return;
+        }
+        
+        var applied = 0;
+        videos.forEach(function(v) {
+            try {
+                v.playbackRate = speed;
+                v.controls = true; // Wymuszamy pokazanie kontrolek na wypadek ukrytych odtwarzaczy
+                applied++;
+            } catch(e) {
+                console.error("Akcelerator błąd na wideo:", e);
+            }
+        });
+        
+        alert("🚀 Zakończono!\nPrzyspieszono " + applied + " wideo do prędkości " + speed + "x i wymuszono pokazanie kontrolek.");
+    }
+
+    // --- 4. UN-BLUR ---
     function runUnBlurLogic() {
         var unblurred = 0;
         d.querySelectorAll('*').forEach(function(el) {
@@ -469,12 +480,11 @@
     }
     
     // =========================================================================
-    // INICJALIZACJA AUTOMATYCZNA (AUTO-RUN DLA AKTYWNYCH MODUŁÓW TŁA)
+    // INICJALIZACJA AUTOMATYCZNA
     // =========================================================================
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 
 
-    // PIERWSZE RENDEROWANIE SKRÓTÓW NA BAZIE ZAPISANYCH USTAWIEŃ
     renderDynamicMenu();
     __updateDevKitBadge();
 })();

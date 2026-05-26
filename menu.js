@@ -2,7 +2,7 @@
     var d = document;
 
     // =========================================================================
-    // [ZMIANA - POMYSŁ NR 1] INICJALIZACJA SYSTEMU WYŁAPYWANIA BŁĘDÓW (ERROR BADGE)
+    // [KROK 1] INICJALIZACJA SYSTEMU WYŁAPYWANIA BŁĘDÓW (ERROR BADGE)
     // =========================================================================
     if (!window.__devKitErrors) {
         window.__devKitErrors = {
@@ -12,10 +12,20 @@
     }
 
     function __updateDevKitBadge() {
+        var count = window.__devKitErrors.count;
+        
+        // Aktualizacja badge na pływającym przycisku PRO
         var badge = d.getElementById('devkit-error-badge');
         if (badge) {
-            badge.innerText = window.__devKitErrors.count;
-            badge.style.setProperty('display', window.__devKitErrors.count > 0 ? 'flex' : 'none', 'important');
+            badge.innerText = count;
+            badge.style.setProperty('display', count > 0 ? 'flex' : 'none', 'important');
+        }
+
+        // Aktualizacja kółka z błędami wewnątrz menu obok Konsoli
+        var menuBadge = d.getElementById('menu-console-error-badge');
+        if (menuBadge) {
+            menuBadge.innerText = count;
+            menuBadge.style.setProperty('display', count > 0 ? 'inline-flex' : 'none', 'important');
         }
     }
 
@@ -37,7 +47,7 @@
         return false;
     };
 
-    // Przechwytywanie asynchronicznych Promise Rejections (np. błędy API)
+    // Przechwytywanie asynchronicznych Promise Rejections
     window.addEventListener('unhandledrejection', function(event) {
         window.__devKitErrors.count++;
         window.__devKitErrors.logs.push({
@@ -66,7 +76,7 @@
         }
     }
 
-    console.log("--- Menu.js Wersja 7.0 (Error Badge Enabled) załadowana ---");
+    console.log("--- Menu.js Wersja 7.5 (Frameless PRO + Integrated Console Badge) załadowana ---");
 
     // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -169,11 +179,11 @@
     // TWORZENIE STRUKTURY MENU PRO
     var menu = d.getElementById('pro-menu');
     if (!menu) {
-        // [ZMIANA] DODANIE STYLE DLA FAB I BADGE ABY BYŁY ZINTEGROWANE
         var proStyles = d.createElement('style');
         proStyles.innerHTML = `
-            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #222; border: 2px solid #ffd700; color: #ffd700; font-family: sans-serif; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-            #devkit-error-badge { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 9px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000000; }
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #222; border: none !important; color: #ffd700; font-family: sans-serif; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+            #devkit-error-badge { position: absolute; top: -3px; right: -3px; background: #ff3b30; color: white; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1000000; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: white !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 5px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; margin-left: 8px !important; vertical-align: middle !important; box-sizing: border-box !important; }
         `;
         d.head.appendChild(proStyles);
 
@@ -181,7 +191,6 @@
         fab.id = 'pro-fab';
         fab.innerText = 'PRO';
 
-        // [ZMIANA] WSTRZYKNIĘCIE BADGE DO ELEMENTU FAB
         var badge = d.createElement('div');
         badge.id = 'devkit-error-badge';
         badge.innerText = '0';
@@ -192,9 +201,8 @@
         menu = d.createElement('div');
         menu.id = 'pro-menu';
         menu.innerHTML = `
-            <button class="pro-menu-btn" id="btn-show-errors" style="background: rgba(255, 59, 48, 0.15) !important; border: 1px solid #ff3b30 !important; color: #ff8177 !important;">⚠️ Pokaż Błędy Strony</button>
             <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
-            <button class="pro-menu-btn" id="btn-console">💻 Konsola</button>
+            <button class="pro-menu-btn" id="btn-console" style="display: flex !important; align-items: center; justify-content: center;">💻 Konsola <span id="menu-console-error-badge">0</span></button>
             <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
             <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
             <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh (Experimental)</button>
@@ -204,7 +212,7 @@
 
         fab.onclick = function() {
             menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-            __updateDevKitBadge(); // Odśwież stan badge przy otwarciu menu
+            __updateDevKitBadge(); 
         };
     }
 
@@ -243,27 +251,6 @@
         }
     };
 
-    // [ZMIANA] OBSŁUGA NOWEGO PRZYCISKU POKAZYWANIA BŁĘDÓW
-    d.getElementById('btn-show-errors').onclick = function() {
-        menu.style.display = 'none';
-        if (window.__devKitErrors.logs.length === 0) {
-            alert("Brak wykrytych błędów na stronie! 🎉");
-            return;
-        }
-        var raport = "WYKRYTE BŁĘDY (" + window.__devKitErrors.count + "):\n\n";
-        window.__devKitErrors.logs.forEach(function(log, index) {
-            raport += "[" + (index + 1) + "] " + log.time + " | " + log.type + "\n";
-            raport += "Wiadomość: " + log.message + "\n";
-            raport += "Plik: " + log.file + " (Linia: " + log.line + ")\n";
-            raport += "---------------------------\n";
-        });
-        
-        var alertResult = confirm(raport + "\n\nCzy chcesz otworzyć pełną Konsolę vConsole dewelopera?");
-        if (alertResult) {
-            loadAndShowVConsole('default');
-        }
-    };
-
     // ZAPISYWANIE OSTATNIEJ AKTYWNOŚCI I URUCHAMIANIE
     d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'edytor'); if(window.StartEdytorPro) window.StartEdytorPro(); };
     d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'console'); loadAndShowVConsole('default'); };
@@ -287,6 +274,5 @@
         }
     }
 
-    // Odpalenie aktualizacji po załadowaniu skryptu (na wypadek wcześniejszych błędów)
     __updateDevKitBadge();
 })();

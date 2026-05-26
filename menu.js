@@ -1,27 +1,32 @@
 (function() {
     var d = document;
 
+    // DEFINICJA NASZEJ WIELKIEJ DZIESIĄTKI (FUNKCJE DO ZARZĄDZANIA W SETTINGS)
+    var proFeatures = [
+        { id: 'adkiller', name: '💥 Ad-Killer (Tryb Przetrwania)', key: 'pro_mod_adkiller', color: '#ffaa66' },
+        { id: 'fps', name: '📊 FPS & Performance HUD', key: 'pro_mod_fps', color: '#66ffaa' },
+        { id: 'video', name: '🎬 Akcelerator Wideo', key: 'pro_mod_video', color: '#ffee66' },
+        { id: 'qr', name: '🔮 Transfer QR', key: 'pro_mod_qr', color: '#ff66cc' },
+        { id: 'unblur', name: '🔓 Un-Blur PRO', key: 'pro_mod_unblur', color: '#aaccff' },
+        { id: 'linkspy', name: '🕵️ Link Spy / Detektyw', key: 'pro_mod_linkspy', color: '#cc99ff' },
+        { id: 'antipopup', name: '🚫 Anti-PopUp EXTREME', key: 'pro_mod_antipopup', color: '#ff6666' },
+        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode', key: 'pro_mod_darkmode', color: '#bbbbbb' }
+    ];
+
     // =========================================================================
-    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE (CZERWONE KÓŁKA)
+    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE
     // =========================================================================
     if (!window.__devKitErrors) {
-        window.__devKitErrors = {
-            count: 0,
-            logs: []
-        };
+        window.__devKitErrors = { count: 0, logs: [] };
     }
 
     function __updateDevKitBadge() {
         var count = window.__devKitErrors.count;
-        
-        // Kółko na głównym przycisku PRO
         var badge = d.getElementById('devkit-error-badge');
         if (badge) {
             badge.innerText = count;
             badge.style.setProperty('display', count > 0 ? 'flex' : 'none', 'important');
         }
-
-        // Kółko wewnątrz menu na przycisku "Konsola"
         var menuBadge = d.getElementById('menu-console-error-badge');
         if (menuBadge) {
             menuBadge.innerText = count;
@@ -49,7 +54,7 @@
     });
     // =========================================================================
 
-    // [KROK 0] BEZPIECZEŃSTWO - INTELIGENTNE OSTRZEŻENIE (SECURITY GUARD)
+    // BEZPIECZEŃSTWO - SECURITY GUARD
     var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
     var currentUrl = window.location.href.toLowerCase();
     var isSensitive = sensitiveKeywords.some(function(keyword) {
@@ -57,80 +62,48 @@
     });
 
     if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto, że próbujesz uruchomić skrypt na stronie zawierającej wrażliwe dane (logowanie, bankowość, płatności).\n\nUruchamianie zewnętrznych narzędzi (bookmarkletów) w takich miejscach niesie ryzyko przejęcia poufnych informacji. Jeśli ufasz temu skryptowi i wiesz co robisz, kliknij OK. W przeciwnym razie kliknij Anuluj.");
-        if (!proceed) {
-            console.warn("🔒 [PRO] Uruchomienie zablokowane ze względów bezpieczeństwa.");
-            return; 
-        }
+        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto wrażliwe dane na stronie. Czy na pewno chcesz uruchomić skrypt?");
+        if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 6.8 (Gradient PRO 19px + Space-Between Console) załadowana ---");
+    console.log("--- Menu.js Wersja 7.0 (Settings Interface Modular System) załadowana ---");
 
-    // [KROK 1] PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
+    // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
     var savedHTML = localStorage.getItem('pro_persisted_html');
-
     if (isSaveOnRefreshActive && savedHTML) {
         d.body.innerHTML = savedHTML;
-        console.log("🚀 [PRO] Stan struktury HTML został pomyślnie przywrócony!");
     }
 
-    // Ukrycie domyślnego przycisku vConsole na stronie
+    // Ukrycie domyślnego przycisku vConsole
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
 
-    // FUNKCJA STYLIZUJĄCA vConsole
     function applyGannewTheme() {
         var vcDom = d.getElementById('__vconsole');
         if (!vcDom) return;
-
         var targetRoot = vcDom.shadowRoot || vcDom;
         if (targetRoot.querySelector('#gannew-devkit-theme')) return; 
-
         var style = d.createElement('style');
         style.id = 'gannew-devkit-theme';
         style.textContent = `
-            .vc-main, .vc-content, .vc-panel, .vc-logbox { background-color: rgba(10, 13, 20, 0.82) !important; background: rgba(10, 13, 20, 0.82) !important; }
-            .vc-main { border-radius: 20px 20px 0 0 !important; border-top: 3px solid #ffd700 !important; overflow: hidden !important; box-shadow: 0 -15px 40px rgba(0,0,0,0.85) !important; font-family: 'Segoe UI Variable Display', -apple-system, sans-serif !important; backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important; }
-            .vc-tabbar { background-color: rgba(17, 22, 34, 0.7) !important; border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important; height: 44px !important; display: flex !important; align-items: center !important; padding: 0 !important; }
+            .vc-main, .vc-content, .vc-panel, .vc-logbox { background-color: rgba(10, 13, 20, 0.82) !important; }
+            .vc-main { border-radius: 20px 20px 0 0 !important; border-top: 3px solid #ffd700 !important; font-family: sans-serif !important; backdrop-filter: blur(14px) !important; }
+            .vc-tabbar { background-color: rgba(17, 22, 34, 0.7) !important; border-bottom: 2px solid rgba(255, 215, 0, 0.3) !important; height: 44px !important; }
             .vc-tabbar .vc-tab:not(.vc-actived):not(.vc-active) { display: none !important; }
-            .vc-tabbar .vc-tab.vc-actived, .vc-tabbar .vc-tab.vc-active { width: 100% !important; color: #ffd700 !important; border-bottom: 3px solid #ffd700 !important; background-color: transparent !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.6) !important; font-size: 14px !important; letter-spacing: 0.12em !important; text-transform: uppercase !important; display: flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; }
-            .vc-tabbar .vc-tab::after, .vc-topbar .vc-tab::after { display: none !important; content: none !important; }
-            .vc-content { padding-top: 20px !important; padding-left: 12px !important; padding-right: 12px !important; }
-            .vc-panel[data-plugin="element"] *, .vc-html-tree *, div[class*="element-node"] { font-family: 'JetBrains Mono', 'Fira Code', monospace !important; font-size: 13px !important; line-height: 1.8 !important; }
-            div[class*="element-node"], .vc-html-tree div { border-left: 1px dotted rgba(255, 215, 0, 0.15) !important; padding-left: 14px !important; margin-left: 6px !important; }
-            .vc-panel .vc-html-tag, span[class*="tag"], span[class*="node-tag"] { color: #51afef !important; font-weight: bold !important; }
-            .vc-panel .vc-html-attr-name, span[class*="attr-name"] { color: #e5c07b !important; font-weight: 500 !important; }
-            .vc-panel .vc-html-attr-val, span[class*="attr-val"], span[class*="attr-value"] { color: #98c379 !important; }
-            .vc-panel { color: #abb2bf !important; }
-            .vc-toggle-btn, span[class*="toggle"], i[class*="arrow"] { color: #ffd700 !important; font-weight: 900 !important; }
-            div[class*="element-node"]:hover { background-color: rgba(255, 215, 0, 0.04) !important; border-radius: 4px !important; }
-            .vc-topbar { background-color: transparent !important; border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important; height: 38px !important; }
-            .vc-topbar .vc-tab { color: #8b949e !important; font-weight: 600 !important; }
-            .vc-topbar .vc-tab.vc-actived { color: #ffd700 !important; border-bottom: 2px solid #ffd700 !important; }
-            .vc-logbox .vc-item { border-bottom: 1px solid rgba(255,255,255,0.02) !important; padding: 10px 14px !important; margin: 2px 6px !important; border-radius: 6px !important; }
-            .vc-logbox .vc-item:nth-child(even) { background-color: rgba(255, 255, 255, 0.02) !important; }
-            ::-webkit-scrollbar { width: 6px !important; height: 6px !important; }
-            ::-webkit-scrollbar-track { background: transparent !important; }
-            ::-webkit-scrollbar-thumb { background: #c5a037 !important; border-radius: 10px !important; }
-            .vc-toolbar { background-color: rgba(17, 22, 34, 0.7) !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; padding: 6px !important; }
-            .vc-toolbar .vc-btn { background: rgba(22, 27, 38, 0.85) !important; color: #e5c07b !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; margin: 0 4px !important; font-size: 13px !important; font-weight: 700 !important; }
-            .vc-cmd { background-color: transparent !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; padding: 8px !important; }
-            .vc-cmd-input, .vc-search-input, input[class*="input"] { background-color: rgba(22, 27, 38, 0.85) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 10px !important; color: #ffd700 !important; font-family: 'JetBrains Mono', monospace !important; padding: 8px 12px !important; }
-            .vc-cmd-btn { background: #ffd700 !important; color: #0a0d14 !important; border-radius: 10px !important; font-weight: 800 !important; }
+            .vc-tabbar .vc-tab.vc-actived, .vc-tabbar .vc-tab.vc-active { width: 100% !important; color: #ffd700 !important; text-transform: uppercase !important; display: flex !important; align-items: center; justify-content: center; }
+            .vc-logbox .vc-item { border-bottom: 1px solid rgba(255,255,255,0.02) !important; padding: 10px 14px !important; }
         `;
         targetRoot.appendChild(style);
     }
 
-    // AUTOMATYCZNY ZAPIS KODU PRZED ZAMKNIĘCIEM STRONY
     window.addEventListener('beforeunload', function() {
         if (localStorage.getItem('pro_save_on_refresh') === 'true') {
             var clone = d.body.cloneNode(true);
             var menuEl = clone.querySelector('#pro-menu'); if (menuEl) menuEl.remove();
             var fabEl = clone.querySelector('#pro-fab'); if (fabEl) fabEl.remove();
             var vcEl = clone.querySelector('#__vconsole'); if (vcEl) vcEl.remove();
-            var themeEl = clone.querySelector('#gannew-devkit-theme'); if (themeEl) themeEl.remove();
             localStorage.setItem('pro_persisted_html', clone.innerHTML);
         }
     });
@@ -138,137 +111,235 @@
     function loadAndShowVConsole(tabName) {
         var triggerVConsole = function() {
             try {
-                if (!window.vConsoleInstance) {
-                    window.vConsoleInstance = new window.VConsole({ theme: 'dark' });
-                }
+                if (!window.vConsoleInstance) window.vConsoleInstance = new window.VConsole({ theme: 'dark' });
                 window.vConsoleInstance.show();
-                if (typeof window.vConsoleInstance.showPlugin === 'function' && tabName) {
-                    window.vConsoleInstance.showPlugin(tabName);
-                } else if (typeof window.vConsoleInstance.showTab === 'function' && tabName) {
-                    window.vConsoleInstance.showTab(tabName);
+                if (tabName) {
+                    if (typeof window.vConsoleInstance.showPlugin === 'function') window.vConsoleInstance.showPlugin(tabName);
+                    else if (typeof window.vConsoleInstance.showTab === 'function') window.vConsoleInstance.showTab(tabName);
                 }
                 applyGannewTheme();
-                setTimeout(applyGannewTheme, 50);
-                setTimeout(applyGannewTheme, 250);
-            } catch(e) {
-                console.error("Błąd vConsole: ", e);
-            }
+            } catch(e){}
         };
-
-        if (window.VConsole) { triggerVConsole(); } 
+        if (window.VConsole) triggerVConsole(); 
         else {
-            var s = d.createElement('script');
-            s.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js';
-            s.onload = triggerVConsole;
-            d.head.appendChild(s);
+            var s = d.createElement('script'); s.src = 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js'; s.onload = triggerVConsole; d.head.appendChild(s);
         }
     }
 
-    // TWORZENIE STRUKTURY MENU PRO
+    // TWORZENIE STRUKTURY MENU I STYLE
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var proStyles = d.createElement('style');
         proStyles.innerHTML = `
-            /* [NOWOŚĆ] Gradient z obrazka, większa i pogrubiona czcionka (19px) */
-            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 19px !important; font-weight: 900 !important; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); user-select: none; }
+            #pro-fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7abcff, #c39eff) !important; border: none !important; color: #ffffff !important; font-size: 19px !important; font-weight: 900 !important; display: flex; align-items: center; justify-content: center; z-index: 999999; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); user-select: none; }
+            #devkit-error-badge { position: absolute; top: -2px; right: -2px; background: #ff3b30 !important; color: #ffffff !important; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; z-index: 1000000; }
+            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; }
             
-            /* Czerwone jaskrawe kółka powiadomień o błędach */
-            #devkit-error-badge { position: absolute; top: -2px; right: -2px; background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; padding: 2px; border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(255,0,0,0.4); z-index: 1000000; }
-            #menu-console-error-badge { background: #ff3b30 !important; color: #ffffff !important; font-family: sans-serif !important; font-size: 11px !important; font-weight: bold !important; min-width: 18px !important; height: 18px !important; padding: 0 6px !important; border-radius: 9px !important; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(255,0,0,0.3) !important; }
+            #pro-menu { max-height: 80vh !important; overflow-y: auto !important; display: none; flex-direction: column; }
+            .pro-menu-view-container { width: 100%; display: flex; flex-direction: column; }
+            
+            /* Style dla wierszy ustawień */
+            .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
+            .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
+            .pro-settings-checkbox { width: 18px !important; height: 18px !important; cursor: pointer !important; accent-color: #7abcff !important; }
+            .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
         `;
         d.head.appendChild(proStyles);
 
         var fab = d.createElement('div');
-        fab.id = 'pro-fab';
-        fab.innerText = 'PRO';
-        
-        var badge = d.createElement('div');
-        badge.id = 'devkit-error-badge';
-        badge.innerText = '0';
-        fab.appendChild(badge);
-        
-        d.body.appendChild(fab);
+        fab.id = 'pro-fab'; fab.innerText = 'PRO';
+        var badge = d.createElement('div'); badge.id = 'devkit-error-badge'; badge.innerText = '0';
+        fab.appendChild(badge); d.body.appendChild(fab);
 
         menu = d.createElement('div');
         menu.id = 'pro-menu';
+        
+        // WYGENEROWANIE STRUKTURY WIDOKÓW (GŁÓWNY I USTAWIENIA)
         menu.innerHTML = `
-            <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
-            
-            <button class="pro-menu-btn" id="btn-console" style="display: flex !important; justify-content: space-between !important; align-items: center !important; text-align: left;">
-                <span>💻 Konsola</span>
-                <span id="menu-console-error-badge">0</span>
-            </button>
-            
-            <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
-            <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
-            <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh (Experimental)</button>
-            <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Zamknij Narzędzia</button>
+            <div id="pro-view-main" class="pro-menu-view-container">
+                <div class="pro-menu-section-title">🛠️ Core Dev Tools</div>
+                <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
+                <button class="pro-menu-btn" id="btn-console" style="display: flex !important; justify-content: space-between !important; align-items: center !important; text-align: left;">
+                    <span>💻 Konsola</span>
+                    <span id="menu-console-error-badge">0</span>
+                </button>
+                <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
+                <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
+                <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh</button>
+                
+                <div id="pro-dynamic-shortcuts" class="pro-menu-view-container"></div>
+                
+                <button class="pro-menu-btn" id="btn-go-settings" style="background: rgba(255,255,255,0.07) !important; color: #ffd700 !important; font-weight: bold !important; margin-top: 10px;">⚙️ Ustawienia DevKit</button>
+                <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Zamknij Narzędzia</button>
+            </div>
+
+            <div id="pro-view-settings" class="pro-menu-view-container" style="display: none;">
+                <div class="pro-menu-section-title" style="color: #7abcff !important; border-color: rgba(122,188,255,0.2) !important;">⚙️ Panel Konfiguracji PRO</div>
+                <div id="pro-settings-list" style="margin-bottom: 10px;"></div>
+                <button class="pro-menu-btn accent" id="btn-back-to-main" style="background: linear-gradient(135deg, #7abcff, #c39eff) !important; color: white !important;">🔙 Wróć do Menu</button>
+            </div>
         `;
         d.body.appendChild(menu);
 
         fab.onclick = function() {
-            menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-            __updateDevKitBadge();
+            var isVisible = menu.style.display === 'flex';
+            menu.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) {
+                // Zawsze wracaj do głównego menu przy otwieraniu panelu na nowo
+                d.getElementById('pro-view-main').style.display = 'flex';
+                d.getElementById('pro-view-settings').style.display = 'none';
+                __updateDevKitBadge();
+            }
         };
     }
 
-    // OBSŁUGA DYNAMICZNEGO WYGLĄDU PRZYCISKU "SAVE ON REFRESH"
+    // GENEROWANIE WIDŻETÓW W USTAWIENIACH I CHALLLENGE DLA CHECKBOXÓW
+    var settingsListContainer = d.getElementById('pro-settings-list');
+    var shortcutsContainer = d.getElementById('pro-dynamic-shortcuts');
+
+    function renderDynamicMenu() {
+        shortcutsContainer.innerHTML = ''; // Czyszczenie starych skrótów w menu głównym
+        var hasDynamicItems = false;
+
+        proFeatures.forEach(function(feat) {
+            var isActive = localStorage.getItem(feat.key) === 'true';
+            
+            if (isActive) {
+                if (!hasDynamicItems) {
+                    // Dodaj nagłówek sekcji, jeśli pojawi się choć jeden przypięty przycisk
+                    var title = d.createElement('div');
+                    title.className = 'pro-menu-section-title';
+                    title.style.color = '#7abcff';
+                    title.style.borderColor = 'rgba(122,188,255,0.15)';
+                    title.innerText = '🚀 Przypięte Funkcje PRO';
+                    shortcutsContainer.appendChild(title);
+                    hasDynamicItems = true;
+                }
+
+                // Tworzenie dynamicznego przycisku w menu głównym
+                var btn = d.createElement('button');
+                btn.className = 'pro-menu-btn';
+                btn.id = 'btn-run-' + feat.id;
+                btn.style.setProperty('color', feat.color, 'important');
+                btn.innerText = feat.name;
+                
+                // Przypisanie logiki wykonawczej (podpięte pod zrobione już Ad-Killer i UnBlur)
+                btn.onclick = function() {
+                    menu.style.display = 'none';
+                    if (feat.id === 'adkiller') runAdKillerLogic();
+                    if (feat.id === 'unblur') runUnBlurLogic();
+                    if (['fps', 'video', 'qr', 'linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
+                        alert("Wybrano: " + feat.name + "\n\nTa funkcja jest zarejestrowana w module zarządcy! Skonfigurujemy jej działanie w kolejnym kroku.");
+                    }
+                };
+                shortcutsContainer.appendChild(btn);
+            }
+        });
+    }
+
+    // Budowanie listy checkboxów w widoku ustawień
+    proFeatures.forEach(function(feat) {
+        var row = d.createElement('div');
+        row.className = 'pro-settings-row';
+        
+        var label = d.createElement('span');
+        label.className = 'pro-settings-label';
+        label.innerText = feat.name;
+        
+        var checkbox = d.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'pro-settings-checkbox';
+        checkbox.checked = localStorage.getItem(feat.key) === 'true';
+        
+        checkbox.onchange = function() {
+            localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
+            renderDynamicMenu(); // Natychmiastowa aktualizacja wyglądu głównego menu
+        };
+
+        row.appendChild(label);
+        row.appendChild(checkbox);
+        settingsListContainer.appendChild(row);
+    });
+
+    // NAWIGACJA WIDOKÓW (PRZEŁĄCZANIE)
+    d.getElementById('btn-go-settings').onclick = function() {
+        d.getElementById('pro-view-main').style.display = 'none';
+        d.getElementById('pro-view-settings').style.display = 'flex';
+    };
+
+    d.getElementById('btn-back-to-main').onclick = function() {
+        d.getElementById('pro-view-settings').style.display = 'none';
+        d.getElementById('pro-view-main').style.display = 'flex';
+    };
+
+    // =========================================================================
+    // LOGIKI PROCEDURALNE (AD-KILLER I UNBLUR)
+    // =========================================================================
+    function runAdKillerLogic() {
+        var selectors = ['div[class*="cookie"]', 'div[id*="cookie"]', 'div[class*="consent"]', 'div[id*="consent"]', 'div[class*="modal"]', 'div[id*="modal"]', 'div[class*="popup"]', 'div[id*="popup"]', 'iframe[src*="googleads"]', 'div[class*="banner"]', '.cmp-root', '#cmp-wrapper'];
+        var removed = 0;
+        selectors.forEach(function(sel) {
+            try {
+                d.querySelectorAll(sel).forEach(function(node) {
+                    if (node !== menu && node !== d.getElementById('pro-fab') && !node.contains(menu)) { node.remove(); removed++; }
+                });
+            } catch(e){}
+        });
+        d.body.style.setProperty('overflow', 'auto', 'important');
+        d.documentElement.style.setProperty('overflow', 'auto', 'important');
+        alert("💥 Ad-Killer: Oczyszczono stronę z " + removed + " elementów blokujących.");
+    }
+
+    function runUnBlurLogic() {
+        var unblurred = 0;
+        d.querySelectorAll('*').forEach(function(el) {
+            if (el === menu || el === d.getElementById('pro-fab')) return;
+            var s = window.getComputedStyle(el);
+            if (s.filter.indexOf('blur') !== -1 || s.webkitFilter.indexOf('blur') !== -1) {
+                el.style.setProperty('filter', 'none', 'important');
+                el.style.setProperty('-webkit-filter', 'none', 'important');
+                unblurred++;
+            }
+            if (s.userSelect === 'none' || s.pointerEvents === 'none') {
+                el.style.setProperty('user-select', 'text', 'important');
+                el.style.setProperty('pointer-events', 'auto', 'important');
+            }
+        });
+        alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
+    }
+
+    // OBSŁUGA RATUNKU "SAVE ON REFRESH"
     var btnSaveRefresh = d.getElementById('btn-save-refresh');
     if (isSaveOnRefreshActive) {
         btnSaveRefresh.style.setProperty('background', 'rgba(76, 175, 80, 0.2)', 'important');
         btnSaveRefresh.style.setProperty('border', '1px solid #4caf50', 'important');
         btnSaveRefresh.style.setProperty('color', '#81c784', 'important');
-        btnSaveRefresh.innerText = '💾 Save on refresh: [AKTYWNY]';
+        btnSaveRefresh.innerText = '💾 Save on refresh: [ON]';
     } else {
         btnSaveRefresh.style.setProperty('background', 'rgba(255, 152, 0, 0.1)', 'important');
         btnSaveRefresh.style.setProperty('border', '1px solid rgba(255, 152, 0, 0.4)', 'important');
         btnSaveRefresh.style.setProperty('color', '#ffb74d', 'important');
     }
 
-    // LOGIKA PRZYCISKU Z POTWIERDZENIEM OK / ANULUJ
     btnSaveRefresh.onclick = function() {
         if (localStorage.getItem('pro_save_on_refresh') !== 'true') {
-            var stan = confirm("⚠️ FUNKCJA EKSPERYMALNA\n\nCzy na pewno chcesz włączyć 'Save on refresh'? \n\nSkrypt spróbuje zamrozić i odtworzyć obecny stan kodu HTML po odświeżeniu strony. Może to kolidować z niektórymi zaawansowanymi skryptami na oryginalnej witrynie.");
-            if (stan) {
+            if (confirm("Uaktywnić 'Save on refresh'? Zamrozi strukturę HTML.")) {
                 localStorage.setItem('pro_save_on_refresh', 'true');
                 var clone = d.body.cloneNode(true);
                 var m = clone.querySelector('#pro-menu'); if(m) m.remove();
                 var f = clone.querySelector('#pro-fab'); if(f) f.remove();
-                var v = clone.querySelector('#__vconsole'); if(v) v.remove();
                 localStorage.setItem('pro_persisted_html', clone.innerHTML);
                 location.reload();
             }
         } else {
             localStorage.removeItem('pro_save_on_refresh');
             localStorage.removeItem('pro_persisted_html');
-            localStorage.removeItem('pro_last_active_tool');
-            alert("Funkcja została wyłączona. Przy następnym odświeżeniu strona powróci do swojego oryginalnego stanu.");
             location.reload();
         }
     };
 
-    // ZAPISYWANIE OSTATNIEJ AKTYWNOŚCI I URUCHAMIANIE
+    // AKCJE PRZYCISKÓW PODSTAWOWYCH
     d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'edytor'); if(window.StartEdytorPro) window.StartEdytorPro(); };
     d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'console'); loadAndShowVConsole('default'); };
     d.getElementById('btn-elements').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'element'); loadAndShowVConsole('element'); };
-    d.getElementById('btn-network').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'network'); loadAndShowVConsole('network'); };
-    d.getElementById('btn-close-tools').onclick = function() { if(window.vConsoleInstance) window.vConsoleInstance.hide(); menu.style.display = 'none'; localStorage.removeItem('pro_last_active_tool'); };
-
-    // SYSTEM INTELIGENTNEGO AUTOWZNAWIANIA SESJI
-    if (isSaveOnRefreshActive) {
-        var lastTool = localStorage.getItem('pro_last_active_tool');
-        if (lastTool === 'edytor') {
-            var checkEditor = setInterval(function() {
-                if (typeof window.StartEdytorPro === 'function') {
-                    clearInterval(checkEditor);
-                    window.StartEdytorPro();
-                }
-            }, 50);
-            setTimeout(function() { clearInterval(checkEditor); }, 3000);
-        } else if (lastTool) {
-            loadAndShowVConsole(lastTool === 'console' ? 'default' : lastTool);
-        }
-    }
-    
-    __updateDevKitBadge();
-})();
+    d.getElementById('btn-network').onclick = function() { menu.style.displa

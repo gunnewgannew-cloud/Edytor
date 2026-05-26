@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.0 (Settings Interface Modular System) załadowana ---");
+    console.log("--- Menu.js Wersja 7.1 (Modern UI Toggles) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -141,7 +141,15 @@
             /* Style dla wierszy ustawień */
             .pro-settings-row { display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 10px 12px !important; background: rgba(255,255,255,0.03) !important; margin: 4px 0 !important; border-radius: 8px !important; border: 1px solid rgba(255,255,255,0.05) !important; }
             .pro-settings-label { color: #e0e0e0 !important; font-size: 13px !important; font-family: sans-serif !important; font-weight: 500 !important; }
-            .pro-settings-checkbox { width: 18px !important; height: 18px !important; cursor: pointer !important; accent-color: #7abcff !important; }
+            
+            /* NOWE STYLE: Nowoczesne Suwaki (Toggles) */
+            .pro-toggle-switch { position: relative; display: inline-block; width: 38px; height: 22px; margin-left: 10px; }
+            .pro-toggle-switch input { opacity: 0; width: 0; height: 0; }
+            .pro-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 22px; border: 1px solid rgba(255,255,255,0.2); }
+            .pro-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: #888; transition: .3s; border-radius: 50%; }
+            .pro-toggle-switch input:checked + .pro-slider { background-color: rgba(122,188,255,0.2); border-color: #7abcff; }
+            .pro-toggle-switch input:checked + .pro-slider:before { transform: translateX(16px); background-color: #7abcff; box-shadow: 0 0 8px rgba(122,188,255,0.6); }
+
             .pro-menu-section-title { font-size: 11px !important; color: #ffd700 !important; margin: 10px 6px 4px 6px !important; font-weight: bold !important; opacity: 0.8 !important; letter-spacing: 1px !important; text-transform: uppercase !important; border-bottom: 1px solid rgba(255,215,0,0.15) !important; padding-bottom: 2px !important; font-family: sans-serif !important; }
         `;
         d.head.appendChild(proStyles);
@@ -193,7 +201,7 @@
         };
     }
 
-    // GENEROWANIE WIDŻETÓW W USTAWIENIACH I CHALLLENGE DLA CHECKBOXÓW
+    // GENEROWANIE WIDŻETÓW W USTAWIENIACH
     var settingsListContainer = d.getElementById('pro-settings-list');
     var shortcutsContainer = d.getElementById('pro-dynamic-shortcuts');
 
@@ -206,7 +214,6 @@
             
             if (isActive) {
                 if (!hasDynamicItems) {
-                    // Dodaj nagłówek sekcji, jeśli pojawi się choć jeden przypięty przycisk
                     var title = d.createElement('div');
                     title.className = 'pro-menu-section-title';
                     title.style.color = '#7abcff';
@@ -216,14 +223,12 @@
                     hasDynamicItems = true;
                 }
 
-                // Tworzenie dynamicznego przycisku w menu głównym
                 var btn = d.createElement('button');
                 btn.className = 'pro-menu-btn';
                 btn.id = 'btn-run-' + feat.id;
                 btn.style.setProperty('color', feat.color, 'important');
                 btn.innerText = feat.name;
                 
-                // Przypisanie logiki wykonawczej (podpięte pod zrobione już Ad-Killer i UnBlur)
                 btn.onclick = function() {
                     menu.style.display = 'none';
                     if (feat.id === 'adkiller') runAdKillerLogic();
@@ -237,7 +242,7 @@
         });
     }
 
-    // Budowanie listy checkboxów w widoku ustawień
+    // Budowanie listy z NOWYMI SUWAKAMI (Toggles) w widoku ustawień
     proFeatures.forEach(function(feat) {
         var row = d.createElement('div');
         row.className = 'pro-settings-row';
@@ -246,18 +251,27 @@
         label.className = 'pro-settings-label';
         label.innerText = feat.name;
         
+        // Kontener suwaka
+        var switchLabel = d.createElement('label');
+        switchLabel.className = 'pro-toggle-switch';
+        
         var checkbox = d.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.className = 'pro-settings-checkbox';
         checkbox.checked = localStorage.getItem(feat.key) === 'true';
+        
+        var slider = d.createElement('span');
+        slider.className = 'pro-slider';
         
         checkbox.onchange = function() {
             localStorage.setItem(feat.key, checkbox.checked ? 'true' : 'false');
             renderDynamicMenu(); // Natychmiastowa aktualizacja wyglądu głównego menu
         };
 
+        switchLabel.appendChild(checkbox);
+        switchLabel.appendChild(slider);
+        
         row.appendChild(label);
-        row.appendChild(checkbox);
+        row.appendChild(switchLabel);
         settingsListContainer.appendChild(row);
     });
 

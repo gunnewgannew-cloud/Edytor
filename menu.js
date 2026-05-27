@@ -1,22 +1,22 @@
 (function() {
     var d = document;
 
-    // DEFINICJA NASZEJ POTĘŻNEJ DZIESIĄTKI (Dodano Wymuszacz Archiwum)
+    // DEFINITION OF THE POWERFUL TEN (Enterprise English Edition)
     var proFeatures = [
-        { id: 'adkiller', name: '💥 Ad-Killer (Tryb Przetrwania)', key: 'pro_mod_adkiller', color: '#ffaa66' },
+        { id: 'adkiller', name: '💥 Ad-Killer (Survival Mode)', key: 'pro_mod_adkiller', color: '#ffaa66' },
         { id: 'fps', name: '📊 FPS & Performance HUD', key: 'pro_mod_fps', color: '#66ffaa' },
-        { id: 'video', name: '🎬 Akcelerator Wideo', key: 'pro_mod_video', color: '#ffee66' },
-        { id: 'qr', name: '🔮 Transfer QR', key: 'pro_mod_qr', color: '#ff66cc' },
+        { id: 'video', name: '🎬 Video Accelerator', key: 'pro_mod_video', color: '#ffee66' },
+        { id: 'qr', name: '🔮 QR Code Transfer', key: 'pro_mod_qr', color: '#ff66cc' },
         { id: 'unblur', name: '🔓 Un-Blur PRO', key: 'pro_mod_unblur', color: '#aaccff' },
-        { id: 'linkspy', name: '🕵️ Link Spy / Detektyw', key: 'pro_mod_linkspy', color: '#cc99ff' },
+        { id: 'linkspy', name: '🕵️ Link Spy / Detective', key: 'pro_mod_linkspy', color: '#cc99ff' },
         { id: 'antipopup', name: '🚫 Anti-PopUp EXTREME', key: 'pro_mod_antipopup', color: '#ff6666' },
-        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' },
-        { id: 'antirick', name: '🛡️ Tarcza Anti Rick-Roll', key: 'pro_mod_antirick', color: '#ff3333' },
-        { id: 'archive', name: '⏳ Wymuszacz Archiwum (Wehikuł Czasu)', key: 'pro_mod_archive', color: '#ffd700' }
+        { id: 'darkmode', name: '🌙 Force Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' },
+        { id: 'antirick', name: '🛡️ Anti Rick-Roll Shield', key: 'pro_mod_antirick', color: '#ff3333' },
+        { id: 'archive', name: '⏳ Archive Enforcer (Time Machine)', key: 'pro_mod_archive', color: '#ffd700' }
     ];
 
     // =========================================================================
-    // [SYSTEM BŁĘDÓW] INICJALIZACJA I NASŁUCHIWANIE
+    // [ERROR SYSTEM] INITIALIZATION & MONITORING
     // =========================================================================
     if (!window.__devKitErrors) {
         window.__devKitErrors = { count: 0, logs: [] };
@@ -55,7 +55,7 @@
         __updateDevKitBadge();
     });
 
-    // BEZPIECZEŃSTWO - SECURITY GUARD
+    // SECURITY GUARD
     var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
     var currentUrl = window.location.href.toLowerCase();
     var isSensitive = sensitiveKeywords.some(function(keyword) {
@@ -63,13 +63,13 @@
     });
 
     if (isSensitive) {
-        var proceed = confirm("🚨 OSTRZEŻENIE BEZPIECZEŃSTWA (DevKit PRO)\n\nWykryto wrażliwe dane na stronie. Czy na pewno chcesz uruchomić skrypt?");
-        if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
+        var proceed = confirm("🚨 SECURITY WARNING (DevKit PRO)\n\nSensitive context keywords detected on this page. Are you sure you want to run the script?");
+        if (!proceed) { console.warn("🔒 Script execution aborted by user."); return; }
     }
 
-    console.log("--- Menu.js Wersja 8.5 (Archive & Time Edition) załadowana ---");
+    console.log("--- Menu.js Version 9.0 (Enterprise English Edition) Loaded ---");
 
-    // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
+    // PERSISTENCE STATE RESTORE
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
     var savedHTML = localStorage.getItem('pro_persisted_html');
     if (isSaveOnRefreshActive && savedHTML) {
@@ -128,7 +128,7 @@
         }
     }
 
-    // TWORZENIE STRUKTURY MENU I STYLE
+    // MENU DOM STRUCTURE & STYLES
     var menu = d.getElementById('pro-menu');
     if (!menu) {
         var proStyles = d.createElement('style');
@@ -167,25 +167,25 @@
         menu.innerHTML = `
             <div id="pro-view-main" class="pro-menu-view-container">
                 <div class="pro-menu-section-title">🛠️ Core Dev Tools</div>
-                <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edytuj Element</button>
+                <button class="pro-menu-btn accent" id="btn-edytor">⚡ Edit Element</button>
                 <button class="pro-menu-btn" id="btn-console" style="display: flex !important; justify-content: space-between !important; align-items: center !important; text-align: left;">
-                    <span>💻 Konsola</span>
+                    <span>💻 Console</span>
                     <span id="menu-console-error-badge">0</span>
                 </button>
-                <button class="pro-menu-btn" id="btn-elements">🔍 Struktura (DOM)</button>
-                <button class="pro-menu-btn" id="btn-network">🌐 Sieć (Network)</button>
+                <button class="pro-menu-btn" id="btn-elements">🔍 DOM Structure</button>
+                <button class="pro-menu-btn" id="btn-network">🌐 Network</button>
                 <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh</button>
                 
                 <div id="pro-dynamic-shortcuts" class="pro-menu-view-container"></div>
                 
-                <button class="pro-menu-btn" id="btn-go-settings" style="background: rgba(255,255,255,0.07) !important; color: #ffd700 !important; font-weight: bold !important; margin-top: 10px;">⚙️ Ustawienia DevKit</button>
-                <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Zamknij Narzędzia</button>
+                <button class="pro-menu-btn" id="btn-go-settings" style="background: rgba(255,255,255,0.07) !important; color: #ffd700 !important; font-weight: bold !important; margin-top: 10px;">⚙️ DevKit Settings</button>
+                <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Close Tools</button>
             </div>
 
             <div id="pro-view-settings" class="pro-menu-view-container" style="display: none;">
-                <div class="pro-menu-section-title" style="color: #7abcff !important; border-color: rgba(122,188,255,0.2) !important;">⚙️ Panel Konfiguracji PRO</div>
+                <div class="pro-menu-section-title" style="color: #7abcff !important; border-color: rgba(122,188,255,0.2) !important;">⚙️ PRO Config Panel</div>
                 <div id="pro-settings-list" style="margin-bottom: 10px;"></div>
-                <button class="pro-menu-btn accent" id="btn-back-to-main" style="background: linear-gradient(135deg, #7abcff, #c39eff) !important; color: white !important;">🔙 Wróć do Menu</button>
+                <button class="pro-menu-btn accent" id="btn-back-to-main" style="background: linear-gradient(135deg, #7abcff, #c39eff) !important; color: white !important;">🔙 Back to Menu</button>
             </div>
         `;
         d.body.appendChild(menu);
@@ -217,7 +217,7 @@
                     title.className = 'pro-menu-section-title';
                     title.style.color = '#7abcff';
                     title.style.borderColor = 'rgba(122,188,255,0.15)';
-                    title.innerText = '🚀 Przypięte Funkcje PRO';
+                    title.innerText = '🚀 Pinned PRO Features';
                     shortcutsContainer.appendChild(title);
                     hasDynamicItems = true;
                 }
@@ -301,7 +301,7 @@
     };
 
     // =========================================================================
-    // LOGIKI PROCEDURALNE
+    // FEATURE LOGICS
     // =========================================================================
     
     // --- 1. AD-KILLER ---
@@ -346,7 +346,7 @@
             window.__adKillerObserver.observe(d.documentElement, { childList: true, subtree: true });
         }
 
-        if (isManual) alert("💥 Ad-Killer (Survival):\nTarcza CSS aktywna. Usunięto fizycznie " + removed + " śmieci reklamowych. Strażnik czasu rzeczywistego czuwa!");
+        if (isManual) alert("💥 Ad-Killer (Survival):\nCSS Shield deployed. Physically removed " + removed + " garbage elements. Real-time background guard is active!");
     }
 
     // --- 2. FPS & PERFORMANCE HUD ---
@@ -395,20 +395,20 @@
         fpsReqId = requestAnimationFrame(updateFPS);
     }
 
-    // --- 3. AKCELERATOR WIDEO ---
+    // --- 3. VIDEO ACCELERATOR ---
     function runVideoAcceleratorLogic() {
         var videos = d.querySelectorAll('video');
         if (videos.length === 0) {
-            alert("🎬 Akcelerator Wideo:\nNie znaleziono żadnych tagów <video> na tej stronie.");
+            alert("🎬 Video Accelerator:\nNo HTML5 <video> tags detected on this page.");
             return;
         }
         
-        var speedPrompt = prompt("🎬 Znaleziono " + videos.length + " wideo na tej stronie.\n\nPodaj mnożnik prędkości odtwarzania:\n(np. 2 dla 200%, 16 aby błyskawicznie pominąć reklamy)", "2");
+        var speedPrompt = prompt("🎬 Found " + videos.length + " video elements.\n\nEnter playback speed multiplier:\n(e.g., 2 for 200%, 16 to instantly blast through ads)", "2");
         if (!speedPrompt) return; 
         
         var speed = parseFloat(speedPrompt.replace(',', '.'));
         if (isNaN(speed) || speed <= 0) {
-            alert("❌ Błąd: Wpisz prawidłową liczbę (np. 1.5, 2, 10).");
+            alert("❌ Error: Invalid speed value provided (try 1.5, 2, 4).");
             return;
         }
         
@@ -417,10 +417,10 @@
             try { v.playbackRate = speed; v.controls = true; applied++; } catch(e) {}
         });
         
-        alert("🚀 Zakończono!\nPrzyspieszono " + applied + " wideo do prędkości " + speed + "x i wymuszono pokazanie kontrolek.");
+        alert("🚀 Mission accomplished!\nAccelerated " + applied + " videos to " + speed + "x and forced native playback controls.");
     }
 
-    // --- 4. TRANSFER QR ---
+    // --- 4. QR CODE TRANSFER ---
     function runQrTransferLogic() {
         if (d.getElementById('pro-qr-modal')) return;
         var currentUrl = encodeURIComponent(window.location.href);
@@ -429,7 +429,7 @@
         overlay.id = 'pro-qr-modal';
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif;';
         var img = d.createElement('img'); img.src = qrApiUrl; img.style.cssText = 'width: 250px; height: 250px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); border: 3px solid #ff66cc; background: white; padding: 10px;';
-        var closeBtn = d.createElement('button'); closeBtn.innerText = '❌ Zamknij'; closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
+        var closeBtn = d.createElement('button'); closeBtn.innerText = '❌ Close'; closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
         var closeFunc = function() { overlay.remove(); };
         closeBtn.onclick = closeFunc; overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
         overlay.appendChild(img); overlay.appendChild(closeBtn); d.body.appendChild(overlay);
@@ -451,7 +451,7 @@
                 el.style.setProperty('pointer-events', 'auto', 'important');
             }
         });
-        alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
+        alert("🔓 Un-Blur PRO: Successfully bypassed CSS blurring filters in " + unblurred + " elements.");
     }
 
     // --- 6. LINK SPY ---
@@ -468,26 +468,26 @@
 
         links.forEach(function(link) {
             if (link.hasAttribute('data-spy-active') || link === menu || menu.contains(link)) return;
-            var href = link.href || 'Brak URL';
+            var href = link.href || 'No URL';
             var isExternal = href.indexOf(host) === -1 && href.startsWith('http');
             link.setAttribute('data-spy-active', 'true');
             link.style.setProperty('outline', isExternal ? '2px dashed #cc99ff' : '2px dashed #7abcff', 'important');
             link.style.setProperty('background', isExternal ? 'rgba(204, 153, 255, 0.1)' : 'rgba(122, 188, 255, 0.1)', 'important');
-            var badge = d.createElement('span'); badge.className = 'pro-spy-badge'; badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
+            var badge = d.createElement('span'); badge.className = 'pro-spy-badge'; badge.innerText = isExternal ? ' 🔗 EXT: ' + href : ' 🏠 INT: ' + href;
             badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
             link.appendChild(badge); highlighted++;
         });
-        alert("🕵️ Link Spy:\nPrześwietlono " + highlighted + " linków. Etykiety pojawią się przy najechaniu/kliknięciu.");
+        alert("🕵️ Link Spy:\nX-Ray complete! Intercepted " + highlighted + " links. Detailed hover tooltips injected.");
     }
 
     // --- 7. ANTI-POPUP EXTREME ---
     function runAntiPopUpLogic() {
-        if (window.__antiPopUpActive) { alert("🚫 Anti-PopUp EXTREME działa już w tle!\nSpokojnie, nic nie wyskoczy."); return; }
+        if (window.__antiPopUpActive) { alert("🚫 Anti-PopUp EXTREME engine is already active in the background!"); return; }
         window.__antiPopUpActive = true; window.__blockedCount = 0;
         var originalOpen = window.open;
         window.open = function() {
             window.__blockedCount++;
-            console.warn("🚫 [Anti-PopUp EXTREME] Zablokowano próbę otwarcia okna! (Zatrzymano " + window.__blockedCount + " prób)");
+            console.warn("🚫 [Anti-PopUp EXTREME] Blocked script window opening attempt #" + window.__blockedCount);
             return null; 
         };
         function pacifyLinks() {
@@ -497,10 +497,10 @@
         pacifyLinks();
         var popupObserver = new MutationObserver(function() { pacifyLinks(); });
         popupObserver.observe(d.documentElement, { childList: true, subtree: true });
-        alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są podświetlone czerwoną, kropkowaną linią).");
+        alert("🚫 Anti-PopUp EXTREME: ACTIVE!\n\n1. Programmatic window.open triggers neutralized.\n2. New-tab forcing links downgraded to same-tab navigation (marked with red dotted indicator).");
     }
 
-    // --- 8. DARK MODE ---
+    // --- 8. FORCE DARK MODE ---
     function runDarkModeLogic(isManual) {
         var existingStyle = d.getElementById('pro-darkmode-css');
         if (existingStyle) {
@@ -508,7 +508,7 @@
             if (window.__darkModeObserver) { window.__darkModeObserver.disconnect(); window.__darkModeObserver = null; }
             d.querySelectorAll('[data-dark-original-bg]').forEach(function(el) { el.style.backgroundColor = el.getAttribute('data-dark-original-bg'); el.removeAttribute('data-dark-original-bg'); });
             d.querySelectorAll('[data-dark-original-color]').forEach(function(el) { el.style.color = el.getAttribute('data-dark-original-color'); el.removeAttribute('data-dark-original-color'); });
-            if (isManual) alert("🌙 Wymuszacz Dark Mode PRO: Wyłączony. Przywrócono oryginalne barwy.");
+            if (isManual) alert("🌙 Force Dark Mode PRO: Disabled. Restored native stylesheets.");
             return;
         }
         var style = d.createElement('style'); style.id = 'pro-darkmode-css';
@@ -545,52 +545,48 @@
             mutations.forEach(function(mut) { mut.addedNodes.forEach(function(node) { if (node.nodeType === 1) processNodes(node); }); });
         });
         window.__darkModeObserver.observe(d.documentElement, { childList: true, subtree: true });
-        if (isManual) alert("🌙 Wymuszacz Dark Mode PRO:\n\nSilnik prześwietlił strukturę witryny. Jaskrawe, białe elementy zostały przyciemnione do komfortowego grafitu.");
+        if (isManual) alert("🌙 Force Dark Mode PRO: Active.\n\nSmart DOM analysis engine executed. High-contrast blinding components inverted to comfortable dark-graphite color palette.");
     }
 
-    // --- 9. TARCZA ANTI RICK-ROLL ---
+    // --- 9. ANTI RICK-ROLL SHIELD ---
     function runAntiRickRollLogic(isManual) {
-        if (window.__antiRickRollActive) { if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll jest już w pełni operacyjna!"); return; }
+        if (window.__antiRickRollActive) { if (isManual) alert("🛡️ Anti-Rick-Roll Passive Shield is fully operational!"); return; }
         window.__antiRickRollActive = true;
         var rickRollIds = ['dQw4w9WgXcQ', 'iik25wqIuFo', 'oHg5SJYRHA0', 'rickastley']; 
         var currentUrl = window.location.href;
         var isRickRoll = rickRollIds.some(function(id) { return currentUrl.indexOf(id) !== -1; });
         if (isRickRoll) {
             d.querySelectorAll('video, audio').forEach(function(media) { media.pause(); });
-            alert("🚨 KRYTYCZNE ZAGROŻENIE (DevKit PRO) 🚨\n\nPróba Rick-Rollu wykryta!\nZatrzymałem odtwarzacz wideo w ułamku sekundy. Twoja godność została uratowana. Uciekaj z tej strony!");
+            alert("🚨 CRITICAL THREAT MITIGATION (DevKit PRO) 🚨\n\nRick-Roll payload vector detected!\nTerminated media playback execution thread immediately. Your dignity has been secured. Evacuate this URL!");
         }
         d.addEventListener('click', function(e) {
             var target = e.target.closest('a'); if (!target || !target.href) return;
             var isTrap = rickRollIds.some(function(id) { return target.href.indexOf(id) !== -1; });
             if (isTrap) {
                 e.preventDefault(); e.stopPropagation();
-                alert("🚨 SYSTEM BEZPIECZEŃSTWA (DevKit PRO) 🚨\n\nUWAGA! Wykryto skrajnie niebezpieczny link. Ktoś właśnie próbował Cię zrickrollować.\n\nZablokowano ukryte przekierowanie na:\n" + target.href + "\n\nTwój znajomy myślał, że jest sprytny, ale DevKit czuwa. Jesteś bezpieczny.");
+                alert("🚨 SECURITY PROTOCOL BREACH (DevKit PRO) 🚨\n\nMalicious link payload intercepted. Someone tried to Rick-Roll you.\n\nBlocked hostile hidden redirect to:\n" + target.href + "\n\nTarget threat neutralized. You are safe.");
                 target.style.setProperty('border', '3px solid red', 'important');
                 target.style.setProperty('background', 'rgba(255, 0, 0, 0.2)', 'important');
-                target.innerText = "💥 ZNEUTRALIZOWANA PUŁAPKA (RICK-ROLL) 💥";
+                target.innerText = "💥 NEUTRALIZED TRAP (RICK-ROLL) 💥";
             }
         }, true);
-        if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll aktywowana!\n\nSystem pasywnie skanuje wszystkie linki. Nie klikniesz już nigdy w żaden ukryty teledysk Ricka Astleya.");
+        if (isManual) alert("🛡️ Anti-Rick-Roll Shield engaged!\n\nAll outbound links are now being audited. Cyber-trolling defense matrix is operational.");
     }
 
-    // --- 10. WYMUSZACZ ARCHIWUM (WEHIKUŁ CZASU) ---
+    // --- 10. ARCHIVE ENFORCER (TIME MACHINE) ---
     function runArchiveLogic() {
         var activeUrl = window.location.href;
-        // Ignorujemy puste/lokalne karty
         if (activeUrl.startsWith('about:') || activeUrl.startsWith('chrome:')) {
-            alert("⏳ Wehikuł Czasu:\nNie można zarchiwizować pustej karty systemowej.");
+            alert("⏳ Time Machine:\nCannot look up system tabs or void cards in the digital archives.");
             return;
         }
         
-        // Budujemy link do najnowszego zapisu w Wayback Machine
         var archiveUrl = 'https://web.archive.org/web/' + activeUrl;
-        
-        console.log("⏳ [Wehikuł Czasu] Przekierowanie do archiwum dla: " + activeUrl);
-        // Otwieramy archiwum w nowej karcie, by nie zamykać obecnej sesji deweloperskiej
+        console.log("⏳ [Time Machine] Dispatching payload window to Wayback Machine for: " + activeUrl);
         window.open(archiveUrl, '_blank');
     }
 
-    // OBSŁUGA RATUNKU "SAVE ON REFRESH"
+    // SAVE ON REFRESH CONTROLLER
     var btnSaveRefresh = d.getElementById('btn-save-refresh');
     if (isSaveOnRefreshActive) {
         btnSaveRefresh.style.setProperty('background', 'rgba(76, 175, 80, 0.2)', 'important');
@@ -605,7 +601,7 @@
 
     btnSaveRefresh.onclick = function() {
         if (localStorage.getItem('pro_save_on_refresh') !== 'true') {
-            if (confirm("Uaktywnić 'Save on refresh'? Zamrozi strukturę HTML.")) {
+            if (confirm("Activate 'Save on refresh'? This will freeze the HTML DOM structure across reload cycles.")) {
                 localStorage.setItem('pro_save_on_refresh', 'true');
                 var clone = d.body.cloneNode(true);
                 var m = clone.querySelector('#pro-menu'); if(m) m.remove();
@@ -620,7 +616,7 @@
         }
     };
 
-    // AKCJE PRZYCISKÓW PODSTAWOWYCH
+    // CORE ACTION ROUTERS
     d.getElementById('btn-edytor').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'edytor'); if(window.StartEdytorPro) window.StartEdytorPro(); };
     d.getElementById('btn-console').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'console'); loadAndShowVConsole('default'); };
     d.getElementById('btn-elements').onclick = function() { menu.style.display = 'none'; localStorage.setItem('pro_last_active_tool', 'element'); loadAndShowVConsole('element'); };
@@ -634,7 +630,7 @@
     }
     
     // =========================================================================
-    // INICJALIZACJA AUTOMATYCZNA DLA TRYBÓW TŁA
+    // BACKGROUND DAEMONS INITIALIZATION
     // =========================================================================
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 

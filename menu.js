@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.7 (Link Spy) załadowana ---");
+    console.log("--- Menu.js Wersja 7.8 (Dynamic Link Spy) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -234,7 +234,7 @@
                     if (feat.id === 'unblur') runUnBlurLogic();
                     if (feat.id === 'video') runVideoAcceleratorLogic();
                     if (feat.id === 'qr') runQrTransferLogic();
-                    if (feat.id === 'linkspy') runLinkSpyLogic(); // NOWE PODPIĘCIE
+                    if (feat.id === 'linkspy') runLinkSpyLogic();
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
@@ -439,7 +439,6 @@
         closeBtn.onclick = closeFunc;
         overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
 
-        // TYTUŁ USUNIĘTY NA ŻYCZENIE SZEFA 😎
         overlay.appendChild(img);
         overlay.appendChild(closeBtn);
         d.body.appendChild(overlay);
@@ -464,11 +463,22 @@
         alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
     }
 
-    // --- 6. LINK SPY / DETEKTYW ---
+    // --- 6. LINK SPY / DETEKTYW (ZMODYFIKOWANY DYNAMICZNY PODGLĄD) ---
     function runLinkSpyLogic() {
         var links = d.querySelectorAll('a');
         var highlighted = 0;
         var host = window.location.hostname;
+
+        // Dynamiczne wstrzyknięcie stylów CSS dla ukrywania/pokazywania etykiet
+        if (!d.getElementById('pro-linkspy-css')) {
+            var st = d.createElement('style');
+            st.id = 'pro-linkspy-css';
+            st.textContent = `
+                .pro-spy-badge { display: none !important; }
+                a:hover > .pro-spy-badge, a:active > .pro-spy-badge { display: inline-block !important; }
+            `;
+            d.head.appendChild(st);
+        }
 
         links.forEach(function(link) {
             if (link.hasAttribute('data-spy-active') || link === menu || menu.contains(link)) return;
@@ -481,14 +491,15 @@
             link.style.setProperty('background', isExternal ? 'rgba(204, 153, 255, 0.1)' : 'rgba(122, 188, 255, 0.1)', 'important');
             
             var badge = d.createElement('span');
+            badge.className = 'pro-spy-badge'; // Klasa sterowana przez CSS powyżej
             badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
-            badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; display: inline-block !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
+            badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
             
             link.appendChild(badge);
             highlighted++;
         });
 
-        alert("🕵️ Link Spy (Detektyw):\nPrześwietlono " + highlighted + " linków na stronie.\n\nFioletowe: Linki Zewnętrzne (Wychodzące)\nNiebieskie: Linki Wewnętrzne (Lokalne)");
+        alert("🕵️ Link Spy (Zakamuflowany Detektyw):\nPrześwietlono " + highlighted + " linków.\n\nEtykiety z pełnym adresem pojawią się teraz wyłącznie po najechaniu myszką (desktop) lub przytrzymaniu/kliknięciu linku (mobile)!");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"

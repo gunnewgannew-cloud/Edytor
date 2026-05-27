@@ -10,7 +10,7 @@
         { id: 'unblur', name: '🔓 Un-Blur PRO', key: 'pro_mod_unblur', color: '#aaccff' },
         { id: 'linkspy', name: '🕵️ Link Spy / Detektyw', key: 'pro_mod_linkspy', color: '#cc99ff' },
         { id: 'antipopup', name: '🚫 Anti-PopUp EXTREME', key: 'pro_mod_antipopup', color: '#ff6666' },
-        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode', key: 'pro_mod_darkmode', color: '#bbbbbb' }
+        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' }
     ];
 
     // =========================================================================
@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 8.0 (Full Dark Mode Integration) załadowana ---");
+    console.log("--- Menu.js Wersja 8.1 (Smart Dark Mode Patched) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -236,7 +236,7 @@
                     if (feat.id === 'qr') runQrTransferLogic();
                     if (feat.id === 'linkspy') runLinkSpyLogic();
                     if (feat.id === 'antipopup') runAntiPopUpLogic();
-                    if (feat.id === 'darkmode') runDarkModeLogic(true); // NOWE PODPIĘCIE
+                    if (feat.id === 'darkmode') runDarkModeLogic(true); // POPRAWIONE URUCHOMIENIE
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
@@ -271,7 +271,13 @@
             
             if (feat.id === 'adkiller' && checkbox.checked) runAdKillerLogic(false);
             if (feat.id === 'fps') runFpsHudLogic(checkbox.checked);
-            if (feat.id === 'darkmode') runDarkModeLogic(false); // AUTO-TRIGGER PRZY ZMIANIE PREFERENCJI
+            if (feat.id === 'darkmode') {
+                // Synchronizacja przełącznika z silnikiem
+                var styleExists = d.getElementById('pro-darkmode-css');
+                if ((checkbox.checked && !styleExists) || (!checkbox.checked && styleExists)) {
+                    runDarkModeLogic(false);
+                }
+            }
         };
 
         switchLabel.appendChild(checkbox);
@@ -534,33 +540,80 @@
         alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są podświetlone czerwoną, kropkowaną linią).");
     }
 
-    // --- 8. WYMUSHACZ DARK MODE (NOWOŚĆ) ---
+    // --- 8. WYMUSHACZ DARK MODE PRO (WERSJA 8.1 - INTELIGENTNA) ---
     function runDarkModeLogic(isManual) {
         var existingStyle = d.getElementById('pro-darkmode-css');
         if (existingStyle) {
             existingStyle.remove();
-            if (isManual) alert("🌙 Wymuszacz Dark Mode: Wyłączony.");
+            if (window.__darkModeObserver) {
+                window.__darkModeObserver.disconnect();
+                window.__darkModeObserver = null;
+            }
+            // Przywracanie oryginalnych stylów wstrzykniętych przez silnik JS
+            d.querySelectorAll('[data-dark-original-bg]').forEach(function(el) {
+                el.style.backgroundColor = el.getAttribute('data-dark-original-bg');
+                el.removeAttribute('data-dark-original-bg');
+            });
+            d.querySelectorAll('[data-dark-original-color]').forEach(function(el) {
+                el.style.color = el.getAttribute('data-dark-original-color');
+                el.removeAttribute('data-dark-original-color');
+            });
+            if (isManual) alert("🌙 Wymuszacz Dark Mode PRO: Wyłączony. Przywrócono oryginalne barwy.");
             return;
         }
         
+        // Tarcza podstawowa CSS wymuszająca tryb ciemny w przeglądarce
         var style = d.createElement('style');
         style.id = 'pro-darkmode-css';
         style.textContent = `
-            html { 
-                filter: invert(1) hue-rotate(180deg) !important; 
-                background-color: #0d1117 !important; 
-            }
-            /* Podwójna inwersja dla multimediów – przywraca im naturalne kolory */
-            img, video, iframe, canvas, svg { 
-                filter: invert(1) hue-rotate(180deg) !important; 
-            }
-            /* Ochrona interfejsu DevKita przed negatywem */
-            #pro-menu, #pro-fab, #pro-fps-hud, #pro-qr-modal, #__vconsole { 
-                filter: invert(1) hue-rotate(180deg) !important; 
-            }
+            html { color-scheme: dark !important; }
+            html, body { background-color: #121212 !important; color: #e0e0e0 !important; }
+            input, textarea, select { background-color: #2a2a2a !important; color: #fff !important; border: 1px solid #555 !important; }
+            #pro-menu, #pro-fab, #pro-fps-hud, #pro-qr-modal, #__vconsole { color-scheme: dark !important; }
         `;
         d.head.appendChild(style);
-        if (isManual) alert("🌙 Wymuszacz Dark Mode: AKTYWNY!\n\nKolory strony zostały odwrócone, a multimedia i interfejsy DevKita zostały uodpornione na efekt negatywu. Twoje oczy mogą odetchnąć!");
+
+        // Funkcja analizująca i podmieniająca wyłącznie JASNE elementy strony
+        function processNodes(target) {
+            var nodes = target.querySelectorAll ? target.querySelectorAll('*') : [];
+            nodes.forEach(function(el) {
+                if (el === menu || menu.contains(el) || el.id === 'pro-fab' || el.id === 'pro-fps-hud' || el.id === 'pro-qr-modal' || el.closest('#__vconsole')) return;
+                if (el.hasAttribute('data-dark-original-bg')) return; // Pomijamy już przetworzone
+                
+                var bg = window.getComputedStyle(el).backgroundColor;
+                if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
+                    var matches = bg.match(/\d+/g);
+                    if (matches && matches.length >= 3) {
+                        var r = parseInt(matches[0]), g = parseInt(matches[1]), b = parseInt(matches[2]);
+                        // Jeśli tło jest jasne (średnia jasność RGB > 190) – ściemniamy je!
+                        if ((r + g + b) / 3 > 190) {
+                            el.setAttribute('data-dark-original-bg', el.style.backgroundColor || '');
+                            el.style.setProperty('background-color', '#1e1e1e', 'important');
+                            
+                            el.setAttribute('data-dark-original-color', el.style.color || '');
+                            el.style.setProperty('color', '#f0f0f0', 'important');
+                        }
+                    }
+                }
+            });
+        }
+
+        // Pierwszy przebieg po całym dokumencie
+        processNodes(d.documentElement);
+
+        // Aktywny patrol dla dynamicznie doładowywanych asynchronicznie elementów
+        window.__darkModeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mut) {
+                mut.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        processNodes(node);
+                    }
+                });
+            });
+        });
+        window.__darkModeObserver.observe(d.documentElement, { childList: true, subtree: true });
+
+        if (isManual) alert("🌙 Wymuszacz Dark Mode PRO:\n\nSilnik prześwietlił strukturę witryny. Jaskrawe, białe elementy zostały przyciemnione do komfortowego grafitu. Ciemne sekcje strony pozostały nietknięte!");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
@@ -607,11 +660,11 @@
     }
     
     // =========================================================================
-    // INICJALIZACJA AUTOMATYCZNA
+    // INICJALIZACJA AUTOMATYCZNA DLA TRYBÓW TŁA
     // =========================================================================
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 
-    if (localStorage.getItem('pro_mod_darkmode') === 'true') runDarkModeLogic(false); // AUTO-START DLA TRYBU NOCNEGO
+    if (localStorage.getItem('pro_mod_darkmode') === 'true') runDarkModeLogic(false); 
 
     renderDynamicMenu();
     __updateDevKitBadge();

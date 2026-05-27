@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.6 (QR Transfer) załadowana ---");
+    console.log("--- Menu.js Wersja 7.7 (Link Spy) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -233,12 +233,13 @@
                     if (feat.id === 'adkiller') runAdKillerLogic(true);
                     if (feat.id === 'unblur') runUnBlurLogic();
                     if (feat.id === 'video') runVideoAcceleratorLogic();
-                    if (feat.id === 'qr') runQrTransferLogic(); // NOWE PODPIĘCIE
+                    if (feat.id === 'qr') runQrTransferLogic();
+                    if (feat.id === 'linkspy') runLinkSpyLogic(); // NOWE PODPIĘCIE
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
                     }
-                    if (['linkspy', 'antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
+                    if (['antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
                         alert("Wybrano: " + feat.name + "\n\nTa funkcja zostanie wdrożona w kolejnym kroku.");
                     }
                 };
@@ -424,12 +425,7 @@
 
         var overlay = d.createElement('div');
         overlay.id = 'pro-qr-modal';
-        // Przyciemnione tło i blur
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif;';
-
-        var title = d.createElement('div');
-        title.innerText = '🔮 Zeskanuj i prześlij';
-        title.style.cssText = 'color: #ff66cc; font-size: 22px; font-weight: bold; margin-bottom: 25px; text-shadow: 0 2px 15px rgba(255, 102, 204, 0.6); text-transform: uppercase; letter-spacing: 1px;';
 
         var img = d.createElement('img');
         img.src = qrApiUrl;
@@ -439,12 +435,11 @@
         closeBtn.innerText = '❌ Zamknij';
         closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
         
-        // Kliknięcie w tło lub przycisk usuwa modal
         var closeFunc = function() { overlay.remove(); };
         closeBtn.onclick = closeFunc;
         overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
 
-        overlay.appendChild(title);
+        // TYTUŁ USUNIĘTY NA ŻYCZENIE SZEFA 😎
         overlay.appendChild(img);
         overlay.appendChild(closeBtn);
         d.body.appendChild(overlay);
@@ -467,6 +462,33 @@
             }
         });
         alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
+    }
+
+    // --- 6. LINK SPY / DETEKTYW ---
+    function runLinkSpyLogic() {
+        var links = d.querySelectorAll('a');
+        var highlighted = 0;
+        var host = window.location.hostname;
+
+        links.forEach(function(link) {
+            if (link.hasAttribute('data-spy-active') || link === menu || menu.contains(link)) return;
+            
+            var href = link.href || 'Brak URL';
+            var isExternal = href.indexOf(host) === -1 && href.startsWith('http');
+            
+            link.setAttribute('data-spy-active', 'true');
+            link.style.setProperty('outline', isExternal ? '2px dashed #cc99ff' : '2px dashed #7abcff', 'important');
+            link.style.setProperty('background', isExternal ? 'rgba(204, 153, 255, 0.1)' : 'rgba(122, 188, 255, 0.1)', 'important');
+            
+            var badge = d.createElement('span');
+            badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
+            badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; display: inline-block !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
+            
+            link.appendChild(badge);
+            highlighted++;
+        });
+
+        alert("🕵️ Link Spy (Detektyw):\nPrześwietlono " + highlighted + " linków na stronie.\n\nFioletowe: Linki Zewnętrzne (Wychodzące)\nNiebieskie: Linki Wewnętrzne (Lokalne)");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"

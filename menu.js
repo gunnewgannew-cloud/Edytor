@@ -1,7 +1,7 @@
 (function() {
     var d = document;
 
-    // DEFINICJA NASZEJ WIELKIEJ DZIESIĄTKI
+    // DEFINICJA NASZEJ WIELKIEJ DZIEWIĄTKI (Dodano Anti Rick-Roll)
     var proFeatures = [
         { id: 'adkiller', name: '💥 Ad-Killer (Tryb Przetrwania)', key: 'pro_mod_adkiller', color: '#ffaa66' },
         { id: 'fps', name: '📊 FPS & Performance HUD', key: 'pro_mod_fps', color: '#66ffaa' },
@@ -10,7 +10,8 @@
         { id: 'unblur', name: '🔓 Un-Blur PRO', key: 'pro_mod_unblur', color: '#aaccff' },
         { id: 'linkspy', name: '🕵️ Link Spy / Detektyw', key: 'pro_mod_linkspy', color: '#cc99ff' },
         { id: 'antipopup', name: '🚫 Anti-PopUp EXTREME', key: 'pro_mod_antipopup', color: '#ff6666' },
-        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' }
+        { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' },
+        { id: 'antirick', name: '🛡️ Tarcza Anti Rick-Roll', key: 'pro_mod_antirick', color: '#ff3333' }
     ];
 
     // =========================================================================
@@ -52,7 +53,6 @@
         });
         __updateDevKitBadge();
     });
-    // =========================================================================
 
     // BEZPIECZEŃSTWO - SECURITY GUARD
     var sensitiveKeywords = ['bank', 'login', 'checkout', 'paypal', 'signin', 'sign-in', 'haslo', 'password', 'platnosci', 'payu', 'mojeid', 'secure'];
@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 8.1 (Smart Dark Mode Patched) załadowana ---");
+    console.log("--- Menu.js Wersja 8.2 (Anti-Troll Edition) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -75,7 +75,6 @@
         d.body.innerHTML = savedHTML;
     }
 
-    // Ukrycie domyślnego przycisku vConsole
     var vcStyle = d.createElement('style');
     vcStyle.innerHTML = '#__vconsole .vc-switch { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
     d.head.appendChild(vcStyle);
@@ -236,7 +235,8 @@
                     if (feat.id === 'qr') runQrTransferLogic();
                     if (feat.id === 'linkspy') runLinkSpyLogic();
                     if (feat.id === 'antipopup') runAntiPopUpLogic();
-                    if (feat.id === 'darkmode') runDarkModeLogic(true); // POPRAWIONE URUCHOMIENIE
+                    if (feat.id === 'darkmode') runDarkModeLogic(true);
+                    if (feat.id === 'antirick') runAntiRickRollLogic(true);
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
@@ -271,8 +271,8 @@
             
             if (feat.id === 'adkiller' && checkbox.checked) runAdKillerLogic(false);
             if (feat.id === 'fps') runFpsHudLogic(checkbox.checked);
+            if (feat.id === 'antirick' && checkbox.checked) runAntiRickRollLogic(false);
             if (feat.id === 'darkmode') {
-                // Synchronizacja przełącznika z silnikiem
                 var styleExists = d.getElementById('pro-darkmode-css');
                 if ((checkbox.checked && !styleExists) || (!checkbox.checked && styleExists)) {
                     runDarkModeLogic(false);
@@ -412,11 +412,7 @@
         
         var applied = 0;
         videos.forEach(function(v) {
-            try {
-                v.playbackRate = speed;
-                v.controls = true; 
-                applied++;
-            } catch(e) {}
+            try { v.playbackRate = speed; v.controls = true; applied++; } catch(e) {}
         });
         
         alert("🚀 Zakończono!\nPrzyspieszono " + applied + " wideo do prędkości " + speed + "x i wymuszono pokazanie kontrolek.");
@@ -425,29 +421,16 @@
     // --- 4. TRANSFER QR ---
     function runQrTransferLogic() {
         if (d.getElementById('pro-qr-modal')) return;
-
         var currentUrl = encodeURIComponent(window.location.href);
         var qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + currentUrl;
-
         var overlay = d.createElement('div');
         overlay.id = 'pro-qr-modal';
         overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif;';
-
-        var img = d.createElement('img');
-        img.src = qrApiUrl;
-        img.style.cssText = 'width: 250px; height: 250px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); border: 3px solid #ff66cc; background: white; padding: 10px;';
-
-        var closeBtn = d.createElement('button');
-        closeBtn.innerText = '❌ Zamknij';
-        closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
-        
+        var img = d.createElement('img'); img.src = qrApiUrl; img.style.cssText = 'width: 250px; height: 250px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); border: 3px solid #ff66cc; background: white; padding: 10px;';
+        var closeBtn = d.createElement('button'); closeBtn.innerText = '❌ Zamknij'; closeBtn.style.cssText = 'margin-top: 35px; padding: 12px 28px; background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid #ff6666; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;';
         var closeFunc = function() { overlay.remove(); };
-        closeBtn.onclick = closeFunc;
-        overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
-
-        overlay.appendChild(img);
-        overlay.appendChild(closeBtn);
-        d.body.appendChild(overlay);
+        closeBtn.onclick = closeFunc; overlay.onclick = function(e) { if (e.target === overlay) closeFunc(); };
+        overlay.appendChild(img); overlay.appendChild(closeBtn); d.body.appendChild(overlay);
     }
 
     // --- 5. UN-BLUR ---
@@ -469,102 +452,64 @@
         alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
     }
 
-    // --- 6. LINK SPY / DETEKTYW ---
+    // --- 6. LINK SPY ---
     function runLinkSpyLogic() {
         var links = d.querySelectorAll('a');
         var highlighted = 0;
         var host = window.location.hostname;
 
         if (!d.getElementById('pro-linkspy-css')) {
-            var st = d.createElement('style');
-            st.id = 'pro-linkspy-css';
-            st.textContent = `
-                .pro-spy-badge { display: none !important; }
-                a:hover > .pro-spy-badge, a:active > .pro-spy-badge { display: inline-block !important; }
-            `;
+            var st = d.createElement('style'); st.id = 'pro-linkspy-css';
+            st.textContent = `.pro-spy-badge { display: none !important; } a:hover > .pro-spy-badge, a:active > .pro-spy-badge { display: inline-block !important; }`;
             d.head.appendChild(st);
         }
 
         links.forEach(function(link) {
             if (link.hasAttribute('data-spy-active') || link === menu || menu.contains(link)) return;
-            
             var href = link.href || 'Brak URL';
             var isExternal = href.indexOf(host) === -1 && href.startsWith('http');
-            
             link.setAttribute('data-spy-active', 'true');
             link.style.setProperty('outline', isExternal ? '2px dashed #cc99ff' : '2px dashed #7abcff', 'important');
             link.style.setProperty('background', isExternal ? 'rgba(204, 153, 255, 0.1)' : 'rgba(122, 188, 255, 0.1)', 'important');
-            
-            var badge = d.createElement('span');
-            badge.className = 'pro-spy-badge'; 
-            badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
+            var badge = d.createElement('span'); badge.className = 'pro-spy-badge'; badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
             badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
-            
-            link.appendChild(badge);
-            highlighted++;
+            link.appendChild(badge); highlighted++;
         });
-
         alert("🕵️ Link Spy:\nPrześwietlono " + highlighted + " linków. Etykiety pojawią się przy najechaniu/kliknięciu.");
     }
 
     // --- 7. ANTI-POPUP EXTREME ---
     function runAntiPopUpLogic() {
-        if (window.__antiPopUpActive) {
-            alert("🚫 Anti-PopUp EXTREME działa już w tle!\nSpokojnie, nic nie wyskoczy.");
-            return;
-        }
-        window.__antiPopUpActive = true;
-        window.__blockedCount = 0;
-
+        if (window.__antiPopUpActive) { alert("🚫 Anti-PopUp EXTREME działa już w tle!\nSpokojnie, nic nie wyskoczy."); return; }
+        window.__antiPopUpActive = true; window.__blockedCount = 0;
         var originalOpen = window.open;
         window.open = function() {
             window.__blockedCount++;
             console.warn("🚫 [Anti-PopUp EXTREME] Zablokowano próbę otwarcia okna! (Zatrzymano " + window.__blockedCount + " prób)");
             return null; 
         };
-
         function pacifyLinks() {
             var maliciousLinks = d.querySelectorAll('a[target="_blank"]');
-            maliciousLinks.forEach(function(a) {
-                a.removeAttribute('target');
-                a.style.setProperty('border-bottom', '2px dotted #ff6666', 'important'); 
-            });
+            maliciousLinks.forEach(function(a) { a.removeAttribute('target'); a.style.setProperty('border-bottom', '2px dotted #ff6666', 'important'); });
         }
         pacifyLinks();
-
-        var popupObserver = new MutationObserver(function() {
-            pacifyLinks();
-        });
+        var popupObserver = new MutationObserver(function() { pacifyLinks(); });
         popupObserver.observe(d.documentElement, { childList: true, subtree: true });
-
         alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są podświetlone czerwoną, kropkowaną linią).");
     }
 
-    // --- 8. WYMUSHACZ DARK MODE PRO (WERSJA 8.1 - INTELIGENTNA) ---
+    // --- 8. DARK MODE ---
     function runDarkModeLogic(isManual) {
         var existingStyle = d.getElementById('pro-darkmode-css');
         if (existingStyle) {
             existingStyle.remove();
-            if (window.__darkModeObserver) {
-                window.__darkModeObserver.disconnect();
-                window.__darkModeObserver = null;
-            }
-            // Przywracanie oryginalnych stylów wstrzykniętych przez silnik JS
-            d.querySelectorAll('[data-dark-original-bg]').forEach(function(el) {
-                el.style.backgroundColor = el.getAttribute('data-dark-original-bg');
-                el.removeAttribute('data-dark-original-bg');
-            });
-            d.querySelectorAll('[data-dark-original-color]').forEach(function(el) {
-                el.style.color = el.getAttribute('data-dark-original-color');
-                el.removeAttribute('data-dark-original-color');
-            });
+            if (window.__darkModeObserver) { window.__darkModeObserver.disconnect(); window.__darkModeObserver = null; }
+            d.querySelectorAll('[data-dark-original-bg]').forEach(function(el) { el.style.backgroundColor = el.getAttribute('data-dark-original-bg'); el.removeAttribute('data-dark-original-bg'); });
+            d.querySelectorAll('[data-dark-original-color]').forEach(function(el) { el.style.color = el.getAttribute('data-dark-original-color'); el.removeAttribute('data-dark-original-color'); });
             if (isManual) alert("🌙 Wymuszacz Dark Mode PRO: Wyłączony. Przywrócono oryginalne barwy.");
             return;
         }
-        
-        // Tarcza podstawowa CSS wymuszająca tryb ciemny w przeglądarce
-        var style = d.createElement('style');
-        style.id = 'pro-darkmode-css';
+        var style = d.createElement('style'); style.id = 'pro-darkmode-css';
         style.textContent = `
             html { color-scheme: dark !important; }
             html, body { background-color: #121212 !important; color: #e0e0e0 !important; }
@@ -573,23 +518,19 @@
         `;
         d.head.appendChild(style);
 
-        // Funkcja analizująca i podmieniająca wyłącznie JASNE elementy strony
         function processNodes(target) {
             var nodes = target.querySelectorAll ? target.querySelectorAll('*') : [];
             nodes.forEach(function(el) {
                 if (el === menu || menu.contains(el) || el.id === 'pro-fab' || el.id === 'pro-fps-hud' || el.id === 'pro-qr-modal' || el.closest('#__vconsole')) return;
-                if (el.hasAttribute('data-dark-original-bg')) return; // Pomijamy już przetworzone
-                
+                if (el.hasAttribute('data-dark-original-bg')) return; 
                 var bg = window.getComputedStyle(el).backgroundColor;
                 if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
                     var matches = bg.match(/\d+/g);
                     if (matches && matches.length >= 3) {
                         var r = parseInt(matches[0]), g = parseInt(matches[1]), b = parseInt(matches[2]);
-                        // Jeśli tło jest jasne (średnia jasność RGB > 190) – ściemniamy je!
                         if ((r + g + b) / 3 > 190) {
                             el.setAttribute('data-dark-original-bg', el.style.backgroundColor || '');
                             el.style.setProperty('background-color', '#1e1e1e', 'important');
-                            
                             el.setAttribute('data-dark-original-color', el.style.color || '');
                             el.style.setProperty('color', '#f0f0f0', 'important');
                         }
@@ -597,23 +538,55 @@
                 }
             });
         }
-
-        // Pierwszy przebieg po całym dokumencie
         processNodes(d.documentElement);
-
-        // Aktywny patrol dla dynamicznie doładowywanych asynchronicznie elementów
         window.__darkModeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mut) {
-                mut.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1) {
-                        processNodes(node);
-                    }
-                });
-            });
+            mutations.forEach(function(mut) { mut.addedNodes.forEach(function(node) { if (node.nodeType === 1) processNodes(node); }); });
         });
         window.__darkModeObserver.observe(d.documentElement, { childList: true, subtree: true });
+        if (isManual) alert("🌙 Wymuszacz Dark Mode PRO:\n\nSilnik prześwietlił strukturę witryny. Jaskrawe, białe elementy zostały przyciemnione do komfortowego grafitu.");
+    }
 
-        if (isManual) alert("🌙 Wymuszacz Dark Mode PRO:\n\nSilnik prześwietlił strukturę witryny. Jaskrawe, białe elementy zostały przyciemnione do komfortowego grafitu. Ciemne sekcje strony pozostały nietknięte!");
+    // --- 9. TARCZA ANTI RICK-ROLL ---
+    function runAntiRickRollLogic(isManual) {
+        if (window.__antiRickRollActive) {
+            if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll jest już w pełni operacyjna!");
+            return;
+        }
+        window.__antiRickRollActive = true;
+
+        // Lista legendarnych identyfikatorów
+        var rickRollIds = ['dQw4w9WgXcQ', 'iik25wqIuFo', 'oHg5SJYRHA0', 'rickastley']; 
+
+        // 1. Sprawdzanie obecnej strony (jeśli ktoś odpalił skrypt po wejściu w pułapkę)
+        var currentUrl = window.location.href;
+        var isRickRoll = rickRollIds.some(function(id) { return currentUrl.indexOf(id) !== -1; });
+        
+        if (isRickRoll) {
+            // Natychmiastowe zatrzymanie odtwarzaczy na stronie
+            d.querySelectorAll('video, audio').forEach(function(media) { media.pause(); });
+            alert("🚨 KRYTYCZNE ZAGROŻENIE (DevKit PRO) 🚨\n\nPróba Rick-Rollu wykryta!\nZatrzymałem odtwarzacz wideo w ułamku sekundy. Twoja godność została uratowana. Uciekaj z tej strony!");
+        }
+
+        // 2. Nasłuchiwanie wszystkich kliknięć na stronie
+        d.addEventListener('click', function(e) {
+            var target = e.target.closest('a');
+            if (!target || !target.href) return;
+            
+            var isTrap = rickRollIds.some(function(id) { return target.href.indexOf(id) !== -1; });
+            if (isTrap) {
+                e.preventDefault(); // Blokujemy przejście
+                e.stopPropagation();
+                
+                alert("🚨 SYSTEM BEZPIECZEŃSTWA (DevKit PRO) 🚨\n\nUWAGA! Wykryto skrajnie niebezpieczny link. Ktoś właśnie próbował Cię zrickrollować.\n\nZablokowano ukryte przekierowanie na:\n" + target.href + "\n\nTwój znajomy myślał, że jest sprytny, ale DevKit czuwa. Jesteś bezpieczny.");
+                
+                // Oznaczamy wrogi link na czerwono, żeby było widać gdzie był schowany
+                target.style.setProperty('border', '3px solid red', 'important');
+                target.style.setProperty('background', 'rgba(255, 0, 0, 0.2)', 'important');
+                target.innerText = "💥 ZNEUTRALIZOWANA PUŁAPKA (RICK-ROLL) 💥";
+            }
+        }, true); // Use capture żeby złapać kliknięcie przed innymi skryptami witryny
+
+        if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll aktywowana!\n\nSystem pasywnie skanuje wszystkie linki. Nie klikniesz już nigdy w żaden ukryty teledysk Ricka Astleya. Jesteś kuloodporny.");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
@@ -665,6 +638,7 @@
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 
     if (localStorage.getItem('pro_mod_darkmode') === 'true') runDarkModeLogic(false); 
+    if (localStorage.getItem('pro_mod_antirick') === 'true') runAntiRickRollLogic(false); // Automatyczny start Tarczy
 
     renderDynamicMenu();
     __updateDevKitBadge();

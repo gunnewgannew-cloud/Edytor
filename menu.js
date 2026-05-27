@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.8 (Dynamic Link Spy) załadowana ---");
+    console.log("--- Menu.js Wersja 7.9 (Anti-PopUp EXTREME) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -235,11 +235,12 @@
                     if (feat.id === 'video') runVideoAcceleratorLogic();
                     if (feat.id === 'qr') runQrTransferLogic();
                     if (feat.id === 'linkspy') runLinkSpyLogic();
+                    if (feat.id === 'antipopup') runAntiPopUpLogic(); // NOWE PODPIĘCIE
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
                     }
-                    if (['antipopup', 'darkmode'].indexOf(feat.id) !== -1) {
+                    if (feat.id === 'darkmode') {
                         alert("Wybrano: " + feat.name + "\n\nTa funkcja zostanie wdrożona w kolejnym kroku.");
                     }
                 };
@@ -463,13 +464,12 @@
         alert("🔓 Un-Blur PRO: Odblokowano tekst w " + unblurred + " miejscach.");
     }
 
-    // --- 6. LINK SPY / DETEKTYW (ZMODYFIKOWANY DYNAMICZNY PODGLĄD) ---
+    // --- 6. LINK SPY / DETEKTYW ---
     function runLinkSpyLogic() {
         var links = d.querySelectorAll('a');
         var highlighted = 0;
         var host = window.location.hostname;
 
-        // Dynamiczne wstrzyknięcie stylów CSS dla ukrywania/pokazywania etykiet
         if (!d.getElementById('pro-linkspy-css')) {
             var st = d.createElement('style');
             st.id = 'pro-linkspy-css';
@@ -491,7 +491,7 @@
             link.style.setProperty('background', isExternal ? 'rgba(204, 153, 255, 0.1)' : 'rgba(122, 188, 255, 0.1)', 'important');
             
             var badge = d.createElement('span');
-            badge.className = 'pro-spy-badge'; // Klasa sterowana przez CSS powyżej
+            badge.className = 'pro-spy-badge'; 
             badge.innerText = isExternal ? ' 🔗 ZEW: ' + href : ' 🏠 WEW: ' + href;
             badge.style.cssText = 'font-size: 10px !important; color: ' + (isExternal ? '#cc99ff' : '#7abcff') + ' !important; background: rgba(10,13,20,0.9) !important; padding: 2px 4px !important; border-radius: 4px !important; border: 1px solid ' + (isExternal ? 'rgba(204,153,255,0.4)' : 'rgba(122,188,255,0.4)') + ' !important; font-family: monospace !important; margin-left: 6px !important; word-break: break-all !important; pointer-events: none !important; user-select: text !important; z-index: 9999 !important;';
             
@@ -499,7 +499,43 @@
             highlighted++;
         });
 
-        alert("🕵️ Link Spy (Zakamuflowany Detektyw):\nPrześwietlono " + highlighted + " linków.\n\nEtykiety z pełnym adresem pojawią się teraz wyłącznie po najechaniu myszką (desktop) lub przytrzymaniu/kliknięciu linku (mobile)!");
+        alert("🕵️ Link Spy:\nPrześwietlono " + highlighted + " linków. Etykiety pojawią się przy najechaniu/kliknięciu.");
+    }
+
+    // --- 7. ANTI-POPUP EXTREME ---
+    function runAntiPopUpLogic() {
+        if (window.__antiPopUpActive) {
+            alert("🚫 Anti-PopUp EXTREME działa już w tle!\nSpokojnie, nic nie wyskoczy.");
+            return;
+        }
+        window.__antiPopUpActive = true;
+        window.__blockedCount = 0;
+
+        // KROK 1: Nadpisanie natywnego window.open (pacyfikacja skryptów js)
+        var originalOpen = window.open;
+        window.open = function() {
+            window.__blockedCount++;
+            console.warn("🚫 [Anti-PopUp EXTREME] Zablokowano próbę otwarcia okna! (Zatrzymano " + window.__blockedCount + " prób)");
+            return null; 
+        };
+
+        // KROK 2: Neutralizacja linków w HTML
+        function pacifyLinks() {
+            var maliciousLinks = d.querySelectorAll('a[target="_blank"]');
+            maliciousLinks.forEach(function(a) {
+                a.removeAttribute('target');
+                a.style.setProperty('border-bottom', '2px dotted #ff6666', 'important'); // Oznaczenie wizualne
+            });
+        }
+        pacifyLinks();
+
+        // KROK 3: Patrol MutationObserver (wyłapuje linki ładowane asynchronicznie)
+        var popupObserver = new MutationObserver(function() {
+            pacifyLinks();
+        });
+        popupObserver.observe(d.documentElement, { childList: true, subtree: true });
+
+        alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są teraz podświetlone czerwoną, kropkowaną linią i otworzą się w tej samej karcie).\n\nStrażnik czuwa w tle. Możesz bezpiecznie eksplorować!");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"

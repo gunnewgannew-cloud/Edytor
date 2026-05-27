@@ -66,7 +66,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 7.9 (Anti-PopUp EXTREME) załadowana ---");
+    console.log("--- Menu.js Wersja 8.0 (Full Dark Mode Integration) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -235,13 +235,11 @@
                     if (feat.id === 'video') runVideoAcceleratorLogic();
                     if (feat.id === 'qr') runQrTransferLogic();
                     if (feat.id === 'linkspy') runLinkSpyLogic();
-                    if (feat.id === 'antipopup') runAntiPopUpLogic(); // NOWE PODPIĘCIE
+                    if (feat.id === 'antipopup') runAntiPopUpLogic();
+                    if (feat.id === 'darkmode') runDarkModeLogic(true); // NOWE PODPIĘCIE
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
-                    }
-                    if (feat.id === 'darkmode') {
-                        alert("Wybrano: " + feat.name + "\n\nTa funkcja zostanie wdrożona w kolejnym kroku.");
                     }
                 };
                 shortcutsContainer.appendChild(btn);
@@ -273,6 +271,7 @@
             
             if (feat.id === 'adkiller' && checkbox.checked) runAdKillerLogic(false);
             if (feat.id === 'fps') runFpsHudLogic(checkbox.checked);
+            if (feat.id === 'darkmode') runDarkModeLogic(false); // AUTO-TRIGGER PRZY ZMIANIE PREFERENCJI
         };
 
         switchLabel.appendChild(checkbox);
@@ -511,7 +510,6 @@
         window.__antiPopUpActive = true;
         window.__blockedCount = 0;
 
-        // KROK 1: Nadpisanie natywnego window.open (pacyfikacja skryptów js)
         var originalOpen = window.open;
         window.open = function() {
             window.__blockedCount++;
@@ -519,23 +517,50 @@
             return null; 
         };
 
-        // KROK 2: Neutralizacja linków w HTML
         function pacifyLinks() {
             var maliciousLinks = d.querySelectorAll('a[target="_blank"]');
             maliciousLinks.forEach(function(a) {
                 a.removeAttribute('target');
-                a.style.setProperty('border-bottom', '2px dotted #ff6666', 'important'); // Oznaczenie wizualne
+                a.style.setProperty('border-bottom', '2px dotted #ff6666', 'important'); 
             });
         }
         pacifyLinks();
 
-        // KROK 3: Patrol MutationObserver (wyłapuje linki ładowane asynchronicznie)
         var popupObserver = new MutationObserver(function() {
             pacifyLinks();
         });
         popupObserver.observe(d.documentElement, { childList: true, subtree: true });
 
-        alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są teraz podświetlone czerwoną, kropkowaną linią i otworzą się w tej samej karcie).\n\nStrażnik czuwa w tle. Możesz bezpiecznie eksplorować!");
+        alert("🚫 Anti-PopUp EXTREME: AKTYWNY!\n\n1. Skrypty otwierające nowe okna zostały zneutralizowane.\n2. Linki zmuszające przeglądarkę do otwierania nowych kart zostały pozbawione tej mocy (są podświetlone czerwoną, kropkowaną linią).");
+    }
+
+    // --- 8. WYMUSHACZ DARK MODE (NOWOŚĆ) ---
+    function runDarkModeLogic(isManual) {
+        var existingStyle = d.getElementById('pro-darkmode-css');
+        if (existingStyle) {
+            existingStyle.remove();
+            if (isManual) alert("🌙 Wymuszacz Dark Mode: Wyłączony.");
+            return;
+        }
+        
+        var style = d.createElement('style');
+        style.id = 'pro-darkmode-css';
+        style.textContent = `
+            html { 
+                filter: invert(1) hue-rotate(180deg) !important; 
+                background-color: #0d1117 !important; 
+            }
+            /* Podwójna inwersja dla multimediów – przywraca im naturalne kolory */
+            img, video, iframe, canvas, svg { 
+                filter: invert(1) hue-rotate(180deg) !important; 
+            }
+            /* Ochrona interfejsu DevKita przed negatywem */
+            #pro-menu, #pro-fab, #pro-fps-hud, #pro-qr-modal, #__vconsole { 
+                filter: invert(1) hue-rotate(180deg) !important; 
+            }
+        `;
+        d.head.appendChild(style);
+        if (isManual) alert("🌙 Wymuszacz Dark Mode: AKTYWNY!\n\nKolory strony zostały odwrócone, a multimedia i interfejsy DevKita zostały uodpornione na efekt negatywu. Twoje oczy mogą odetchnąć!");
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
@@ -586,6 +611,7 @@
     // =========================================================================
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 
+    if (localStorage.getItem('pro_mod_darkmode') === 'true') runDarkModeLogic(false); // AUTO-START DLA TRYBU NOCNEGO
 
     renderDynamicMenu();
     __updateDevKitBadge();

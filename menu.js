@@ -1,7 +1,7 @@
 (function() {
     var d = document;
 
-    // DEFINICJA NASZEJ WIELKIEJ DZIEWIĄTKI (Dodano Anti Rick-Roll)
+    // DEFINICJA NASZEJ POTĘŻNEJ DZIESIĄTKI (Dodano Wymuszacz Archiwum)
     var proFeatures = [
         { id: 'adkiller', name: '💥 Ad-Killer (Tryb Przetrwania)', key: 'pro_mod_adkiller', color: '#ffaa66' },
         { id: 'fps', name: '📊 FPS & Performance HUD', key: 'pro_mod_fps', color: '#66ffaa' },
@@ -11,7 +11,8 @@
         { id: 'linkspy', name: '🕵️ Link Spy / Detektyw', key: 'pro_mod_linkspy', color: '#cc99ff' },
         { id: 'antipopup', name: '🚫 Anti-PopUp EXTREME', key: 'pro_mod_antipopup', color: '#ff6666' },
         { id: 'darkmode', name: '🌙 Wymuszacz Dark Mode PRO', key: 'pro_mod_darkmode', color: '#bbbbbb' },
-        { id: 'antirick', name: '🛡️ Tarcza Anti Rick-Roll', key: 'pro_mod_antirick', color: '#ff3333' }
+        { id: 'antirick', name: '🛡️ Tarcza Anti Rick-Roll', key: 'pro_mod_antirick', color: '#ff3333' },
+        { id: 'archive', name: '⏳ Wymuszacz Archiwum (Wehikuł Czasu)', key: 'pro_mod_archive', color: '#ffd700' }
     ];
 
     // =========================================================================
@@ -66,7 +67,7 @@
         if (!proceed) { console.warn("🔒 Uruchomienie zablokowane."); return; }
     }
 
-    console.log("--- Menu.js Wersja 8.2 (Anti-Troll Edition) załadowana ---");
+    console.log("--- Menu.js Wersja 8.5 (Archive & Time Edition) załadowana ---");
 
     // PRZYWRACANIE STANU KODU PO ODŚWIEŻENIU
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -237,6 +238,7 @@
                     if (feat.id === 'antipopup') runAntiPopUpLogic();
                     if (feat.id === 'darkmode') runDarkModeLogic(true);
                     if (feat.id === 'antirick') runAntiRickRollLogic(true);
+                    if (feat.id === 'archive') runArchiveLogic();
                     if (feat.id === 'fps') {
                         runFpsHudLogic(false); 
                         setTimeout(function(){ runFpsHudLogic(true); }, 50); 
@@ -548,45 +550,44 @@
 
     // --- 9. TARCZA ANTI RICK-ROLL ---
     function runAntiRickRollLogic(isManual) {
-        if (window.__antiRickRollActive) {
-            if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll jest już w pełni operacyjna!");
-            return;
-        }
+        if (window.__antiRickRollActive) { if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll jest już w pełni operacyjna!"); return; }
         window.__antiRickRollActive = true;
-
-        // Lista legendarnych identyfikatorów
         var rickRollIds = ['dQw4w9WgXcQ', 'iik25wqIuFo', 'oHg5SJYRHA0', 'rickastley']; 
-
-        // 1. Sprawdzanie obecnej strony (jeśli ktoś odpalił skrypt po wejściu w pułapkę)
         var currentUrl = window.location.href;
         var isRickRoll = rickRollIds.some(function(id) { return currentUrl.indexOf(id) !== -1; });
-        
         if (isRickRoll) {
-            // Natychmiastowe zatrzymanie odtwarzaczy na stronie
             d.querySelectorAll('video, audio').forEach(function(media) { media.pause(); });
             alert("🚨 KRYTYCZNE ZAGROŻENIE (DevKit PRO) 🚨\n\nPróba Rick-Rollu wykryta!\nZatrzymałem odtwarzacz wideo w ułamku sekundy. Twoja godność została uratowana. Uciekaj z tej strony!");
         }
-
-        // 2. Nasłuchiwanie wszystkich kliknięć na stronie
         d.addEventListener('click', function(e) {
-            var target = e.target.closest('a');
-            if (!target || !target.href) return;
-            
+            var target = e.target.closest('a'); if (!target || !target.href) return;
             var isTrap = rickRollIds.some(function(id) { return target.href.indexOf(id) !== -1; });
             if (isTrap) {
-                e.preventDefault(); // Blokujemy przejście
-                e.stopPropagation();
-                
+                e.preventDefault(); e.stopPropagation();
                 alert("🚨 SYSTEM BEZPIECZEŃSTWA (DevKit PRO) 🚨\n\nUWAGA! Wykryto skrajnie niebezpieczny link. Ktoś właśnie próbował Cię zrickrollować.\n\nZablokowano ukryte przekierowanie na:\n" + target.href + "\n\nTwój znajomy myślał, że jest sprytny, ale DevKit czuwa. Jesteś bezpieczny.");
-                
-                // Oznaczamy wrogi link na czerwono, żeby było widać gdzie był schowany
                 target.style.setProperty('border', '3px solid red', 'important');
                 target.style.setProperty('background', 'rgba(255, 0, 0, 0.2)', 'important');
                 target.innerText = "💥 ZNEUTRALIZOWANA PUŁAPKA (RICK-ROLL) 💥";
             }
-        }, true); // Use capture żeby złapać kliknięcie przed innymi skryptami witryny
+        }, true);
+        if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll aktywowana!\n\nSystem pasywnie skanuje wszystkie linki. Nie klikniesz już nigdy w żaden ukryty teledysk Ricka Astleya.");
+    }
 
-        if (isManual) alert("🛡️ Tarcza Anti-Rick-Roll aktywowana!\n\nSystem pasywnie skanuje wszystkie linki. Nie klikniesz już nigdy w żaden ukryty teledysk Ricka Astleya. Jesteś kuloodporny.");
+    // --- 10. WYMUSZACZ ARCHIWUM (WEHIKUŁ CZASU) ---
+    function runArchiveLogic() {
+        var activeUrl = window.location.href;
+        // Ignorujemy puste/lokalne karty
+        if (activeUrl.startsWith('about:') || activeUrl.startsWith('chrome:')) {
+            alert("⏳ Wehikuł Czasu:\nNie można zarchiwizować pustej karty systemowej.");
+            return;
+        }
+        
+        // Budujemy link do najnowszego zapisu w Wayback Machine
+        var archiveUrl = 'https://web.archive.org/web/' + activeUrl;
+        
+        console.log("⏳ [Wehikuł Czasu] Przekierowanie do archiwum dla: " + activeUrl);
+        // Otwieramy archiwum w nowej karcie, by nie zamykać obecnej sesji deweloperskiej
+        window.open(archiveUrl, '_blank');
     }
 
     // OBSŁUGA RATUNKU "SAVE ON REFRESH"
@@ -638,7 +639,7 @@
     if (localStorage.getItem('pro_mod_adkiller') === 'true') runAdKillerLogic(false); 
     if (localStorage.getItem('pro_mod_fps') === 'true') runFpsHudLogic(true); 
     if (localStorage.getItem('pro_mod_darkmode') === 'true') runDarkModeLogic(false); 
-    if (localStorage.getItem('pro_mod_antirick') === 'true') runAntiRickRollLogic(false); // Automatyczny start Tarczy
+    if (localStorage.getItem('pro_mod_antirick') === 'true') runAntiRickRollLogic(false); 
 
     renderDynamicMenu();
     __updateDevKitBadge();

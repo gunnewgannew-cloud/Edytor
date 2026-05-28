@@ -6,10 +6,10 @@
     // =========================================================================
     window.devkit = {
         enablePro: function() {
-            console.log("%c[ SYSTEM ] Verifying privileges...", "color: #ffaa66; font-weight: bold;");
+            console.log("[ SYSTEM ] Verifying privileges...");
             setTimeout(function() {
-                console.log("%c[ OK ] Access Level: ROOT", "color: #66ffaa; font-weight: bold;");
-                console.log("%c[ SYSTEM ] Unlocking utility payloads...", "color: #aaccff; font-weight: bold;");
+                console.log("[ OK ] Access Level: ROOT");
+                console.log("[ SYSTEM ] Unlocking utility payloads...");
                 
                 var shortcuts = d.getElementById('pro-dynamic-shortcuts');
                 var settingsBtn = d.getElementById('btn-go-settings');

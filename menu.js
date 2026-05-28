@@ -1,6 +1,29 @@
 (function() {
     var d = document;
 
+    // =========================================================================
+    // 🔐 GŁÓWNY ZAMEK: THE GATEWAY TO PRO
+    // =========================================================================
+    window.devkit = {
+        enablePro: function() {
+            console.log("%c[ SYSTEM ] Verifying privileges...", "color: #ffaa66; font-weight: bold;");
+            setTimeout(function() {
+                console.log("%c[ OK ] Access Level: ROOT", "color: #66ffaa; font-weight: bold;");
+                console.log("%c[ SYSTEM ] Unlocking utility payloads...", "color: #aaccff; font-weight: bold;");
+                
+                var shortcuts = d.getElementById('pro-dynamic-shortcuts');
+                var settingsBtn = d.getElementById('btn-go-settings');
+                
+                if (shortcuts) shortcuts.style.display = 'flex';
+                if (settingsBtn) settingsBtn.style.display = 'block';
+                
+                sessionStorage.setItem('devkit_pro_unlocked', 'true');
+                alert("🔓 ACCESS GRANTED: System eksperymentalny został odblokowany.");
+            }, 800);
+            return "Waking up the beast...";
+        }
+    };
+
     // DEFINITION OF THE POWERFUL TEN (Enterprise English Edition)
     var proFeatures = [
         { id: 'adkiller', name: '💥 Ad-Killer (Survival Mode)', key: 'pro_mod_adkiller', color: '#ffaa66' },
@@ -67,7 +90,7 @@
         if (!proceed) { console.warn("🔒 Script execution aborted by user."); return; }
     }
 
-    console.log("--- Menu.js Version 9.0 (Enterprise English Edition) Loaded ---");
+    console.log("--- Menu.js Version 9.1 (Core Isolated Edition) Loaded ---");
 
     // PERSISTENCE STATE RESTORE
     var isSaveOnRefreshActive = localStorage.getItem('pro_save_on_refresh') === 'true';
@@ -176,9 +199,9 @@
                 <button class="pro-menu-btn" id="btn-network">🌐 Network</button>
                 <button class="pro-menu-btn" id="btn-save-refresh">💾 Save on refresh</button>
                 
-                <div id="pro-dynamic-shortcuts" class="pro-menu-view-container"></div>
+                <div id="pro-dynamic-shortcuts" class="pro-menu-view-container" style="display: none;"></div>
                 
-                <button class="pro-menu-btn" id="btn-go-settings" style="background: rgba(255,255,255,0.07) !important; color: #ffd700 !important; font-weight: bold !important; margin-top: 10px;">⚙️ DevKit Settings</button>
+                <button class="pro-menu-btn" id="btn-go-settings" style="display: none; background: rgba(255,255,255,0.07) !important; color: #ffd700 !important; font-weight: bold !important; margin-top: 10px;">⚙️ DevKit Settings</button>
                 <button class="pro-menu-btn" id="btn-close-tools" style="color: #ef5350; margin-top: 5px;">❌ Close Tools</button>
             </div>
 
@@ -199,6 +222,12 @@
                 __updateDevKitBadge();
             }
         };
+
+        // --- INICJALIZACJA STANU UKRYCIA ---
+        if (sessionStorage.getItem('devkit_pro_unlocked') === 'true') {
+            d.getElementById('pro-dynamic-shortcuts').style.display = 'flex';
+            d.getElementById('btn-go-settings').style.display = 'block';
+        }
     }
 
     var settingsListContainer = d.getElementById('pro-settings-list');

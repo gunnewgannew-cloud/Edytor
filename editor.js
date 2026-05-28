@@ -45,7 +45,7 @@
     };
 
     // --- IDEALNIE PŁYNNY SILNIK RUCHU (DELTA-TRANSFORM) ---
-    // Zero przeskakiwania, zero opóźnień, pełna synchronizacja z palcem
+    // Zero przeskakiwania, zero opóźnień, pełna synchronizacja z palcem/myszką
     var isDragging = false;
     var startX = 0, startY = 0;
     var translateX = 0, translateY = 0;
@@ -84,7 +84,7 @@
         }
     });
 
-    // Obsługa myszki (PC)
+    // Obsługa myszki (PC) do przesuwania okna
     header.addEventListener('mousedown', function(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
         isDragging = true;
@@ -123,17 +123,47 @@
         b.style.cssText = 'position:fixed;pointer-events:none;border:2px dashed #e5c07b;box-shadow: 0 0 15px rgba(229,192,123,0.6);z-index:999998;';
         d.body.appendChild(b);
         
-        var tm = function(x) {
-            var m = x.touches[0], l = d.elementFromPoint(m.clientX, m.clientY);
-            if (l && l !== b && !w.contains(l) && !d.getElementById('pro-menu').contains(l) && l.id !== 'pro-fab') { 
-                e = l; var r = l.getBoundingClientRect(); b.style.left=r.left+'px'; b.style.top=r.top+'px'; b.style.width=r.width+'px'; b.style.height=r.height+'px'; b.style.display='block'; 
+        // Wspólna funkcja podświetlająca dla touch i mouse
+        var hl = function(clientX, clientY) {
+            var l = d.elementFromPoint(clientX, clientY);
+            var proMenu = d.getElementById('pro-menu');
+            if (l && l !== b && !w.contains(l) && (!proMenu || !proMenu.contains(l)) && l.id !== 'pro-fab') { 
+                e = l; 
+                var r = l.getBoundingClientRect(); 
+                b.style.left = r.left + 'px'; 
+                b.style.top = r.top + 'px'; 
+                b.style.width = r.width + 'px'; 
+                b.style.height = r.height + 'px'; 
+                b.style.display = 'block'; 
             }
         };
-        var nd = function() {
-            d.removeEventListener('touchmove', tm); d.removeEventListener('touchend', nd); b.remove();
+
+        var tmTouch = function(x) { hl(x.touches[0].clientX, x.touches[0].clientY); };
+        var tmMouse = function(x) { hl(x.clientX, x.clientY); };
+
+        var finish = function() {
+            d.removeEventListener('touchmove', tmTouch); 
+            d.removeEventListener('touchend', ndTouch);
+            d.removeEventListener('mousemove', tmMouse); 
+            d.removeEventListener('click', ndMouse, true); // true łapie zdarzenie w fazie przechwytywania
+            b.remove();
             if(e) { e.id = 'e_l'; area.value = e.outerHTML; w.style.display = 'flex'; }
         };
-        d.addEventListener('touchmove', tm, {passive: false}); d.addEventListener('touchend', nd);
+
+        var ndTouch = function() { finish(); };
+        var ndMouse = function(ev) {
+            // Ważne na PC: blokujemy kliknięcie, żeby nie wejść w link podczas wybierania!
+            ev.preventDefault();  
+            ev.stopPropagation(); 
+            finish();
+        };
+
+        // Nasłuchiwanie Touch (Mobile)
+        d.addEventListener('touchmove', tmTouch, {passive: false}); 
+        d.addEventListener('touchend', ndTouch);
+
+        // Nasłuchiwanie Mouse (PC)
+        d.addEventListener('mousemove', tmMouse); 
+        d.addEventListener('click', ndMouse, true); // true = capture phase
     };
 })();
-        

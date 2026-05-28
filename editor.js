@@ -6,7 +6,7 @@
     w.style.cssText = 'position:fixed;top:10%;left:5%;width:90%;height:75%;background:#111;z-index:2147483647;display:none;flex-direction:column;border-radius:15px;box-shadow:0 0 25px rgba(0,0,0,0.8);will-change:transform;transition:none !important;animation:none !important;';
     w.innerHTML = `
         <div id="edytor-header" style="padding:12px;background:#1a1a22;cursor:move;border-radius:15px 15px 0 0;display:flex;justify-content:space-between;align-items:center;border-bottom: 2px solid #61afef;touch-action:none;transition:none !important;-webkit-user-select:none;user-select:none;">
-            <b style="color:#61afef;font-family:sans-serif;">Gannew DevKit</b>
+            <b style="color:#61afef;font-family:sans-serif;">Redqu's DevKit</b>
             <div>
                 <input id="eSearch" type="text" placeholder="Szukaj..." style="width:60px;background:#333;color:#fff;border:none;border-radius:5px;padding:2px 5px;margin-right:5px;font-size:12px;">
                 <button id="eMi" style="background:#333;color:#fff;border:none;border-radius:5px;padding:5px 10px;">↕</button>
